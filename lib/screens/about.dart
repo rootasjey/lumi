@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:lumi/components/home_app_bar.dart';
 import 'package:lumi/router/router.dart';
+import 'package:lumi/state/colors.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class About extends StatefulWidget {
@@ -13,7 +14,7 @@ class About extends StatefulWidget {
 class _AboutState extends State<About> {
   final titleStyle = TextStyle(
     fontSize: 30.0,
-    fontWeight: FontWeight.w200,
+    fontWeight: FontWeight.w300,
   );
 
   final paragraphStyle = TextStyle(
@@ -32,7 +33,14 @@ class _AboutState extends State<About> {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          HomeAppBar(),
+          HomeAppBar(
+            title: Text(
+              'lumi',
+              style: TextStyle(
+                fontSize: 50.0,
+              ),
+            ),
+          ),
 
           SliverList(
             delegate: SliverChildListDelegate([
@@ -43,6 +51,7 @@ class _AboutState extends State<About> {
           SliverPadding(
             padding: const EdgeInsets.only(
               left: 150.0,
+              bottom: 300.0,
             ),
             sliver: body(),
           ),
@@ -117,7 +126,7 @@ class _AboutState extends State<About> {
             child: Padding(
               padding: const EdgeInsets.only(top: 25.0),
               child: Text(
-                "This is my personal website where you'll find projects that I'm working on, some hobbies I want to share and how to contact me.",
+                "lumi is an app to quickly control Philips Hue lights and sensors. If you often want to adjust these devices without taking your phone, this is made for you. The features are pretty basic for now but more will come later.",
                 style: paragraphStyle,
               ),
             ),
@@ -152,7 +161,7 @@ class _AboutState extends State<About> {
             child: Padding(
               padding: const EdgeInsets.only(top: 25.0),
               child: Text(
-                "This website has been crafted by hand with Flutter & Firebase.\nAfter testing multiple solutions, I ended up here because it seems the cheapest and most flexble way for my usage.",
+                "This app has been crafted by code with Flutter.",
                 style: paragraphStyle,
               ),
             ),
@@ -163,7 +172,7 @@ class _AboutState extends State<About> {
             child: Padding(
               padding: const EdgeInsets.only(top: 25.0),
               child: Text(
-                "If you want to learn how the technology behind this website, visit the GitHub repository. or stay tuned for future blog posts explanations.",
+                "If you want to learn how the technology behind this app, visit the GitHub repository. or stay tuned for future blog posts explanations.",
                 style: paragraphStyle,
               ),
             ),
@@ -173,8 +182,9 @@ class _AboutState extends State<About> {
             padding: const EdgeInsets.only(
               top: 10.0,
             ),
-            child: FlatButton.icon(
-              onPressed: () => launch('https://github.com/rootasjey/rootasjey.dev'),
+            child: RaisedButton.icon(
+              onPressed: () => launch('https://github.com/rootasjey/lumi'),
+              color: stateColors.primary,
               icon: Icon(Icons.open_in_browser),
               label: Text(
                 'Github',
