@@ -2,9 +2,15 @@
 
 Philips Hue web app to control lights and sensors.
 
+![lumi screenshot](./screenshot.png)
+
+## Features
+
 The features are pretty basic for now.
 
-![lumi screenshot](./screenshot.png)
+* Control lights
+* Control sensors
+* Control groups (& rooms)
 
 ## License
 
