@@ -85,15 +85,33 @@ class _SensorsState extends State<Sensors> {
 
                   Tooltip(
                     message: "${sensor.config.battery}% of battery remaining for this sensor",
-                    child: Opacity(
-                      opacity: 0.6,
-                      child: Text(
-                        '${sensor.config.battery}%',
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.w400,
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            right: 8.0,
+                          ),
+                          child: Icon(
+                            sensor.config.battery < 5
+                              ? Icons.battery_alert
+                              : Icons.battery_full,
+                            color: sensor.config.battery < 5
+                              ? Colors.red.shade300
+                              : stateColors.foreground,
+                          ),
                         ),
-                      ),
+
+                        Opacity(
+                          opacity: 0.6,
+                          child: Text(
+                            '${sensor.config.battery}%',
+                            style: TextStyle(
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
