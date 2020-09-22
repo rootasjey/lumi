@@ -14,6 +14,9 @@ abstract class UserStateBase with Store {
   Bridge get bridge => _bridge;
 
   @observable
+  String homeSectionTitle = '';
+
+  @observable
   String lang = 'en';
 
   @observable
@@ -36,6 +39,11 @@ abstract class UserStateBase with Store {
 
   void setBridge(Bridge newBridge) {
     _bridge = newBridge;
+  }
+
+  @action
+  void setHomeSectionTitle(String title) {
+    homeSectionTitle = title;
   }
 
   @action

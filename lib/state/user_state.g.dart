@@ -24,6 +24,21 @@ mixin _$UserState on UserStateBase, Store {
     });
   }
 
+  final _$homeSectionTitleAtom = Atom(name: 'UserStateBase.homeSectionTitle');
+
+  @override
+  String get homeSectionTitle {
+    _$homeSectionTitleAtom.reportRead();
+    return super.homeSectionTitle;
+  }
+
+  @override
+  set homeSectionTitle(String value) {
+    _$homeSectionTitleAtom.reportWrite(value, super.homeSectionTitle, () {
+      super.homeSectionTitle = value;
+    });
+  }
+
   final _$langAtom = Atom(name: 'UserStateBase.lang');
 
   @override
@@ -116,6 +131,17 @@ mixin _$UserState on UserStateBase, Store {
   }
 
   @override
+  void setHomeSectionTitle(String title) {
+    final _$actionInfo = _$UserStateBaseActionController.startAction(
+        name: 'UserStateBase.setHomeSectionTitle');
+    try {
+      return super.setHomeSectionTitle(title);
+    } finally {
+      _$UserStateBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void setLang(String newLang) {
     final _$actionInfo = _$UserStateBaseActionController.startAction(
         name: 'UserStateBase.setLang');
@@ -174,6 +200,7 @@ mixin _$UserState on UserStateBase, Store {
   String toString() {
     return '''
 avatarUrl: ${avatarUrl},
+homeSectionTitle: ${homeSectionTitle},
 lang: ${lang},
 isQuotidianNotifActive: ${isQuotidianNotifActive},
 isUserConnected: ${isUserConnected},
