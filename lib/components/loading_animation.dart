@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lumi/components/app_icon.dart';
 
 class LoadingAnimation extends StatelessWidget {
   final TextStyle style;
@@ -18,11 +19,20 @@ class LoadingAnimation extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text('R'),
+        AppIcon(
+          padding: const EdgeInsets.only(
+            bottom: 40.0,
+          ),
+        ),
 
-        title != null ?
-          title :
-          Padding(
+        SizedBox(
+          width: 100.0,
+          child: LinearProgressIndicator(),
+        ),
+
+        title != null
+          ? title
+          : Padding(
             padding: const EdgeInsets.only(top: 40.0),
             child: Text(
               textTitle,

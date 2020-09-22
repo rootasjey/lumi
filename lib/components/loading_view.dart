@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lumi/components/loading_animation.dart';
 
 class LoadingView extends StatelessWidget {
   final String title;
@@ -13,19 +14,8 @@ class LoadingView extends StatelessWidget {
       padding: const EdgeInsets.all(60.0),
       child: Column(
         children: [
-          CircularProgressIndicator(),
-
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Opacity(
-              opacity: 0.6,
-              child: Text(
-                title,
-                style: TextStyle(
-                  fontSize: 25.0,
-                ),
-              ),
-            ),
+          LoadingAnimation(
+            textTitle: title,
           ),
         ],
       ),
