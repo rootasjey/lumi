@@ -61,7 +61,7 @@ class _SensorsState extends State<Sensors> {
       width: 240.0,
       height: 240.0,
       child: Card(
-        elevation: 4.0,
+        elevation: 6.0,
         child: Stack(
           children: [
             Padding(
