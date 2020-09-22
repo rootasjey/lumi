@@ -37,7 +37,7 @@ class _MainWebState extends State<MainWeb> {
       setBrightness(
         brightness: brightness,
         context: context,
-        duration: 1.seconds,
+        duration: 500.milliseconds,
       );
 
       return;
