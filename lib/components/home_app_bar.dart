@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:lumi/components/app_icon.dart';
 import 'package:lumi/router/route_names.dart';
-import 'package:lumi/router/router.dart';
 import 'package:lumi/state/colors.dart';
 import 'package:lumi/utils/app_localstorage.dart';
 import 'package:lumi/utils/brightness.dart';
@@ -66,7 +65,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
                         padding: const EdgeInsets.only(right: 16.0),
                         child: IconButton(
                           color: stateColors.foreground,
-                          onPressed: () => FluroRouter.router.pop(context),
+                          onPressed: () {},
                           icon: Icon(Icons.arrow_back),
                         ),
                       ),
@@ -178,11 +177,6 @@ class _HomeAppBarState extends State<HomeAppBar> {
         if (value == 'disconnect') {
           return;
         }
-
-        FluroRouter.router.navigateTo(
-          context,
-          value,
-        );
       },
     );
   }

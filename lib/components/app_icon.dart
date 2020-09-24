@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lumi/router/route_names.dart';
-import 'package:lumi/router/router.dart';
 
 class AppIcon extends StatefulWidget {
   final Function onTap;
@@ -49,7 +47,7 @@ class _AppIconState extends State<AppIcon> {
         color: Colors.transparent,
         child: InkWell(
           onTap: widget.onTap
-            ?? () => FluroRouter.router.navigateTo(context, RootRoute),
+            ?? () {},
           // onHover: (isHover) {
           //   isHover
           //     ? setState(() => foreground = stateColors.primary)

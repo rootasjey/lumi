@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lumi/router/router.dart';
+import 'package:lumi/screens/home.dart';
 import 'package:lumi/state/colors.dart';
 import 'package:lumi/utils/app_localstorage.dart';
 import 'package:lumi/utils/brightness.dart';
@@ -23,8 +23,7 @@ class _MainWebState extends State<MainWeb> {
       title: 'lumi',
       theme: stateColors.themeData,
       debugShowCheckedModeBanner: false,
-      initialRoute: '/',
-      onGenerateRoute: FluroRouter.router.generator,
+      home: Home(),
     );
   }
 
@@ -37,7 +36,7 @@ class _MainWebState extends State<MainWeb> {
       setBrightness(
         brightness: brightness,
         context: context,
-        duration: 500.milliseconds,
+        duration: 250.milliseconds,
       );
 
       return;

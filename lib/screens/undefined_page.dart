@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:lumi/components/app_icon.dart';
-import 'package:lumi/router/route_names.dart';
-import 'package:lumi/router/router.dart';
 
 class UndefinedPage extends StatefulWidget {
   final String name;
@@ -83,9 +81,7 @@ class _UndefinedPageState extends State<UndefinedPage> {
         Padding(
           padding: const EdgeInsets.only(top: 100.0),
           child: FlatButton(
-            onPressed: () {
-              FluroRouter.router.navigateTo(context, RootRoute);
-            },
+            onPressed: () {},
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text('Go home'),

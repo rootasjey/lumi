@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:lumi/components/home_app_bar.dart';
-import 'package:lumi/router/router.dart';
 import 'package:lumi/state/colors.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -84,7 +83,7 @@ class _AboutState extends State<About> {
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: IconButton(
-              onPressed: () => FluroRouter.router.pop(context),
+              onPressed: () {},
               icon: Icon(Icons.arrow_back),
             ),
           ),
