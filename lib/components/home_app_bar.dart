@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:lumi/components/app_icon.dart';
 import 'package:lumi/router/route_names.dart';
+import 'package:lumi/screens/about.dart';
 import 'package:lumi/state/colors.dart';
 import 'package:lumi/utils/app_localstorage.dart';
 import 'package:lumi/utils/brightness.dart';
@@ -174,8 +175,21 @@ class _HomeAppBarState extends State<HomeAppBar> {
         ),
       ],
       onSelected: (value) {
-        if (value == 'disconnect') {
-          return;
+        switch (value) {
+          case 'disconnect':
+            break;
+          case AboutRoute:
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) {
+                  return About();
+                },
+              )
+            );
+
+            break;
+          default:
         }
       },
     );
