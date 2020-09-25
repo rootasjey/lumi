@@ -31,12 +31,14 @@ dependencies:
     sdk: flutter
   flutter_mobx: 1.1.0+2
   flutter_sticky_header: 0.5.0
+  hsluv: 1.0.5
   hue_dart:
     git:
       url: git://github.com/rootasjey/hue_dart.git
   line_awesome_flutter: 1.0.1
   mobx: 1.2.1+2
   mobx_codegen: 1.1.0+1
+  random_color: 1.0.5
   sticky_headers: 0.1.8+1
   supercharged: 1.10.0
   url_launcher: 5.5.0
