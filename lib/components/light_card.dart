@@ -175,17 +175,26 @@ class _LightCardState extends State<LightCard> {
         fullscreenDialog: true,
         builder: (context) {
           return Scaffold(
-            body: Hero(
-              tag: light.id,
-              child: Center(
-                child: Container(
-                  width: 800,
-                  padding: const EdgeInsets.all(80.0),
-                  child: Card(
-                    elevation: 8.0,
-                    child: LightPage(
-                      light: light,
-                      color: accentColor,
+            body: GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child: Container(
+                color: Colors.transparent, // onTap doesn't work without this
+                child: Hero(
+                  tag: light.id,
+                  child: Center(
+                    child: Container(
+                      width: 800,
+                      padding: const EdgeInsets.all(80.0),
+                      child: Card(
+                        elevation: 8.0,
+                        child: GestureDetector(
+                          onTap: () {}, // to block parent onTap()
+                          child: LightPage(
+                            light: light,
+                            color: accentColor,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
