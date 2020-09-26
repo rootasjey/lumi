@@ -53,10 +53,15 @@ class _AppIconState extends State<AppIcon> {
           //     ? setState(() => foreground = stateColors.primary)
           //     : setState(() => foreground = stateColors.foreground);
           // },
-          child: Icon(
-            Icons.lightbulb_outline,
-            size: 50.0,
-          )
+          // child: Icon(
+          //   Icons.lightbulb_outline,
+          //   size: 50.0,
+          // ),
+          child: Image.asset(
+            'assets/images/bulb.png',
+            width: 50.0,
+            height: 50.0,
+          ),
         ),
       ),
     );
