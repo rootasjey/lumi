@@ -195,8 +195,8 @@ class _LightsState extends State<Lights> {
     }
   }
 
-  void onTapLightCard(Light light) {
-    Navigator.of(context).push(
+  void onTapLightCard(Light light) async {
+    await Navigator.of(context).push(
       MaterialPageRoute(
         fullscreenDialog: true,
         builder: (context) {
@@ -221,5 +221,7 @@ class _LightsState extends State<Lights> {
         },
       )
     );
+
+    fetchLights();
   }
 }
