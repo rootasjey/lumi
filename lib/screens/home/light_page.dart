@@ -179,7 +179,7 @@ class _LightPageState extends State<LightPage> {
                 )
               );
 
-              // fetch();
+              fetch();
             },
           ),
         ],
@@ -495,6 +495,7 @@ class _LightPageState extends State<LightPage> {
     );
   }
 
+  /// Fetch a single light's data.
   void fetch() async {
     if (isLoading && timerUpdate != null) {
       timerUpdate.cancel();
