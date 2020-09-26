@@ -54,7 +54,7 @@ class _LightCardState extends State<LightCard> {
             child: Card(
               elevation: elevation,
               child: InkWell(
-                onTap: () => onTapLightCard(light),
+                onTap: () => onNavigateToLightPage(light),
                 child: Stack(
                   children: [
                     Padding(
@@ -169,7 +169,7 @@ class _LightCardState extends State<LightCard> {
     );
   }
 
-  void onTapLightCard(Light light) async {
+  void onNavigateToLightPage(Light light) async {
     await Navigator.of(context).push(
       MaterialPageRoute(
         fullscreenDialog: true,
