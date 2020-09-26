@@ -9,11 +9,9 @@ import 'package:random_color/random_color.dart';
 import 'package:supercharged/supercharged.dart';
 
 class LightPage extends StatefulWidget {
-  final String id;
   final Light light;
 
   LightPage({
-    this.id,
     this.light,
   });
 

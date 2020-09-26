@@ -184,7 +184,6 @@ class _LightCardState extends State<LightCard> {
                   child: Card(
                     elevation: 8.0,
                     child: LightPage(
-                      id: light.id.toString(),
                       light: light,
                     ),
                   ),
