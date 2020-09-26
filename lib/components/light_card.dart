@@ -22,6 +22,7 @@ class _LightCardState extends State<LightCard> {
   Color accentColor;
 
   double brightness;
+  double elevation;
   Light light;
 
   Timer updateBrightnessTimer;
@@ -35,6 +36,7 @@ class _LightCardState extends State<LightCard> {
       light = widget.light;
       brightness = light.state.brightness.toDouble();
       accentColor = stateColors.primary;
+      updateElevation();
     });
 
     fetch();
@@ -50,7 +52,7 @@ class _LightCardState extends State<LightCard> {
             width: 240.0,
             height: 240.0,
             child: Card(
-              elevation: 6.0,
+              elevation: elevation,
               child: InkWell(
                 onTap: () => onTapLightCard(light),
                 child: Stack(
@@ -199,10 +201,6 @@ class _LightCardState extends State<LightCard> {
 
   /// Fetch a single light's data.
   void fetch() async {
-    if (!light.state.on) {
-      return;
-    }
-
     if (isLoading && timerUpdate != null) {
       timerUpdate.cancel();
     }
@@ -219,28 +217,33 @@ class _LightCardState extends State<LightCard> {
             return;
           }
 
-          final hsl = HSLColor.fromAHSL(
-            1.0,
-            light.state.hue / 65535 * 360,
-            light.state.saturation / 255,
-            light.state.brightness / 255,
-          );
+          var color = accentColor;
 
-          var color = hsl.toColor();
-
-          if (color.red < 100 && color.green < 100 && color.blue < 100) {
-            color = Color.fromARGB(
-              color.alpha,
-              color.red   + 100,
-              color.green + 100,
-              color.blue  + 100,
+          if (light.state.on) {
+            final hsl = HSLColor.fromAHSL(
+              1.0,
+              light.state.hue / 65535 * 360,
+              light.state.saturation / 255,
+              light.state.brightness / 255,
             );
+
+            color = hsl.toColor();
+
+            if (color.red < 100 && color.green < 100 && color.blue < 100) {
+              color = Color.fromARGB(
+                color.alpha,
+                color.red   + 100,
+                color.green + 100,
+                color.blue  + 100,
+              );
+            }
           }
 
           setState(() {
             isLoading   = false;
             accentColor = color;
             brightness  = light.state.brightness.toDouble();
+            updateElevation();
           });
 
         } catch (error) {
@@ -250,5 +253,11 @@ class _LightCardState extends State<LightCard> {
         }
       }
     );
+  }
+
+  void updateElevation() {
+    elevation = light.state.on
+      ? 6.0
+      : 0.0;
   }
 }
