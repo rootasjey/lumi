@@ -1,11 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:hue_dart/hue_dart.dart';
+import 'package:hue_dart/hue_dart.dart' hide Timer;
 import 'package:lumi/components/error_view.dart';
 import 'package:lumi/components/loading_view.dart';
 import 'package:lumi/screens/home/light_page.dart';
 import 'package:lumi/state/colors.dart';
 import 'package:lumi/state/user_state.dart';
+import 'package:supercharged/supercharged.dart';
 
 class Lights extends StatefulWidget {
   @override
@@ -18,10 +21,14 @@ class _LightsState extends State<Lights> {
 
   bool isLoading = false;
 
+  Timer updateBrightnessTimer;
+
+  final sliderValues = Map<int, double>();
+
   @override
   void initState() {
     super.initState();
-    fetchLights(showLoading: true);
+    fetch(showLoading: true);
   }
 
   @override
@@ -51,14 +58,14 @@ class _LightsState extends State<Lights> {
       delegate: SliverChildBuilderDelegate(
         (context, index) {
           final light = lights[index];
-          return lightCard(light);
+          return card(light);
         },
         childCount: lights.length,
       ),
     );
   }
 
-  Widget lightCard(Light light) {
+  Widget card(Light light) {
     return Observer(
       builder: (context) {
         return Hero(
@@ -91,7 +98,7 @@ class _LightsState extends State<Lights> {
                             ),
                           ),
 
-                          lightCardSlider(light),
+                          brightnessSlider(light),
                         ],
                       ),
                     ),
@@ -114,7 +121,7 @@ class _LightsState extends State<Lights> {
                             )
                           );
 
-                          fetchLights();
+                          fetch();
                         },
                         icon: Icon(
                           Icons.lightbulb_outline,
@@ -135,53 +142,72 @@ class _LightsState extends State<Lights> {
     );
   }
 
-  Widget lightCardSlider(Light light) {
+  Widget brightnessSlider(Light light) {
     return Slider(
-      value: light.state.brightness.toDouble(),
+      value: sliderValues[light.id],
       min: 0,
       max: 254,
       activeColor: light.state.on
         ? stateColors.primary
         : stateColors.foreground.withOpacity(0.4),
-      inactiveColor: stateColors.foreground.withOpacity(0.4),
-      label: light.state.brightness.toDouble().round().toString(),
-      onChanged: (double value) async {
-        LightState state = LightState(
-          (l) => l..brightness = value.toInt()
-        );
 
-        if (!light.state.on) {
-          state = LightState(
-            (l) => l
-              ..on = true
-              ..brightness = value.toInt()
-          );
+      inactiveColor: stateColors.foreground.withOpacity(0.4),
+      label: sliderValues[light.id].round().toString(),
+
+      onChanged: (double value) async {
+        setState(() {
+          sliderValues[light.id] = value;
+        });
+
+        if (updateBrightnessTimer != null) {
+          updateBrightnessTimer.cancel();
         }
 
-        await userState.bridge.updateLightState(
-          light.rebuild(
-            (l) => l..state = state.toBuilder()
-          )
-        );
+        updateBrightnessTimer = Timer(
+          250.milliseconds,
+          () async {
+            LightState state = LightState(
+              (l) => l..brightness = value.toInt()
+            );
 
-        fetchLights();
+            if (!light.state.on) {
+              state = LightState(
+                (l) => l
+                  ..on = true
+                  ..brightness = value.toInt()
+              );
+            }
+
+            await userState.bridge.updateLightState(
+              light.rebuild(
+                (l) => l..state = state.toBuilder()
+              )
+            );
+
+            fetch();
+          }
+        );
       },
     );
   }
 
-  void fetchLights({showLoading = false}) async {
+  /// Fetch all lights' data.
+  void fetch({showLoading = false}) async {
     if (showLoading) {
       setState(() => isLoading = true);
     }
 
     try {
-      final lightsItems = await userState.bridge.lights();
+      lights = await userState.bridge.lights();
 
-      final title = '${lightsItems.length} ${lightsItems.length > 0 ? 'lights' : 'light'}';
+      final title = '${lights.length} ${lights.length > 0 ? 'lights' : 'light'}';
       userState.setHomeSectionTitle(title);
 
+      lights.forEach((light) {
+        sliderValues[light.id] = light.state.brightness.toDouble();
+      });
+
       setState(() {
-        lights = lightsItems;
         isLoading = false;
       });
 
@@ -222,6 +248,6 @@ class _LightsState extends State<Lights> {
       )
     );
 
-    fetchLights();
+    fetch();
   }
 }
