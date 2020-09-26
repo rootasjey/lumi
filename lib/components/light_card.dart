@@ -226,9 +226,20 @@ class _LightCardState extends State<LightCard> {
             light.state.brightness / 255,
           );
 
+          var color = hsl.toColor();
+
+          if (color.red < 100 && color.green < 100 && color.blue < 100) {
+            color = Color.fromARGB(
+              color.alpha,
+              color.red   + 100,
+              color.green + 100,
+              color.blue  + 100,
+            );
+          }
+
           setState(() {
             isLoading   = false;
-            accentColor = hsl.toColor();
+            accentColor = color;
             brightness  = light.state.brightness.toDouble();
           });
 
