@@ -35,6 +35,7 @@ dependencies:
   hue_dart:
     git:
       url: git://github.com/rootasjey/hue_dart.git
+  jiffy: 3.0.1
   line_awesome_flutter: 1.0.1
   mobx: 1.2.1+2
   mobx_codegen: 1.1.0+1
