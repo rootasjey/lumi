@@ -185,6 +185,7 @@ class _LightCardState extends State<LightCard> {
                     elevation: 8.0,
                     child: LightPage(
                       light: light,
+                      color: accentColor,
                     ),
                   ),
                 ),

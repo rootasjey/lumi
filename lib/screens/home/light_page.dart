@@ -10,9 +10,11 @@ import 'package:supercharged/supercharged.dart';
 
 class LightPage extends StatefulWidget {
   final Light light;
+  final Color color;
 
   LightPage({
-    this.light,
+    @required this.light,
+    this.color,
   });
 
   @override
@@ -61,7 +63,7 @@ class _LightPageState extends State<LightPage> {
       brightness  = light.state.brightness.toDouble();
       saturation  = light.state.saturation.toDouble();
       hue         = light.state.hue.toDouble();
-      accentColor = stateColors.primary;
+      accentColor = widget.color ?? stateColors.primary;
     });
 
     generatePalette();
