@@ -72,9 +72,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
                       ),
 
                     AppIcon(
-                      padding: const EdgeInsets.only(
-                        bottom: 8.0,
-                      ),
+                      padding: EdgeInsets.zero,
                       onTap: widget.onTapIconHeader,
                     ),
 
