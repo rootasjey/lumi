@@ -477,13 +477,12 @@ class _LightPageState extends State<LightPage> {
                         )
                       );
 
-                      await userState.bridge.updateLightState(
+                      userState.bridge.updateLightState(
                         light.rebuild(
                           (l) => l..state = state.toBuilder()
                         )
-                      );
-
-                      fetch();
+                      )
+                      .then((_) => fetch());
                     }
                   );
                 },
