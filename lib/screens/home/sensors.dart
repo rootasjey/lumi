@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hue_dart/hue_dart.dart';
 import 'package:lumi/components/error_view.dart';
 import 'package:lumi/components/loading_view.dart';
+import 'package:lumi/components/sensor_card.dart';
 import 'package:lumi/state/colors.dart';
 import 'package:lumi/state/user_state.dart';
 
@@ -49,7 +50,8 @@ class _SensorsState extends State<Sensors> {
       delegate: SliverChildBuilderDelegate(
         (context, index) {
           final sensor = sensors[index];
-          return sensorCard(sensor);
+          // return sensorCard(sensor);
+          return SensorCard(sensor: sensor);
         },
         childCount: sensors.length,
       ),
