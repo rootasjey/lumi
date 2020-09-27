@@ -228,7 +228,7 @@ class _LightCardState extends State<LightCard> {
 
           var color = accentColor;
 
-          if (light.state.on) {
+          if (light.state.on && light.state.hue != null) {
             final hsl = HSLColor.fromAHSL(
               1.0,
               light.state.hue / 65535 * 360,
