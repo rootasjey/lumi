@@ -1,7 +1,8 @@
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:lumi/state/colors.dart';
-import 'package:lumi/utils/app_localstorage.dart';
+import 'package:lumi/utils/constants.dart';
 
 /// Refresh current theme with auto brightness.
 void setAutoBrightness({
@@ -18,11 +19,11 @@ void setAutoBrightness({
 
   Future.delayed(
     duration,
-    () {
+    () async {
       try {
         DynamicTheme.of(context).setBrightness(brightness);
         stateColors.refreshTheme(brightness: brightness);
-        appLocalStorage.setAutoBrightness(true);
+        await Hive.box(KEY_SETTINGS).put(KEY_AUTO_BRIGHTNESS, true);
 
       } catch (error) {
         debugPrint(error.toString());
@@ -42,11 +43,12 @@ void setBrightness({
 
   Future.delayed(
     duration,
-    () {
+    () async {
       DynamicTheme.of(context).setBrightness(brightness);
+      await Hive.box(KEY_SETTINGS).put(KEY_AUTO_BRIGHTNESS, false);
 
-      appLocalStorage.setAutoBrightness(false);
-      appLocalStorage.setBrightness(brightness);
+      final darkMode = brightness == Brightness.dark;
+      await Hive.box(KEY_SETTINGS).put(KEY_DARK_MODE, darkMode);
     }
   );
 }

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:lumi/screens/home.dart';
 import 'package:lumi/state/colors.dart';
-import 'package:lumi/utils/app_localstorage.dart';
 import 'package:lumi/utils/brightness.dart';
+import 'package:lumi/utils/constants.dart';
 import 'package:supercharged/supercharged.dart';
 
 class MainWeb extends StatefulWidget {
@@ -28,10 +29,14 @@ class _MainWebState extends State<MainWeb> {
   }
 
   void loadBrightness() {
-    final autoBrightness = appLocalStorage.getAutoBrightness();
+    bool autoBrightness = Hive.box(KEY_SETTINGS).get(KEY_AUTO_BRIGHTNESS);
 
     if (!autoBrightness) {
-      final brightness = appLocalStorage.getBrightness();
+      bool darkMode = Hive.box(KEY_SETTINGS).get(KEY_DARK_MODE);
+
+      final brightness = darkMode
+        ? Brightness.dark
+        : Brightness.light;
 
       setBrightness(
         brightness: brightness,

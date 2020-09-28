@@ -1,12 +1,13 @@
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:hive/hive.dart';
 import 'package:lumi/components/app_icon.dart';
 import 'package:lumi/router/route_names.dart';
 import 'package:lumi/screens/about.dart';
 import 'package:lumi/state/colors.dart';
-import 'package:lumi/utils/app_localstorage.dart';
 import 'package:lumi/utils/brightness.dart';
+import 'package:lumi/utils/constants.dart';
 
 class HomeAppBar extends StatefulWidget {
   final bool automaticallyImplyLeading;
@@ -99,12 +100,12 @@ class _HomeAppBarState extends State<HomeAppBar> {
   /// Switch from dark to light and vice-versa.
   Widget themeButton() {
     IconData iconBrightness = Icons.brightness_auto;
-    final autoBrightness = appLocalStorage.getAutoBrightness();
+    bool autoBrightness = Hive.box(KEY_SETTINGS).get(KEY_AUTO_BRIGHTNESS);
 
     if (!autoBrightness) {
-      final currentBrightness = appLocalStorage.getBrightness();
+      bool darkMode = Hive.box(KEY_SETTINGS).get(KEY_DARK_MODE);
 
-      iconBrightness = currentBrightness == Brightness.dark
+      iconBrightness = darkMode
         ? Icons.brightness_2
         : Icons.brightness_low;
     }
