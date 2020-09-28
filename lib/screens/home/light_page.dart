@@ -5,6 +5,7 @@ import 'package:hue_dart/hue_dart.dart' hide Timer;
 import 'package:lumi/components/color_card.dart';
 import 'package:lumi/state/colors.dart';
 import 'package:lumi/state/user_state.dart';
+import 'package:lumi/utils/colors.dart';
 import 'package:random_color/random_color.dart';
 import 'package:supercharged/supercharged.dart';
 
@@ -37,18 +38,6 @@ class _LightPageState extends State<LightPage> {
   Timer timerUpdateHue;
 
   RandomColor colorGenerator;
-
-  final hueColors = [
-    const Color.fromARGB(255, 255, 0, 0),
-    const Color.fromARGB(255, 255, 125, 0),
-    const Color.fromARGB(255, 255, 255, 0),
-    const Color.fromARGB(255, 0, 255, 0),
-    const Color.fromARGB(255, 255, 255, 255),
-    const Color.fromARGB(255, 0, 255, 255),
-    const Color.fromARGB(255, 0, 0, 255),
-    const Color.fromARGB(255, 255, 0, 255),
-    const Color.fromARGB(255, 255, 0, 0),
-  ];
 
   final colors = <Color>[];
 
@@ -366,7 +355,7 @@ class _LightPageState extends State<LightPage> {
               elevation: 4.0,
               child: DecoratedBox(
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(colors: hueColors)
+                  gradient: LinearGradient(colors: HUE_COLORS)
                 )
               ),
             ),
