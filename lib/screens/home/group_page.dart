@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:hue_dart/hue_dart.dart' hide Timer;
+import 'package:lumi/components/tiny_light_card.dart';
 import 'package:lumi/state/colors.dart';
 import 'package:lumi/state/user_state.dart';
 import 'package:lumi/utils/colors.dart';
@@ -44,8 +45,8 @@ class _GroupPageState extends State<GroupPage> {
       group       = widget.group;
       groupOn     = group.action.on;
       brightness  = group.action.brightness.toDouble();
-      hue         = group.action.hue.toDouble();
-      saturation  = group.action.saturation.toDouble();
+      hue         = group.action.hue?.toDouble();
+      saturation  = group.action.saturation?.toDouble();
     });
   }
 
@@ -68,8 +69,14 @@ class _GroupPageState extends State<GroupPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 brightnessSlider(),
-                saturationSlider(),
-                hueContainer(),
+
+                if (saturation != null)
+                  saturationSlider(),
+
+                if (hue != null)
+                  hueContainer(),
+
+                groupLights(),
               ],
             ),
         ],
@@ -330,6 +337,71 @@ class _GroupPageState extends State<GroupPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget groupLights() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 74.0,
+        vertical: 30.0,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(
+              bottom: 8.0,
+            ),
+            child: Opacity(
+              opacity: 0.6,
+              child: Text(
+                'LIGHTS',
+                style: TextStyle(
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+
+          Wrap(
+            spacing: 20.0,
+            runSpacing: 20.0,
+            children: group.lightIds.map((id) {
+              return TinyLightCard(id: id);
+            }).toList()
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget lightCard(String id) {
+    return SizedBox(
+      width: 100.0,
+      height: 100.0,
+      child: Card(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.lightbulb_outline,
+            ),
+
+            Opacity(
+              opacity: 0.6,
+              child: Text(
+                id,
+                style: TextStyle(
+                  fontSize: 15.0,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
