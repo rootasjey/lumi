@@ -50,12 +50,15 @@ class _LightPageState extends State<LightPage> {
     setState(() {
       light       = widget.light;
       brightness  = light.state.brightness.toDouble();
-      saturation  = light.state.saturation.toDouble();
-      hue         = light.state.hue.toDouble();
+      saturation  = light.state.saturation?.toDouble();
+      hue         = light.state.hue?.toDouble();
       accentColor = widget.color ?? stateColors.primary;
     });
 
-    generatePalette();
+    if (hue != null) {
+      generatePalette();
+    }
+
     fetch();
   }
 
@@ -75,9 +78,15 @@ class _LightPageState extends State<LightPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 brightnessSlider(),
-                saturationSlider(),
-                lightHue(),
-                colorsPalette(),
+
+                if (saturation != null)
+                  saturationSlider(),
+
+                if (hue != null)
+                  lightHue(),
+
+                if (hue != null)
+                  colorsPalette(),
               ],
             ),
         ],
@@ -118,12 +127,15 @@ class _LightPageState extends State<LightPage> {
             padding: const EdgeInsets.only(
               left: 16.0,
             ),
-            child: Text(
-              light.name.toUpperCase(),
-              style: TextStyle(
-                fontSize: 40.0,
-                fontWeight: FontWeight.w600,
-              )
+            child: Opacity(
+              opacity: 0.7,
+              child: Text(
+                light.name.toUpperCase(),
+                style: TextStyle(
+                  fontSize: 40.0,
+                  fontWeight: FontWeight.w500,
+                )
+              ),
             ),
           ),
         ],
@@ -201,46 +213,54 @@ class _LightPageState extends State<LightPage> {
             ),
           ),
 
-          SizedBox(
-            width: 250.0,
-            child: Slider(
-              value: brightness,
-              min: 0,
-              max: 254,
-              activeColor: light.state.on
-                ? accentColor
-                : stateColors.foreground.withOpacity(0.4),
+          Row(
+            children: [
+              SizedBox(
+                width: 250.0,
+                child: Slider(
+                  value: brightness,
+                  min: 0,
+                  max: 254,
+                  activeColor: light.state.on
+                    ? accentColor
+                    : stateColors.foreground.withOpacity(0.4),
 
-              inactiveColor: stateColors.foreground.withOpacity(0.4),
-              label: brightness.round().toString(),
+                  inactiveColor: stateColors.foreground.withOpacity(0.4),
+                  label: brightness.round().toString(),
 
-              onChanged: (double value) async {
-                setState(() {
-                  brightness = value;
-                });
+                  onChanged: (double value) async {
+                    setState(() {
+                      brightness = value;
+                    });
 
-                if (timerUpdateBrightness != null) {
-                  timerUpdateBrightness.cancel();
-                }
+                    if (timerUpdateBrightness != null) {
+                      timerUpdateBrightness.cancel();
+                    }
 
-                timerUpdateBrightness = Timer(
-                  250.milliseconds,
-                  () async {
-                    LightState state = LightState(
-                      (l) => l..brightness = value.toInt()
+                    timerUpdateBrightness = Timer(
+                      250.milliseconds,
+                      () async {
+                        LightState state = LightState(
+                          (l) => l..brightness = value.toInt()
+                        );
+
+                        await userState.bridge.updateLightState(
+                          light.rebuild(
+                            (l) => l..state = state.toBuilder()
+                          )
+                        );
+
+                        fetch();
+                      }
                     );
+                  },
+                ),
+              ),
 
-                    await userState.bridge.updateLightState(
-                      light.rebuild(
-                        (l) => l..state = state.toBuilder()
-                      )
-                    );
-
-                    fetch();
-                  }
-                );
-              },
-            ),
+              Icon(
+                Icons.wb_sunny,
+              ),
+            ],
           ),
         ],
       ),
@@ -501,19 +521,23 @@ class _LightPageState extends State<LightPage> {
             return;
           }
 
-          final hsl = HSLColor.fromAHSL(
-            1.0,
-            light.state.hue / 65535 * 360,
-            light.state.saturation / 255,
-            light.state.brightness / 255,
-          );
+          HSLColor hsl;
+
+          if (light.state.hue != null) {
+             hsl = HSLColor.fromAHSL(
+              1.0,
+              light.state.hue / 65535 * 360,
+              light.state.saturation / 255,
+              light.state.brightness / 255,
+            );
+          }
 
           setState(() {
             isLoading   = false;
-            accentColor = hsl.toColor();
+            accentColor = hsl != null ? hsl.toColor() : accentColor;
             brightness  = light.state.brightness.toDouble();
-            saturation  = light.state.saturation.toDouble();
-            hue         = light.state.hue.toDouble();
+            saturation  = light.state.saturation?.toDouble();
+            hue         = light.state.hue?.toDouble();
           });
 
         } catch (error) {
