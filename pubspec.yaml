@@ -31,7 +31,6 @@ dependencies:
     sdk: flutter
   flutter_mobx: 1.1.0+2
   flutter_sticky_header: 0.5.0
-  hsluv: 1.0.5
   hue_dart:
     git:
       url: git://github.com/rootasjey/hue_dart.git
