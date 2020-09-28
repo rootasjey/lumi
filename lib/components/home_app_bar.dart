@@ -84,6 +84,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
                         ),
                       ),
 
+                    themeButton(),
                     menu(),
                   ],
                 ),
