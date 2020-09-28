@@ -308,7 +308,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: edd6601353a57d2dfdc2d67a83d86cb18fb07683
+      resolved-ref: f94909f797f844ec46da3cdd450a135293318e83
       url: "git://github.com/rootasjey/hue_dart.git"
     source: git
     version: "0.2.1"
