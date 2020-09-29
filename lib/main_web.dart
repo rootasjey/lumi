@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:lumi/screens/connection.dart';
 import 'package:lumi/screens/home.dart';
 import 'package:lumi/state/colors.dart';
+import 'package:lumi/state/user_state.dart';
 import 'package:lumi/utils/brightness.dart';
 import 'package:lumi/utils/constants.dart';
 import 'package:supercharged/supercharged.dart';
@@ -24,7 +26,9 @@ class _MainWebState extends State<MainWeb> {
       title: 'lumi',
       theme: stateColors.themeData,
       debugShowCheckedModeBanner: false,
-      home: Home(),
+      home: userState.isUserConnected
+        ? Home()
+        : Connection(),
     );
   }
 

@@ -64,11 +64,12 @@ class AppState extends State<App> {
 
   void autoLogin() async {
     try {
-      // final username = appLocalStorage.getUserName();
+      String username = Hive.box(KEY_SETTINGS).get(KEY_USER_NAME);
 
-      // if (username == null || username.isEmpty) {
-      //   return;
-      // }
+      if (username == null || username.isEmpty) {
+        setState(() => isReady = true);
+        return;
+      }
 
       final client = BrowserClient();
       final discovery = BridgeDiscovery(client);
@@ -81,7 +82,8 @@ class AppState extends State<App> {
 
       final firstResult = discoveryResults.first;
       final bridge = Bridge(client, firstResult.ipAddress);
-      bridge.username = 'IgG6uNukt9xndp4cyFX1To0zjDmeiUzj5pwXxEwP';
+      // bridge.username = 'IgG6uNukt9xndp4cyFX1To0zjDmeiUzj5pwXxEwP';
+      bridge.username = username;
 
       userState.setBridge(bridge);
       userState.setUserConnected();

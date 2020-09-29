@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:lumi/components/home_app_bar.dart';
+import 'package:lumi/screens/connection.dart';
 import 'package:lumi/screens/home/lights.dart';
 import 'package:lumi/screens/home/groups.dart';
 import 'package:lumi/screens/home/sensors.dart';
@@ -24,6 +25,21 @@ class _HomeState extends State<Home> {
     Sensors(),
     Groups(),
   ];
+
+  @override
+  initState() {
+    super.initState();
+
+     if (!userState.isUserConnected) {
+       Navigator.of(context).push(
+         MaterialPageRoute(
+           builder: (_) {
+             return Connection();
+            },
+          )
+        );
+     }
+  }
 
   @override
   Widget build(BuildContext context) {

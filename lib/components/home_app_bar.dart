@@ -5,7 +5,9 @@ import 'package:hive/hive.dart';
 import 'package:lumi/components/app_icon.dart';
 import 'package:lumi/router/route_names.dart';
 import 'package:lumi/screens/about.dart';
+import 'package:lumi/screens/connection.dart';
 import 'package:lumi/state/colors.dart';
+import 'package:lumi/state/user_state.dart';
 import 'package:lumi/utils/brightness.dart';
 import 'package:lumi/utils/constants.dart';
 
@@ -177,6 +179,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
       onSelected: (value) {
         switch (value) {
           case 'disconnect':
+            disconnect();
             break;
           case AboutRoute:
             Navigator.push(
@@ -192,6 +195,20 @@ class _HomeAppBarState extends State<HomeAppBar> {
           default:
         }
       },
+    );
+  }
+
+  void disconnect() async {
+    await Hive.box(KEY_SETTINGS).put(KEY_USER_NAME, '');
+    userState.bridge.username = '';
+    userState.setUserDisconnected();
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) {
+          return Connection();
+        }
+      ),
     );
   }
 }
