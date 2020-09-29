@@ -1,7 +1,9 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:lumi/components/home_app_bar.dart';
+import 'package:lumi/screens/home.dart';
 import 'package:lumi/state/colors.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -13,7 +15,7 @@ class About extends StatefulWidget {
 class _AboutState extends State<About> {
   final titleStyle = TextStyle(
     fontSize: 30.0,
-    fontWeight: FontWeight.w300,
+    fontWeight: FontWeight.w400,
   );
 
   final paragraphStyle = TextStyle(
@@ -33,12 +35,22 @@ class _AboutState extends State<About> {
       body: CustomScrollView(
         slivers: [
           HomeAppBar(
+             automaticallyImplyLeading: true,
             title: Text(
               'lumi',
               style: TextStyle(
                 fontSize: 50.0,
               ),
             ),
+            onTapIconHeader: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) {
+                    return Home();
+                  },
+                ),
+              );
+            },
           ),
 
           SliverList(
@@ -67,6 +79,7 @@ class _AboutState extends State<About> {
           children: <Widget>[
             thePurpose(),
             theDevStack(),
+            thePerson(),
           ],
         ),
       ]),
@@ -104,7 +117,7 @@ class _AboutState extends State<About> {
     return Container(
       width: 600.0,
       padding: const EdgeInsets.only(
-        top: 40.0,
+        top: 0.0,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -184,9 +197,69 @@ class _AboutState extends State<About> {
             child: RaisedButton.icon(
               onPressed: () => launch('https://github.com/rootasjey/lumi'),
               color: stateColors.primary,
-              icon: Icon(Icons.open_in_browser),
+              icon: Icon(LineAwesomeIcons.github),
               label: Text(
                 'Github',
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget thePerson() {
+    return Container(
+      width: 600.0,
+      padding: const EdgeInsets.only(
+        top: 40.0,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 80.0),
+            child: Opacity(
+              opacity: titleOpacity,
+              child: Text(
+                'ME',
+                style: titleStyle,
+              ),
+            ),
+          ),
+
+           Opacity(
+            opacity: paragraphOpacity,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 25.0),
+              child: Text(
+                "I'm a french freelance developer.",
+                style: paragraphStyle,
+              ),
+            ),
+          ),
+
+          Opacity(
+            opacity: paragraphOpacity,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 5.0),
+              child: Text(
+                "You can find more of me and my work on my website.",
+                style: paragraphStyle,
+              ),
+            ),
+          ),
+
+          Padding(
+            padding: const EdgeInsets.only(
+              top: 10.0,
+            ),
+            child: RaisedButton.icon(
+              onPressed: () => launch('https://rootasjey.dev'),
+              color: stateColors.primary,
+              icon: Icon(LineAwesomeIcons.box_open),
+              label: Text(
+                'rootasjey.dev',
               ),
             ),
           ),

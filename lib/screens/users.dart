@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:lumi/components/home_app_bar.dart';
+import 'package:lumi/screens/home.dart';
 import 'package:lumi/state/user_state.dart';
 import 'package:lumi/types/user.dart';
-import 'package:supercharged/supercharged.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class UsersPage extends StatefulWidget {
@@ -27,6 +27,7 @@ class _UsersPageState extends State<UsersPage> {
       body: CustomScrollView(
         slivers: [
            HomeAppBar(
+             automaticallyImplyLeading: true,
             title: Text(
               'lumi',
               style: TextStyle(
@@ -34,10 +35,12 @@ class _UsersPageState extends State<UsersPage> {
               ),
             ),
             onTapIconHeader: () {
-              scrollController.animateTo(
-                0,
-                duration: 250.milliseconds,
-                curve: Curves.decelerate,
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) {
+                    return Home();
+                  },
+                ),
               );
             },
           ),
