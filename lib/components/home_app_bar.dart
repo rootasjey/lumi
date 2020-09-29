@@ -71,7 +71,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
                         padding: const EdgeInsets.only(right: 16.0),
                         child: IconButton(
                           color: stateColors.foreground,
-                          onPressed: () {},
+                          onPressed: () => Navigator.of(context).pop(),
                           icon: Icon(Icons.arrow_back),
                         ),
                       ),
@@ -177,6 +177,15 @@ class _HomeAppBarState extends State<HomeAppBar> {
             title: Text('Users'),
           ),
         ),
+
+        PopupMenuItem(
+          value: 'config',
+          child: ListTile(
+            leading: Icon(Icons.settings),
+            title: Text('Configuration'),
+          ),
+        ),
+
         PopupMenuItem(
           value: AboutRoute,
           child: ListTile(
@@ -193,6 +202,11 @@ class _HomeAppBarState extends State<HomeAppBar> {
           case 'users':
             Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => UsersPage()),
+            );
+            break;
+          case 'config':
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => ConfigPage()),
             );
             break;
           case AboutRoute:
