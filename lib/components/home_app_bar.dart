@@ -5,7 +5,9 @@ import 'package:hive/hive.dart';
 import 'package:lumi/components/app_icon.dart';
 import 'package:lumi/router/route_names.dart';
 import 'package:lumi/screens/about.dart';
+import 'package:lumi/screens/config.dart';
 import 'package:lumi/screens/connection.dart';
+import 'package:lumi/screens/users.dart';
 import 'package:lumi/state/colors.dart';
 import 'package:lumi/state/user_state.dart';
 import 'package:lumi/utils/brightness.dart';
@@ -169,6 +171,13 @@ class _HomeAppBarState extends State<HomeAppBar> {
         ),
 
         PopupMenuItem(
+          value: 'users',
+          child: ListTile(
+            leading: Icon(Icons.person_outline),
+            title: Text('Users'),
+          ),
+        ),
+        PopupMenuItem(
           value: AboutRoute,
           child: ListTile(
             leading: Icon(Icons.help),
@@ -181,14 +190,14 @@ class _HomeAppBarState extends State<HomeAppBar> {
           case 'disconnect':
             disconnect();
             break;
+          case 'users':
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => UsersPage()),
+            );
+            break;
           case AboutRoute:
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) {
-                  return About();
-                },
-              )
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => About()),
             );
 
             break;
