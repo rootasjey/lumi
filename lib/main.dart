@@ -82,7 +82,6 @@ class AppState extends State<App> {
 
       final firstResult = discoveryResults.first;
       final bridge = Bridge(client, firstResult.ipAddress);
-      // bridge.username = 'IgG6uNukt9xndp4cyFX1To0zjDmeiUzj5pwXxEwP';
       bridge.username = username;
 
       userState.setBridge(bridge);
