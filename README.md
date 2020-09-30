@@ -2,6 +2,8 @@
 
 Philips Hue desktop app to control lights and sensors.
 
+> ⚠️ This app won't work in your web browser because it needs a local environment to communicate with Hue API. A working desktop app will be released when [Flutter](https://flutter.dev) will be more mature for desktop. In the meantime, you can run this app locally in your web browser with the command `flutter run -d chrome`.
+
 [https://lumi.rootasjey.dev](https://lumi.rootasjey.dev)
 
 ![lumi screenshot](./screenshot.png)
