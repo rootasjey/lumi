@@ -159,32 +159,37 @@ class _HomeAppBarState extends State<HomeAppBar> {
   }
 
   Widget menu() {
+    bool isConnected = userState.isUserConnected;
+
     return PopupMenuButton(
       icon: Icon(Icons.more_vert, color: stateColors.foreground),
       itemBuilder: (context) => <PopupMenuEntry<String>>[
-        PopupMenuItem(
-          value: 'disconnect',
-          child: ListTile(
-            leading: Icon(Icons.exit_to_app),
-            title: Text('Disconnect'),
-          ),
-        ),
+        if (isConnected)
+          ...[
+              PopupMenuItem(
+              value: 'disconnect',
+              child: ListTile(
+                leading: Icon(Icons.exit_to_app),
+                title: Text('Disconnect'),
+              ),
+            ),
 
-        PopupMenuItem(
-          value: 'users',
-          child: ListTile(
-            leading: Icon(Icons.person_outline),
-            title: Text('Users'),
-          ),
-        ),
+            PopupMenuItem(
+              value: 'users',
+              child: ListTile(
+                leading: Icon(Icons.person_outline),
+                title: Text('Users'),
+              ),
+            ),
 
-        PopupMenuItem(
-          value: 'config',
-          child: ListTile(
-            leading: Icon(Icons.settings),
-            title: Text('Configuration'),
-          ),
-        ),
+            PopupMenuItem(
+              value: 'config',
+              child: ListTile(
+                leading: Icon(Icons.settings),
+                title: Text('Configuration'),
+              ),
+            ),
+          ],
 
         PopupMenuItem(
           value: AboutRoute,
