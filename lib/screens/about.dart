@@ -35,7 +35,7 @@ class _AboutState extends State<About> {
       body: CustomScrollView(
         slivers: [
           HomeAppBar(
-             automaticallyImplyLeading: true,
+             automaticallyImplyLeading: false,
             title: Text(
               'lumi',
               style: TextStyle(
@@ -197,6 +197,7 @@ class _AboutState extends State<About> {
             child: RaisedButton.icon(
               onPressed: () => launch('https://github.com/rootasjey/lumi'),
               color: stateColors.primary,
+              textColor: Colors.white,
               icon: Icon(LineAwesomeIcons.github),
               label: Text(
                 'Github',
@@ -257,6 +258,7 @@ class _AboutState extends State<About> {
             child: RaisedButton.icon(
               onPressed: () => launch('https://rootasjey.dev'),
               color: stateColors.primary,
+              textColor: Colors.white,
               icon: Icon(LineAwesomeIcons.box_open),
               label: Text(
                 'rootasjey.dev',
