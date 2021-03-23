@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:hue_dart/hue_dart.dart' hide Timer;
+import 'package:hue_api/hue_dart.dart' hide Timer;
 import 'package:lumi/components/error_view.dart';
 import 'package:lumi/components/light_card.dart';
 import 'package:lumi/components/loading_view.dart';
@@ -71,7 +71,8 @@ class _LightsState extends State<Lights> {
     try {
       lights = await userState.bridge.lights();
 
-      final title = '${lights.length} ${lights.length > 0 ? 'lights' : 'light'}';
+      final title =
+          '${lights.length} ${lights.length > 0 ? 'lights' : 'light'}';
       userState.setHomeSectionTitle(title);
 
       lights.forEach((light) {
@@ -81,7 +82,6 @@ class _LightsState extends State<Lights> {
       setState(() {
         isLoading = false;
       });
-
     } on Exception catch (err) {
       setState(() {
         error = err;

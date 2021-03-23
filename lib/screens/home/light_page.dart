@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:hue_dart/hue_dart.dart' hide Timer;
+import 'package:hue_api/hue_dart.dart' hide Timer;
 import 'package:lumi/components/color_card.dart';
 import 'package:lumi/state/colors.dart';
 import 'package:lumi/state/user_state.dart';
@@ -48,10 +48,10 @@ class _LightPageState extends State<LightPage> {
     colorGenerator = RandomColor();
 
     setState(() {
-      light       = widget.light;
-      brightness  = light.state.brightness.toDouble();
-      saturation  = light.state.saturation?.toDouble();
-      hue         = light.state.hue?.toDouble();
+      light = widget.light;
+      brightness = light.state.brightness.toDouble();
+      saturation = light.state.saturation?.toDouble();
+      hue = light.state.hue?.toDouble();
       accentColor = widget.color ?? stateColors.primary;
     });
 
@@ -72,21 +72,14 @@ class _LightPageState extends State<LightPage> {
         children: [
           header(),
           powerSwitch(),
-
           if (light.state.on)
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 brightnessSlider(),
-
-                if (saturation != null)
-                  saturationSlider(),
-
-                if (hue != null)
-                  lightHue(),
-
-                if (hue != null)
-                  colorsPalette(),
+                if (saturation != null) saturationSlider(),
+                if (hue != null) lightHue(),
+                if (hue != null) colorsPalette(),
               ],
             ),
         ],
@@ -108,7 +101,6 @@ class _LightPageState extends State<LightPage> {
               Icons.close,
             ),
           ),
-
           Padding(
             padding: const EdgeInsets.only(
               left: 8.0,
@@ -118,24 +110,21 @@ class _LightPageState extends State<LightPage> {
               Icons.lightbulb_outline,
               size: 40.0,
               color: light.state.on
-                ? accentColor
-                : stateColors.foreground.withOpacity(0.6),
+                  ? accentColor
+                  : stateColors.foreground.withOpacity(0.6),
             ),
           ),
-
           Padding(
             padding: const EdgeInsets.only(
               left: 16.0,
             ),
             child: Opacity(
               opacity: 0.7,
-              child: Text(
-                light.name.toUpperCase(),
-                style: TextStyle(
-                  fontSize: 40.0,
-                  fontWeight: FontWeight.w500,
-                )
-              ),
+              child: Text(light.name.toUpperCase(),
+                  style: TextStyle(
+                    fontSize: 40.0,
+                    fontWeight: FontWeight.w500,
+                  )),
             ),
           ),
         ],
@@ -156,29 +145,21 @@ class _LightPageState extends State<LightPage> {
               right: 12.0,
             ),
             child: Text(
-              light.state.on
-                ? 'ON'
-                : 'OFF',
-                style: TextStyle(
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.w500,
-                ),
+              light.state.on ? 'ON' : 'OFF',
+              style: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
-
           Switch(
             value: light.state.on,
             activeColor: accentColor,
             onChanged: (isOn) async {
-              LightState state = LightState(
-                (l) => l..on = isOn
-              );
+              LightState state = LightState((l) => l..on = isOn);
 
               await userState.bridge.updateLightState(
-                light.rebuild(
-                  (l) => l..state = state.toBuilder()
-                )
-              );
+                  light.rebuild((l) => l..state = state.toBuilder()));
 
               fetch();
             },
@@ -212,7 +193,6 @@ class _LightPageState extends State<LightPage> {
               ),
             ),
           ),
-
           Row(
             children: [
               SizedBox(
@@ -222,12 +202,10 @@ class _LightPageState extends State<LightPage> {
                   min: 0,
                   max: 254,
                   activeColor: light.state.on
-                    ? accentColor
-                    : stateColors.foreground.withOpacity(0.4),
-
+                      ? accentColor
+                      : stateColors.foreground.withOpacity(0.4),
                   inactiveColor: stateColors.foreground.withOpacity(0.4),
                   label: brightness.round().toString(),
-
                   onChanged: (double value) async {
                     setState(() {
                       brightness = value;
@@ -237,26 +215,18 @@ class _LightPageState extends State<LightPage> {
                       timerUpdateBrightness.cancel();
                     }
 
-                    timerUpdateBrightness = Timer(
-                      250.milliseconds,
-                      () async {
-                        LightState state = LightState(
-                          (l) => l..brightness = value.toInt()
-                        );
+                    timerUpdateBrightness = Timer(250.milliseconds, () async {
+                      LightState state =
+                          LightState((l) => l..brightness = value.toInt());
 
-                        await userState.bridge.updateLightState(
-                          light.rebuild(
-                            (l) => l..state = state.toBuilder()
-                          )
-                        );
+                      await userState.bridge.updateLightState(
+                          light.rebuild((l) => l..state = state.toBuilder()));
 
-                        fetch();
-                      }
-                    );
+                      fetch();
+                    });
                   },
                 ),
               ),
-
               Icon(
                 Icons.wb_sunny,
               ),
@@ -291,7 +261,6 @@ class _LightPageState extends State<LightPage> {
               ),
             ),
           ),
-
           SizedBox(
             width: 250.0,
             child: Slider(
@@ -299,12 +268,10 @@ class _LightPageState extends State<LightPage> {
               min: 0,
               max: 254,
               activeColor: light.state.on
-                ? accentColor
-                : stateColors.foreground.withOpacity(0.4),
-
+                  ? accentColor
+                  : stateColors.foreground.withOpacity(0.4),
               inactiveColor: stateColors.foreground.withOpacity(0.4),
               label: saturation.round().toString(),
-
               onChanged: (double value) async {
                 setState(() {
                   saturation = value;
@@ -314,22 +281,15 @@ class _LightPageState extends State<LightPage> {
                   timerUpdateSaturation.cancel();
                 }
 
-                timerUpdateSaturation = Timer(
-                  250.milliseconds,
-                  () async {
-                    LightState state = LightState(
-                      (l) => l..saturation = value.toInt()
-                    );
+                timerUpdateSaturation = Timer(250.milliseconds, () async {
+                  LightState state =
+                      LightState((l) => l..saturation = value.toInt());
 
-                    await userState.bridge.updateLightState(
-                      light.rebuild(
-                        (l) => l..state = state.toBuilder()
-                      )
-                    );
+                  await userState.bridge.updateLightState(
+                      light.rebuild((l) => l..state = state.toBuilder()));
 
-                    fetch();
-                  }
-                );
+                  fetch();
+                });
               },
             ),
           ),
@@ -362,9 +322,7 @@ class _LightPageState extends State<LightPage> {
               ),
             ),
           ),
-
           colorSlider(),
-
           Container(
             width: 220.0,
             height: 40.0,
@@ -374,10 +332,8 @@ class _LightPageState extends State<LightPage> {
             child: Card(
               elevation: 4.0,
               child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(colors: HUE_COLORS)
-                )
-              ),
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(colors: HUE_COLORS))),
             ),
           ),
         ],
@@ -393,9 +349,8 @@ class _LightPageState extends State<LightPage> {
         min: 0,
         max: 65535,
         activeColor: light.state.on
-          ? accentColor
-          : stateColors.foreground.withOpacity(0.4),
-
+            ? accentColor
+            : stateColors.foreground.withOpacity(0.4),
         inactiveColor: stateColors.foreground.withOpacity(0.4),
         label: hue.round().toString(),
         onChanged: (double value) async {
@@ -407,23 +362,16 @@ class _LightPageState extends State<LightPage> {
             timerUpdateHue.cancel();
           }
 
-          timerUpdateHue = Timer(
-            250.milliseconds,
-            () async {
-              var state = LightState(
-                (l) => l..hue = value.toInt()
-              );
+          timerUpdateHue = Timer(250.milliseconds, () async {
+            var state = LightState((l) => l..hue = value.toInt());
 
-              userState.bridge.updateLightState(
-                light.rebuild(
-                  (l) => l..state = state.toBuilder()
-                )
-              )
-              .then((value) {
-                fetch();
-              });
-            }
-          );
+            userState.bridge
+                .updateLightState(
+                    light.rebuild((l) => l..state = state.toBuilder()))
+                .then((value) {
+              fetch();
+            });
+          });
         },
       ),
     );
@@ -456,7 +404,6 @@ class _LightPageState extends State<LightPage> {
                     ),
                   ),
                 ),
-
                 IconButton(
                   onPressed: () => generatePalette(),
                   icon: Icon(Icons.refresh),
@@ -475,25 +422,18 @@ class _LightPageState extends State<LightPage> {
                     timerUpdateHue.cancel();
                   }
 
-                  timerUpdateHue = Timer(
-                    250.milliseconds,
-                    () async {
-                      final state = lightStateForColorOnly(
-                        light.changeColor(
-                          red: color.red,
-                          green: color.green,
-                          blue: color.blue,
-                        )
-                      );
+                  timerUpdateHue = Timer(250.milliseconds, () async {
+                    final state = lightStateForColorOnly(light.changeColor(
+                      red: color.red,
+                      green: color.green,
+                      blue: color.blue,
+                    ));
 
-                      userState.bridge.updateLightState(
-                        light.rebuild(
-                          (l) => l..state = state.toBuilder()
-                        )
-                      )
-                      .then((_) => fetch());
-                    }
-                  );
+                    userState.bridge
+                        .updateLightState(
+                            light.rebuild((l) => l..state = state.toBuilder()))
+                        .then((_) => fetch());
+                  });
                 },
               );
             }).toList(),
@@ -511,42 +451,38 @@ class _LightPageState extends State<LightPage> {
 
     isLoading = true;
 
-    timerUpdate = Timer(
-      150.milliseconds,
-      () async {
-        try {
-          light = await userState.bridge.light(light.id);
+    timerUpdate = Timer(150.milliseconds, () async {
+      try {
+        light = await userState.bridge.light(light.id);
 
-          if (!mounted) {
-            return;
-          }
-
-          HSLColor hsl;
-
-          if (light.state.hue != null) {
-             hsl = HSLColor.fromAHSL(
-              1.0,
-              light.state.hue / 65535 * 360,
-              light.state.saturation / 255,
-              light.state.brightness / 255,
-            );
-          }
-
-          setState(() {
-            isLoading   = false;
-            accentColor = hsl != null ? hsl.toColor() : accentColor;
-            brightness  = light.state.brightness.toDouble();
-            saturation  = light.state.saturation?.toDouble();
-            hue         = light.state.hue?.toDouble();
-          });
-
-        } catch (error) {
-          debugPrint(error.toString());
-          isLoading = false;
-          setState(() {});
+        if (!mounted) {
+          return;
         }
+
+        HSLColor hsl;
+
+        if (light.state.hue != null) {
+          hsl = HSLColor.fromAHSL(
+            1.0,
+            light.state.hue / 65535 * 360,
+            light.state.saturation / 255,
+            light.state.brightness / 255,
+          );
+        }
+
+        setState(() {
+          isLoading = false;
+          accentColor = hsl != null ? hsl.toColor() : accentColor;
+          brightness = light.state.brightness.toDouble();
+          saturation = light.state.saturation?.toDouble();
+          hue = light.state.hue?.toDouble();
+        });
+      } catch (error) {
+        debugPrint(error.toString());
+        isLoading = false;
+        setState(() {});
       }
-    );
+    });
   }
 
   void generatePalette() {

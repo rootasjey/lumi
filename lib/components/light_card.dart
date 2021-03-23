@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:hue_dart/hue_dart.dart' hide Timer;
+import 'package:hue_api/hue_dart.dart' hide Timer;
 import 'package:lumi/screens/home/light_page.dart';
 import 'package:lumi/state/colors.dart';
 import 'package:lumi/state/user_state.dart';
@@ -44,80 +44,69 @@ class _LightCardState extends State<LightCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Observer(
-      builder: (context) {
-        return Hero(
-          tag: light.id,
-          child: Container(
-            width: 240.0,
-            height: 240.0,
-            child: Card(
-              elevation: elevation,
-              child: InkWell(
-                onTap: () => onNavigateToLightPage(light),
-                child: Stack(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(30.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              bottom: 8.0,
-                            ),
-                            child: Text(
-                              light.name,
-                              style: TextStyle(
-                                fontSize: 24.0,
-                                fontWeight: FontWeight.w500,
-                              ),
+    return Observer(builder: (context) {
+      return Hero(
+        tag: light.id,
+        child: Container(
+          width: 240.0,
+          height: 240.0,
+          child: Card(
+            elevation: elevation,
+            child: InkWell(
+              onTap: () => onNavigateToLightPage(light),
+              child: Stack(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(30.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            bottom: 8.0,
+                          ),
+                          child: Text(
+                            light.name,
+                            style: TextStyle(
+                              fontSize: 24.0,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
-
-                          brightnessSlider(light),
-                        ],
-                      ),
+                        ),
+                        brightnessSlider(light),
+                      ],
                     ),
+                  ),
+                  Positioned(
+                    top: 20.0,
+                    left: 20.0,
+                    child: IconButton(
+                      tooltip: 'Turn ${light.state.on ? 'off' : 'on'}',
+                      onPressed: () async {
+                        final isOn = light.state.on;
 
-                    Positioned(
-                      top: 20.0,
-                      left: 20.0,
-                      child: IconButton(
-                        tooltip: 'Turn ${light.state.on ? 'off' : 'on'}',
-                        onPressed: () async {
-                          final isOn = light.state.on;
+                        LightState state = LightState((l) => l..on = !isOn);
 
-                          LightState state = LightState(
-                            (l) => l..on = !isOn
-                          );
+                        await userState.bridge.updateLightState(
+                            light.rebuild((l) => l..state = state.toBuilder()));
 
-                          await userState.bridge.updateLightState(
-                            light.rebuild(
-                              (l) => l..state = state.toBuilder()
-                            )
-                          );
-
-                          fetch();
-                        },
-                        icon: Icon(
-                          Icons.lightbulb_outline,
+                        fetch();
+                      },
+                      icon: Icon(Icons.lightbulb_outline,
                           size: 30.0,
                           color: light.state.on
-                            ? accentColor
-                            : stateColors.foreground.withOpacity(0.6)
-                        ),
-                      ),
+                              ? accentColor
+                              : stateColors.foreground.withOpacity(0.6)),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
-        );
-      }
-    );
+        ),
+      );
+    });
   }
 
   Widget brightnessSlider(Light light) {
@@ -126,12 +115,10 @@ class _LightCardState extends State<LightCard> {
       min: 0,
       max: 254,
       activeColor: light.state.on
-        ? accentColor
-        : stateColors.foreground.withOpacity(0.4),
-
+          ? accentColor
+          : stateColors.foreground.withOpacity(0.4),
       inactiveColor: stateColors.foreground.withOpacity(0.4),
       label: brightness.round().toString(),
-
       onChanged: (double value) async {
         setState(() {
           brightness = value;
@@ -141,58 +128,46 @@ class _LightCardState extends State<LightCard> {
           updateBrightnessTimer.cancel();
         }
 
-        updateBrightnessTimer = Timer(
-          250.milliseconds,
-          () async {
-            LightState state = LightState(
-              (l) => l..brightness = value.toInt()
-            );
+        updateBrightnessTimer = Timer(250.milliseconds, () async {
+          LightState state = LightState((l) => l..brightness = value.toInt());
 
-            if (!light.state.on) {
-              state = LightState(
-                (l) => l
-                  ..on = true
-                  ..brightness = value.toInt()
-              );
-            }
-
-            await userState.bridge.updateLightState(
-              light.rebuild(
-                (l) => l..state = state.toBuilder()
-              )
-            );
-
-            fetch();
+          if (!light.state.on) {
+            state = LightState((l) => l
+              ..on = true
+              ..brightness = value.toInt());
           }
-        );
+
+          await userState.bridge.updateLightState(
+              light.rebuild((l) => l..state = state.toBuilder()));
+
+          fetch();
+        });
       },
     );
   }
 
   void onNavigateToLightPage(Light light) async {
-    await Navigator.of(context).push(
-      MaterialPageRoute(
-        fullscreenDialog: true,
-        builder: (context) {
-          return Scaffold(
-            body: GestureDetector(
-              onTap: () => Navigator.pop(context),
-              child: Container(
-                color: Colors.transparent, // onTap doesn't work without this
-                child: Hero(
-                  tag: light.id,
-                  child: Center(
-                    child: Container(
-                      width: 800,
-                      padding: const EdgeInsets.all(80.0),
-                      child: Card(
-                        elevation: 8.0,
-                        child: GestureDetector(
-                          onTap: () {}, // to block parent onTap()
-                          child: LightPage(
-                            light: light,
-                            color: accentColor,
-                          ),
+    await Navigator.of(context).push(MaterialPageRoute(
+      fullscreenDialog: true,
+      builder: (context) {
+        return Scaffold(
+          body: GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: Container(
+              color: Colors.transparent, // onTap doesn't work without this
+              child: Hero(
+                tag: light.id,
+                child: Center(
+                  child: Container(
+                    width: 800,
+                    padding: const EdgeInsets.all(80.0),
+                    child: Card(
+                      elevation: 8.0,
+                      child: GestureDetector(
+                        onTap: () {}, // to block parent onTap()
+                        child: LightPage(
+                          light: light,
+                          color: accentColor,
                         ),
                       ),
                     ),
@@ -200,10 +175,10 @@ class _LightCardState extends State<LightCard> {
                 ),
               ),
             ),
-          );
-        },
-      )
-    );
+          ),
+        );
+      },
+    ));
 
     fetch();
   }
@@ -216,57 +191,51 @@ class _LightCardState extends State<LightCard> {
 
     isLoading = true;
 
-    timerUpdate = Timer(
-      150.milliseconds,
-      () async {
-        try {
-          light = await userState.bridge.light(light.id);
+    timerUpdate = Timer(150.milliseconds, () async {
+      try {
+        light = await userState.bridge.light(light.id);
 
-          if (!mounted) {
-            return;
-          }
-
-          var color = accentColor;
-
-          if (light.state.on && light.state.hue != null) {
-            final hsl = HSLColor.fromAHSL(
-              1.0,
-              light.state.hue / 65535 * 360,
-              light.state.saturation / 255,
-              light.state.brightness / 255,
-            );
-
-            color = hsl.toColor();
-
-            if (color.red < 100 && color.green < 100 && color.blue < 100) {
-              color = Color.fromARGB(
-                color.alpha,
-                color.red   + 100,
-                color.green + 100,
-                color.blue  + 100,
-              );
-            }
-          }
-
-          setState(() {
-            isLoading   = false;
-            accentColor = color;
-            brightness  = light.state.brightness.toDouble();
-            updateElevation();
-          });
-
-        } catch (error) {
-          debugPrint(error.toString());
-          isLoading = false;
-          setState(() {});
+        if (!mounted) {
+          return;
         }
+
+        var color = accentColor;
+
+        if (light.state.on && light.state.hue != null) {
+          final hsl = HSLColor.fromAHSL(
+            1.0,
+            light.state.hue / 65535 * 360,
+            light.state.saturation / 255,
+            light.state.brightness / 255,
+          );
+
+          color = hsl.toColor();
+
+          if (color.red < 100 && color.green < 100 && color.blue < 100) {
+            color = Color.fromARGB(
+              color.alpha,
+              color.red + 100,
+              color.green + 100,
+              color.blue + 100,
+            );
+          }
+        }
+
+        setState(() {
+          isLoading = false;
+          accentColor = color;
+          brightness = light.state.brightness.toDouble();
+          updateElevation();
+        });
+      } catch (error) {
+        debugPrint(error.toString());
+        isLoading = false;
+        setState(() {});
       }
-    );
+    });
   }
 
   void updateElevation() {
-    elevation = light.state.on
-      ? 6.0
-      : 0.0;
+    elevation = light.state.on ? 6.0 : 0.0;
   }
 }

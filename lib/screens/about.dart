@@ -35,7 +35,7 @@ class _AboutState extends State<About> {
       body: CustomScrollView(
         slivers: [
           HomeAppBar(
-             automaticallyImplyLeading: false,
+            automaticallyImplyLeading: false,
             title: Text(
               'lumi',
               style: TextStyle(
@@ -52,13 +52,11 @@ class _AboutState extends State<About> {
               );
             },
           ),
-
           SliverList(
             delegate: SliverChildListDelegate([
               headerTitle(),
             ]),
           ),
-
           SliverPadding(
             padding: const EdgeInsets.only(
               left: 150.0,
@@ -100,7 +98,6 @@ class _AboutState extends State<About> {
               icon: Icon(Icons.arrow_back),
             ),
           ),
-
           Text(
             'About',
             style: TextStyle(
@@ -132,7 +129,6 @@ class _AboutState extends State<About> {
               ),
             ),
           ),
-
           Opacity(
             opacity: paragraphOpacity,
             child: Padding(
@@ -167,8 +163,7 @@ class _AboutState extends State<About> {
               ),
             ),
           ),
-
-           Opacity(
+          Opacity(
             opacity: paragraphOpacity,
             child: Padding(
               padding: const EdgeInsets.only(top: 25.0),
@@ -178,7 +173,6 @@ class _AboutState extends State<About> {
               ),
             ),
           ),
-
           Opacity(
             opacity: paragraphOpacity,
             child: Padding(
@@ -189,15 +183,18 @@ class _AboutState extends State<About> {
               ),
             ),
           ),
-
           Padding(
             padding: const EdgeInsets.only(
               top: 10.0,
             ),
-            child: RaisedButton.icon(
+            child: ElevatedButton.icon(
               onPressed: () => launch('https://github.com/rootasjey/lumi'),
-              color: stateColors.primary,
-              textColor: Colors.white,
+              style: ElevatedButton.styleFrom(
+                primary: stateColors.primary,
+                textStyle: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
               icon: Icon(LineAwesomeIcons.github),
               label: Text(
                 'Github',
@@ -228,8 +225,7 @@ class _AboutState extends State<About> {
               ),
             ),
           ),
-
-           Opacity(
+          Opacity(
             opacity: paragraphOpacity,
             child: Padding(
               padding: const EdgeInsets.only(top: 25.0),
@@ -239,7 +235,6 @@ class _AboutState extends State<About> {
               ),
             ),
           ),
-
           Opacity(
             opacity: paragraphOpacity,
             child: Padding(
@@ -250,15 +245,18 @@ class _AboutState extends State<About> {
               ),
             ),
           ),
-
           Padding(
             padding: const EdgeInsets.only(
               top: 10.0,
             ),
-            child: RaisedButton.icon(
+            child: ElevatedButton.icon(
               onPressed: () => launch('https://rootasjey.dev'),
-              color: stateColors.primary,
-              textColor: Colors.white,
+              style: ElevatedButton.styleFrom(
+                primary: stateColors.primary,
+                textStyle: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
               icon: Icon(LineAwesomeIcons.box_open),
               label: Text(
                 'rootasjey.dev',

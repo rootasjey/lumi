@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:hue_dart/hue_dart.dart' hide Timer;
+import 'package:hue_api/hue_dart.dart' hide Timer;
 import 'package:jiffy/jiffy.dart';
 import 'package:lumi/state/colors.dart';
 import 'package:lumi/state/user_state.dart';
@@ -56,7 +56,6 @@ class _SensorPageState extends State<SensorPage> {
         children: [
           header(),
           powerSwitch(),
-
           if (sensorOn)
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,7 +83,6 @@ class _SensorPageState extends State<SensorPage> {
               Icons.close,
             ),
           ),
-
           Padding(
             padding: const EdgeInsets.only(
               left: 8.0,
@@ -94,22 +92,19 @@ class _SensorPageState extends State<SensorPage> {
               Icons.lightbulb_outline,
               size: 40.0,
               color: sensor.config.on
-                ? stateColors.primary
-                : stateColors.foreground.withOpacity(0.6),
+                  ? stateColors.primary
+                  : stateColors.foreground.withOpacity(0.6),
             ),
           ),
-
           Padding(
             padding: const EdgeInsets.only(
               left: 16.0,
             ),
-            child: Text(
-              sensor.name.toUpperCase(),
-              style: TextStyle(
-                fontSize: 40.0,
-                fontWeight: FontWeight.w600,
-              )
-            ),
+            child: Text(sensor.name.toUpperCase(),
+                style: TextStyle(
+                  fontSize: 40.0,
+                  fontWeight: FontWeight.w600,
+                )),
           ),
         ],
       ),
@@ -129,31 +124,24 @@ class _SensorPageState extends State<SensorPage> {
               right: 12.0,
             ),
             child: Text(
-              sensor.config.on
-                ? 'ON'
-                : 'OFF',
-                style: TextStyle(
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.w500,
-                ),
+              sensor.config.on ? 'ON' : 'OFF',
+              style: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
-
           Switch(
             value: sensorOn,
             activeColor: stateColors.primary,
             onChanged: (isOn) async {
               setState(() => sensorOn = isOn);
 
-              userState.bridge.updateSensorConfig(
-                sensor.rebuild(
-                  (s) => s..config.on = isOn
-                )
-              )
-              .then((_) => fetch())
-              .catchError(
-                (err) => setState(() => sensorOn = !isOn)
-              );
+              userState.bridge
+                  .updateSensorConfig(
+                      sensor.rebuild((s) => s..config.on = isOn))
+                  .then((_) => fetch())
+                  .catchError((err) => setState(() => sensorOn = !isOn));
             },
           ),
         ],
@@ -186,9 +174,9 @@ class _SensorPageState extends State<SensorPage> {
               ),
             ),
           ),
-
           Tooltip(
-            message: "${sensor.config.battery}% of battery remaining for this sensor",
+            message:
+                "${sensor.config.battery}% of battery remaining for this sensor",
             child: Row(
               children: [
                 Padding(
@@ -198,14 +186,13 @@ class _SensorPageState extends State<SensorPage> {
                   ),
                   child: Icon(
                     sensor.config.battery < 5
-                      ? Icons.battery_alert
-                      : Icons.battery_full,
+                        ? Icons.battery_alert
+                        : Icons.battery_full,
                     color: sensor.config.battery < 5
-                      ? Colors.red.shade300
-                      : stateColors.foreground,
+                        ? Colors.red.shade300
+                        : stateColors.foreground,
                   ),
                 ),
-
                 Opacity(
                   opacity: 0.6,
                   child: Text(
@@ -248,7 +235,6 @@ class _SensorPageState extends State<SensorPage> {
               ),
             ),
           ),
-
           Row(
             children: [
               Padding(
@@ -261,7 +247,6 @@ class _SensorPageState extends State<SensorPage> {
                   size: 30.0,
                 ),
               ),
-
               Opacity(
                 opacity: 0.5,
                 child: Text(
@@ -274,11 +259,11 @@ class _SensorPageState extends State<SensorPage> {
               ),
             ],
           ),
-
           Padding(
-            padding: const EdgeInsets.only(bottom: 10.0,),
+            padding: const EdgeInsets.only(
+              bottom: 10.0,
+            ),
           ),
-
           Row(
             children: [
               Padding(
@@ -291,13 +276,10 @@ class _SensorPageState extends State<SensorPage> {
                   size: 30.0,
                 ),
               ),
-
               Opacity(
                 opacity: 0.5,
                 child: Text(
-                  timeInitialized
-                    ? 'LAST: ${Jiffy(localTime).fromNow()}'
-                    : '',
+                  timeInitialized ? 'LAST: ${Jiffy(localTime).fromNow()}' : '',
                   style: TextStyle(
                     fontSize: 16.0,
                     fontWeight: FontWeight.w600,
@@ -319,36 +301,31 @@ class _SensorPageState extends State<SensorPage> {
 
     isLoading = true;
 
-    timerUpdate = Timer(
-      150.milliseconds,
-      () async {
-        try {
-          final newSensor = await userState.bridge
-            .sensor(sensor.id.toString());
+    timerUpdate = Timer(150.milliseconds, () async {
+      try {
+        final newSensor = await userState.bridge.sensor(sensor.id.toString());
 
-          if (!mounted) {
-            return;
-          }
-
-          setState(() {
-            isLoading = false;
-            sensor = newSensor;
-            initLocalTime();
-          });
-
-        } catch (error) {
-          debugPrint(error.toString());
-          setState(() => isLoading = false);
+        if (!mounted) {
+          return;
         }
+
+        setState(() {
+          isLoading = false;
+          sensor = newSensor;
+          initLocalTime();
+        });
+      } catch (error) {
+        debugPrint(error.toString());
+        setState(() => isLoading = false);
       }
-    );
+    });
   }
 
   void initLocalTime() async {
     await Jiffy.locale('fr');
 
-    if (sensor.state.lastUpdated == null
-      || sensor.state.lastUpdated.contains('none')) {
+    if (sensor.state.lastUpdated == null ||
+        sensor.state.lastUpdated.contains('none')) {
       return;
     }
 

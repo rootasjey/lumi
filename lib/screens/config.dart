@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hue_dart/hue_dart.dart';
+import 'package:hue_api/hue_dart.dart';
 import 'package:lumi/components/home_app_bar.dart';
 import 'package:lumi/screens/home.dart';
 import 'package:lumi/state/user_state.dart';
@@ -26,8 +26,8 @@ class _ConfigPageState extends State<ConfigPage> {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-           HomeAppBar(
-             automaticallyImplyLeading: true,
+          HomeAppBar(
+            automaticallyImplyLeading: true,
             title: Text(
               'lumi',
               style: TextStyle(
@@ -44,16 +44,13 @@ class _ConfigPageState extends State<ConfigPage> {
               );
             },
           ),
-
           SliverPadding(
             padding: const EdgeInsets.only(
               top: 100.0,
             ),
           ),
-
           header(),
           body(),
-
           SliverPadding(
             padding: const EdgeInsets.only(
               bottom: 200.0,
@@ -71,31 +68,29 @@ class _ConfigPageState extends State<ConfigPage> {
         vertical: 30.0,
       ),
       sliver: SliverList(
-        delegate: SliverChildListDelegate.fixed([
-          Padding(
-            padding: const EdgeInsets.only(
-              bottom: 8.0,
-            ),
-            child: Row(
-              children: [
-                Text(
-                  "BRIDGE",
-                  style: TextStyle(
-                    fontSize: 40.0,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-
-                if (isLoading)
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20.0),
-                    child: CircularProgressIndicator(),
-                  ),
-              ],
-            ),
+          delegate: SliverChildListDelegate.fixed([
+        Padding(
+          padding: const EdgeInsets.only(
+            bottom: 8.0,
           ),
-        ])
-      ),
+          child: Row(
+            children: [
+              Text(
+                "BRIDGE",
+                style: TextStyle(
+                  fontSize: 40.0,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              if (isLoading)
+                Padding(
+                  padding: const EdgeInsets.only(left: 20.0),
+                  child: CircularProgressIndicator(),
+                ),
+            ],
+          ),
+        ),
+      ])),
     );
   }
 
@@ -111,88 +106,74 @@ class _ConfigPageState extends State<ConfigPage> {
         horizontal: 110.0,
       ),
       sliver: SliverList(
-        delegate: SliverChildListDelegate.fixed([
-          Padding(
-            padding: const EdgeInsets.only(
-              bottom: 16.0,
-            ),
-            child: Opacity(
-              opacity: 0.6,
-              child: Text(
-                config.name,
-                style: TextStyle(
-                  fontSize: 40.0,
-                ),
+          delegate: SliverChildListDelegate.fixed([
+        Padding(
+          padding: const EdgeInsets.only(
+            bottom: 16.0,
+          ),
+          child: Opacity(
+            opacity: 0.6,
+            child: Text(
+              config.name,
+              style: TextStyle(
+                fontSize: 40.0,
               ),
             ),
           ),
-
-          infoRow(
-            key: 'Bridge ID: ',
-            value: config.bridgeId,
-          ),
-
-          infoRow(
-            key: 'Model ID: ',
-            value: config.modelId,
-          ),
-
-          infoRow(
-            key: 'API version: ',
-            value: config.apiVersion,
-          ),
-
-          infoRow(
-            key: 'Data store version: ',
-            value: config.dataStoreVersion,
-          ),
-
-          infoRow(
-            key: 'MAC address: ',
-            value: config.mac,
-          ),
-
-          infoRow(
-            key: 'IP address: ',
-            value: config.ipAddress,
-          ),
-
-          infoRow(
-            key: 'Gateway: ',
-            value: config.gateway,
-          ),
-
-          infoRow(
-            key: 'Mask: ',
-            value: config.netMask,
-          ),
-
-          infoRow(
-            key: 'Proxy: ',
-            value: config.proxyAddress,
-          ),
-
-          infoRow(
-            key: 'Proxy port: ',
-            value: config.proxyPort.toString(),
-          ),
-
-          infoRow(
-            key: 'Software version: ',
-            value: config.swVersion,
-          ),
-
-          infoRow(
-            key: 'Timezone: ',
-            value: config.timeZone,
-          ),
-
-          infoRow(
-            key: 'Update available: ',
-            value: config.softwareUpdate.state,
-          ),
-        ])
-      ),
+        ),
+        infoRow(
+          key: 'Bridge ID: ',
+          value: config.bridgeId,
+        ),
+        infoRow(
+          key: 'Model ID: ',
+          value: config.modelId,
+        ),
+        infoRow(
+          key: 'API version: ',
+          value: config.apiVersion,
+        ),
+        infoRow(
+          key: 'Data store version: ',
+          value: config.dataStoreVersion,
+        ),
+        infoRow(
+          key: 'MAC address: ',
+          value: config.mac,
+        ),
+        infoRow(
+          key: 'IP address: ',
+          value: config.ipAddress,
+        ),
+        infoRow(
+          key: 'Gateway: ',
+          value: config.gateway,
+        ),
+        infoRow(
+          key: 'Mask: ',
+          value: config.netMask,
+        ),
+        infoRow(
+          key: 'Proxy: ',
+          value: config.proxyAddress,
+        ),
+        infoRow(
+          key: 'Proxy port: ',
+          value: config.proxyPort.toString(),
+        ),
+        infoRow(
+          key: 'Software version: ',
+          value: config.swVersion,
+        ),
+        infoRow(
+          key: 'Timezone: ',
+          value: config.timeZone,
+        ),
+        infoRow(
+          key: 'Update available: ',
+          value: config.softwareUpdate.state,
+        ),
+      ])),
     );
   }
 
@@ -213,7 +194,6 @@ class _ConfigPageState extends State<ConfigPage> {
               ),
             ),
           ),
-
           Opacity(
             opacity: 0.8,
             child: Text(
@@ -235,7 +215,6 @@ class _ConfigPageState extends State<ConfigPage> {
     try {
       config = await userState.bridge.configuration();
       setState(() => isLoading = false);
-
     } catch (error) {
       debugPrint(error.toString());
     }

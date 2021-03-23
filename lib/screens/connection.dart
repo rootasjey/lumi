@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:http/browser_client.dart';
-import 'package:hue_dart/hue_dart.dart' hide Timer;
+import 'package:hue_api/hue_dart.dart' hide Timer;
 import 'package:lumi/components/home_app_bar.dart';
 import 'package:lumi/screens/home.dart';
 import 'package:lumi/state/colors.dart';
@@ -18,10 +18,10 @@ class Connection extends StatefulWidget {
 
 class _ConnectionState extends State<Connection> {
   int maxAttempts = 15;
-  int attempts    = 0;
+  int attempts = 0;
 
-  final delay     = 5.0;
-  double maxTime  = 0.0;
+  final delay = 5.0;
+  double maxTime = 0.0;
   double currTime = 0.0;
   bool isConnecting = false;
 
@@ -37,13 +37,11 @@ class _ConnectionState extends State<Connection> {
     currTime = maxTime;
 
     if (userState.isUserConnected) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) {
-            return Home();
-          },
-        )
-      );
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (_) {
+          return Home();
+        },
+      ));
     }
   }
 
@@ -67,16 +65,13 @@ class _ConnectionState extends State<Connection> {
               );
             },
           ),
-
           SliverPadding(
             padding: const EdgeInsets.only(
               top: 100.0,
             ),
           ),
-
           header(),
           body(),
-
           SliverPadding(
             padding: const EdgeInsets.only(
               bottom: 200.0,
@@ -94,45 +89,41 @@ class _ConnectionState extends State<Connection> {
         vertical: 30.0,
       ),
       sliver: SliverList(
-        delegate: SliverChildListDelegate.fixed([
-          Padding(
-            padding: const EdgeInsets.only(
-              bottom: 8.0,
-            ),
-            child: Row(
-              children: [
-                Text(
-                  "CONNECT",
-                  style: TextStyle(
-                    fontSize: 26.0,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: 20.0,
-                  ),
-                ),
-
-                Icon(Icons.arrow_forward),
-                Icon(Icons.arrow_back),
-              ],
-            ),
+          delegate: SliverChildListDelegate.fixed([
+        Padding(
+          padding: const EdgeInsets.only(
+            bottom: 8.0,
           ),
-
-          Opacity(
-            opacity: 0.5,
-            child: Text(
-              "Please push the link button on your Hue bridge",
-              style: TextStyle(
-                fontSize: 22.0,
-                fontWeight: FontWeight.w300,
+          child: Row(
+            children: [
+              Text(
+                "CONNECT",
+                style: TextStyle(
+                  fontSize: 26.0,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: 20.0,
+                ),
+              ),
+              Icon(Icons.arrow_forward),
+              Icon(Icons.arrow_back),
+            ],
+          ),
+        ),
+        Opacity(
+          opacity: 0.5,
+          child: Text(
+            "Please push the link button on your Hue bridge",
+            style: TextStyle(
+              fontSize: 22.0,
+              fontWeight: FontWeight.w300,
             ),
           ),
-        ])
-      ),
+        ),
+      ])),
     );
   }
 
@@ -147,13 +138,15 @@ class _ConnectionState extends State<Connection> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                RaisedButton(
+                ElevatedButton(
                   onPressed: () => startConnect(),
-                  color: stateColors.primary,
-                  textColor: Colors.white,
-                  child: Text(
-                    'CONNECT TO BRIDGE'
+                  style: ElevatedButton.styleFrom(
+                    primary: stateColors.primary,
+                    textStyle: TextStyle(
+                      color: Colors.white,
+                    ),
                   ),
+                  child: Text('CONNECT TO BRIDGE'),
                 ),
               ],
             ),
@@ -179,11 +172,9 @@ class _ConnectionState extends State<Connection> {
                   color: stateColors.foreground,
                 ),
               ),
-
               LinearProgressIndicator(
                 value: currTime / maxTime,
               ),
-
               Padding(
                 padding: const EdgeInsets.only(
                   top: 8.0,
@@ -197,14 +188,15 @@ class _ConnectionState extends State<Connection> {
                   ),
                 ),
               ),
-
-              RaisedButton(
+              ElevatedButton(
                 onPressed: () => stopConnect(),
-                color: stateColors.primary,
-                textColor: Colors.white,
-                child: Text(
-                  'CANCEL'
+                style: ElevatedButton.styleFrom(
+                  primary: stateColors.primary,
+                  textStyle: TextStyle(
+                    color: Colors.white,
+                  ),
                 ),
+                child: Text('CANCEL'),
               ),
             ],
           ),
@@ -243,14 +235,11 @@ class _ConnectionState extends State<Connection> {
 
       stopConnect();
 
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) {
-            return Home();
-          },
-        )
-      );
-
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (_) {
+          return Home();
+        },
+      ));
     } catch (error) {
       debugPrint(error.toString());
 
@@ -263,24 +252,21 @@ class _ConnectionState extends State<Connection> {
 
   void startConnect() {
     setState(() {
-      isConnecting  = true;
-      attempts      = 0;
-      currTime      = maxTime;
+      isConnecting = true;
+      attempts = 0;
+      currTime = maxTime;
     });
 
     connectLoop();
 
-    timer = Timer.periodic(
-       1.seconds,
-       (timer) {
-         if (currTime <= 0) {
-           timer.cancel();
-           return;
-         }
-
-         setState(() => currTime--);
+    timer = Timer.periodic(1.seconds, (timer) {
+      if (currTime <= 0) {
+        timer.cancel();
+        return;
       }
-    );
+
+      setState(() => currTime--);
+    });
   }
 
   void stopConnect() {

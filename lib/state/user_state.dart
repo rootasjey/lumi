@@ -1,4 +1,4 @@
-import 'package:hue_dart/hue_dart.dart';
+import 'package:hue_api/hue_dart.dart';
 import 'package:mobx/mobx.dart';
 
 part 'user_state.g.dart';

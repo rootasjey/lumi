@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hue_dart/hue_dart.dart';
+import 'package:hue_api/hue_dart.dart';
 import 'package:lumi/components/error_view.dart';
 import 'package:lumi/components/group_card.dart';
 import 'package:lumi/components/loading_view.dart';
@@ -64,14 +64,14 @@ class _GroupsState extends State<Groups> {
     try {
       final groupsItems = await userState.bridge.groups();
 
-      final title = '${groupsItems.length} ${groupsItems.length > 0 ? 'scenes' : 'scene'}';
+      final title =
+          '${groupsItems.length} ${groupsItems.length > 0 ? 'scenes' : 'scene'}';
       userState.setHomeSectionTitle(title);
 
       setState(() {
         groups = groupsItems;
         isLoading = false;
       });
-
     } on Exception catch (err) {
       setState(() {
         error = err;

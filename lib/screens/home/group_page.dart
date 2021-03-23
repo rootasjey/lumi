@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:hue_dart/hue_dart.dart' hide Timer;
+import 'package:hue_api/hue_dart.dart' hide Timer;
 import 'package:lumi/components/tiny_light_card.dart';
 import 'package:lumi/state/colors.dart';
 import 'package:lumi/state/user_state.dart';
@@ -42,11 +42,11 @@ class _GroupPageState extends State<GroupPage> {
     super.initState();
 
     setState(() {
-      group       = widget.group;
-      groupOn     = group.action.on;
-      brightness  = group.action.brightness.toDouble();
-      hue         = group.action.hue?.toDouble();
-      saturation  = group.action.saturation?.toDouble();
+      group = widget.group;
+      groupOn = group.action.on;
+      brightness = group.action.brightness.toDouble();
+      hue = group.action.hue?.toDouble();
+      saturation = group.action.saturation?.toDouble();
     });
   }
 
@@ -60,22 +60,15 @@ class _GroupPageState extends State<GroupPage> {
         children: [
           header(),
           powerSwitch(),
-
           groupType(),
           lightsCount(),
-
           if (groupOn)
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 brightnessSlider(),
-
-                if (saturation != null)
-                  saturationSlider(),
-
-                if (hue != null)
-                  hueContainer(),
-
+                if (saturation != null) saturationSlider(),
+                if (hue != null) hueContainer(),
                 groupLights(),
               ],
             ),
@@ -108,7 +101,6 @@ class _GroupPageState extends State<GroupPage> {
               ),
             ),
           ),
-
           Row(
             children: [
               SizedBox(
@@ -118,12 +110,10 @@ class _GroupPageState extends State<GroupPage> {
                   min: 0,
                   max: 254,
                   activeColor: groupOn
-                    ? stateColors.primary
-                    : stateColors.foreground.withOpacity(0.4),
-
+                      ? stateColors.primary
+                      : stateColors.foreground.withOpacity(0.4),
                   inactiveColor: stateColors.foreground.withOpacity(0.4),
                   label: brightness.round().toString(),
-
                   onChanged: (double value) async {
                     setState(() {
                       brightness = value;
@@ -133,24 +123,18 @@ class _GroupPageState extends State<GroupPage> {
                       timerUpdateBrightness.cancel();
                     }
 
-                    timerUpdateBrightness = Timer(
-                      250.milliseconds,
-                      () async {
-                        final action = GroupAction(
-                          (g) => g..brightness = brightness.toInt()
-                        );
+                    timerUpdateBrightness = Timer(250.milliseconds, () async {
+                      final action = GroupAction(
+                          (g) => g..brightness = brightness.toInt());
 
-                        userState.bridge.updateGroupState(
-                          group.rebuild(
-                            (g) => g..action = action.toBuilder()
-                          )
-                        ).then((_) => fetch());
-                      }
-                    );
+                      userState.bridge
+                          .updateGroupState(group
+                              .rebuild((g) => g..action = action.toBuilder()))
+                          .then((_) => fetch());
+                    });
                   },
                 ),
               ),
-
               Icon(
                 Icons.wb_sunny,
               ),
@@ -184,20 +168,14 @@ class _GroupPageState extends State<GroupPage> {
               timerUpdateHue.cancel();
             }
 
-            timerUpdateHue = Timer(
-              250.milliseconds,
-              () async {
-                final action = GroupAction(
-                  (g) => g..hue = hue.toInt()
-                );
+            timerUpdateHue = Timer(250.milliseconds, () async {
+              final action = GroupAction((g) => g..hue = hue.toInt());
 
-                userState.bridge.updateGroupState(
-                  group.rebuild(
-                    (g) => g..action = action.toBuilder()
-                  )
-                ).then((_) => fetch());
-              }
-            );
+              userState.bridge
+                  .updateGroupState(
+                      group.rebuild((g) => g..action = action.toBuilder()))
+                  .then((_) => fetch());
+            });
           },
         ),
       ),
@@ -219,20 +197,14 @@ class _GroupPageState extends State<GroupPage> {
               Icons.close,
             ),
           ),
-
           IconButton(
             onPressed: () async {
               setState(() => groupOn = !group.action.on);
 
-              final action = GroupAction(
-                (g) => g..on = !group.action.on
-              );
+              final action = GroupAction((g) => g..on = !group.action.on);
 
               await userState.bridge.updateGroupState(
-                group.rebuild(
-                  (g) => g..action = action.toBuilder()
-                )
-              );
+                  group.rebuild((g) => g..action = action.toBuilder()));
 
               fetch();
             },
@@ -240,24 +212,21 @@ class _GroupPageState extends State<GroupPage> {
               Icons.kitchen,
               size: 35.0,
               color: group.action.on
-                ? stateColors.primary
-                : stateColors.foreground.withOpacity(0.6),
+                  ? stateColors.primary
+                  : stateColors.foreground.withOpacity(0.6),
             ),
           ),
-
           Padding(
             padding: const EdgeInsets.only(
               left: 16.0,
             ),
             child: Opacity(
               opacity: 0.7,
-              child: Text(
-                group.name.toUpperCase(),
-                style: TextStyle(
-                  fontSize: 40.0,
-                  fontWeight: FontWeight.w500,
-                )
-              ),
+              child: Text(group.name.toUpperCase(),
+                  style: TextStyle(
+                    fontSize: 40.0,
+                    fontWeight: FontWeight.w500,
+                  )),
             ),
           ),
         ],
@@ -278,31 +247,23 @@ class _GroupPageState extends State<GroupPage> {
               right: 12.0,
             ),
             child: Text(
-              groupOn
-                ? 'ON'
-                : 'OFF',
-                style: TextStyle(
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.w500,
-                ),
+              groupOn ? 'ON' : 'OFF',
+              style: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
-
           Switch(
             value: groupOn,
             activeColor: stateColors.primary,
             onChanged: (isOn) async {
               setState(() => groupOn = isOn);
 
-              final action = GroupAction(
-                (g) => g..on = isOn
-              );
+              final action = GroupAction((g) => g..on = isOn);
 
               await userState.bridge.updateGroupState(
-                group.rebuild(
-                  (g) => g..action = action.toBuilder()
-                )
-              );
+                  group.rebuild((g) => g..action = action.toBuilder()));
             },
           ),
         ],
@@ -320,7 +281,6 @@ class _GroupPageState extends State<GroupPage> {
         // crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           getGroupIcon(),
-
           Padding(
             padding: const EdgeInsets.only(
               left: 10.0,
@@ -365,14 +325,12 @@ class _GroupPageState extends State<GroupPage> {
               ),
             ),
           ),
-
           Wrap(
-            spacing: 20.0,
-            runSpacing: 20.0,
-            children: group.lightIds.map((id) {
-              return TinyLightCard(id: id);
-            }).toList()
-          ),
+              spacing: 20.0,
+              runSpacing: 20.0,
+              children: group.lightIds.map((id) {
+                return TinyLightCard(id: id);
+              }).toList()),
         ],
       ),
     );
@@ -389,7 +347,6 @@ class _GroupPageState extends State<GroupPage> {
             Icon(
               Icons.lightbulb_outline,
             ),
-
             Opacity(
               opacity: 0.6,
               child: Text(
@@ -418,7 +375,6 @@ class _GroupPageState extends State<GroupPage> {
           Icon(
             Icons.lightbulb_outline,
           ),
-
           Padding(
             padding: const EdgeInsets.only(
               left: 10.0,
@@ -463,28 +419,23 @@ class _GroupPageState extends State<GroupPage> {
               ),
             ),
           ),
-
-          Stack(
-            children: [
-              Container(
-                width: 220.0,
-                height: 15.0,
-                margin: const EdgeInsets.only(
-                  left: 20.0,
-                  top: 16.0,
-                ),
-                child: Card(
-                  elevation: 4.0,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(colors: HUE_COLORS)
-                    )
-                  ),
-                ),
+          Stack(children: [
+            Container(
+              width: 220.0,
+              height: 15.0,
+              margin: const EdgeInsets.only(
+                left: 20.0,
+                top: 16.0,
               ),
-
-              hueSlider(),
-            ]),
+              child: Card(
+                elevation: 4.0,
+                child: DecoratedBox(
+                    decoration: BoxDecoration(
+                        gradient: LinearGradient(colors: HUE_COLORS))),
+              ),
+            ),
+            hueSlider(),
+          ]),
         ],
       ),
     );
@@ -520,7 +471,6 @@ class _GroupPageState extends State<GroupPage> {
               ),
             ),
           ),
-
           SizedBox(
             width: 250.0,
             child: Slider(
@@ -528,10 +478,8 @@ class _GroupPageState extends State<GroupPage> {
               min: 0,
               max: 254,
               activeColor: stateColors.primary,
-
               inactiveColor: stateColors.foreground.withOpacity(0.4),
               label: saturation.round().toString(),
-
               onChanged: (double value) async {
                 setState(() {
                   saturation = value;
@@ -541,20 +489,15 @@ class _GroupPageState extends State<GroupPage> {
                   timerUpdateSaturation.cancel();
                 }
 
-                timerUpdateSaturation = Timer(
-                  250.milliseconds,
-                  () async {
-                    final action = GroupAction(
-                      (g) => g..saturation = saturation.toInt()
-                    );
+                timerUpdateSaturation = Timer(250.milliseconds, () async {
+                  final action =
+                      GroupAction((g) => g..saturation = saturation.toInt());
 
-                    userState.bridge.updateGroupState(
-                      group.rebuild(
-                        (g) => g..action = action.toBuilder()
-                      )
-                    ).then((_) => fetch());
-                  }
-                );
+                  userState.bridge
+                      .updateGroupState(
+                          group.rebuild((g) => g..action = action.toBuilder()))
+                      .then((_) => fetch());
+                });
               },
             ),
           ),
@@ -571,34 +514,28 @@ class _GroupPageState extends State<GroupPage> {
 
     isLoading = true;
 
-    timerUpdate = Timer(
-      150.milliseconds,
-      () async {
-        try {
-          final newGroup = await userState.bridge.group(group.id);
+    timerUpdate = Timer(150.milliseconds, () async {
+      try {
+        final newGroup = await userState.bridge.group(group.id);
 
-          if (!mounted) {
-            return;
-          }
-
-          setState(() {
-            isLoading = false;
-            group = newGroup;
-          });
-
-        } catch (error) {
-          debugPrint(error.toString());
-          setState(() => isLoading = false);
+        if (!mounted) {
+          return;
         }
+
+        setState(() {
+          isLoading = false;
+          group = newGroup;
+        });
+      } catch (error) {
+        debugPrint(error.toString());
+        setState(() => isLoading = false);
       }
-    );
+    });
   }
 
   String lightsCountText() {
     final count = group.lightIds.length;
-    final suffix = count > 1
-      ? 'lights'
-      : 'light';
+    final suffix = count > 1 ? 'lights' : 'light';
 
     return '$count $suffix';
   }

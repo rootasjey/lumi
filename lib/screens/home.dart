@@ -30,15 +30,13 @@ class _HomeState extends State<Home> {
   initState() {
     super.initState();
 
-     if (!userState.isUserConnected) {
-       Navigator.of(context).push(
-         MaterialPageRoute(
-           builder: (_) {
-             return Connection();
-            },
-          )
-        );
-     }
+    if (!userState.isUserConnected) {
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (_) {
+          return Connection();
+        },
+      ));
+    }
   }
 
   @override
@@ -62,9 +60,7 @@ class _HomeState extends State<Home> {
               );
             },
           ),
-
           navigation(),
-
           SliverPadding(
             padding: const EdgeInsets.only(
               top: 40.0,
@@ -89,7 +85,6 @@ class _HomeState extends State<Home> {
               ]),
             ),
           ),
-
           SliverPadding(
             padding: const EdgeInsets.symmetric(
               horizontal: 100.0,
@@ -118,12 +113,10 @@ class _HomeState extends State<Home> {
                 title: 'LIGHTS',
                 index: 0,
               ),
-
               navButton(
                 title: 'SENSORS',
                 index: 1,
               ),
-
               navButton(
                 title: 'SCENES',
                 index: 2,
@@ -139,11 +132,10 @@ class _HomeState extends State<Home> {
     String title,
     int index = 0,
   }) {
-
     Widget childButton;
 
     if (index != selectedIndex) {
-      childButton = FlatButton(
+      childButton = TextButton(
         onPressed: () => setState(() => selectedIndex = index),
         child: Opacity(
           opacity: 0.6,
@@ -156,12 +148,15 @@ class _HomeState extends State<Home> {
           ),
         ),
       );
-
     } else {
-      childButton = RaisedButton(
+      childButton = ElevatedButton(
         onPressed: () => setState(() => selectedIndex = index),
-        textColor: Colors.white,
-        color: stateColors.primary,
+        style: ElevatedButton.styleFrom(
+          primary: stateColors.primary,
+          textStyle: TextStyle(
+            color: Colors.white,
+          ),
+        ),
         child: Text(
           title,
           style: TextStyle(

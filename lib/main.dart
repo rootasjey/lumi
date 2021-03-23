@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:http/browser_client.dart';
-import 'package:hue_dart/hue_dart.dart';
+import 'package:hue_api/hue_dart.dart';
 import 'package:lumi/components/full_page_loading.dart';
 import 'package:lumi/main_web.dart';
 import 'package:lumi/state/colors.dart';
@@ -13,6 +13,7 @@ import 'package:lumi/utils/constants.dart';
 void main() {
   runApp(App());
 }
+
 class App extends StatefulWidget {
   AppState createState() => AppState();
 }
@@ -24,8 +25,7 @@ class AppState extends State<App> {
   void initState() {
     super.initState();
 
-    Hive.openBox(KEY_SETTINGS)
-    .then((_) {
+    Hive.openBox(KEY_SETTINGS).then((_) {
       final settingsBox = Hive.box(KEY_SETTINGS);
 
       if (!settingsBox.containsKey(KEY_AUTO_BRIGHTNESS)) {
@@ -35,8 +35,7 @@ class AppState extends State<App> {
       if (!settingsBox.containsKey(KEY_DARK_MODE)) {
         settingsBox.put(KEY_DARK_MODE, true);
       }
-    })
-    .then((_) => autoLogin());
+    }).then((_) => autoLogin());
   }
 
   @override
@@ -88,7 +87,6 @@ class AppState extends State<App> {
       userState.setUserConnected();
 
       setState(() => isReady = true);
-
     } catch (error) {
       debugPrint(error.toString());
     }

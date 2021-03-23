@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hue_dart/hue_dart.dart';
+import 'package:hue_api/hue_dart.dart';
 import 'package:lumi/components/error_view.dart';
 import 'package:lumi/components/loading_view.dart';
 import 'package:lumi/components/sensor_card.dart';
@@ -84,9 +84,9 @@ class _SensorsState extends State<Sensors> {
                       ),
                     ),
                   ),
-
                   Tooltip(
-                    message: "${sensor.config.battery}% of battery remaining for this sensor",
+                    message:
+                        "${sensor.config.battery}% of battery remaining for this sensor",
                     child: Row(
                       children: [
                         Padding(
@@ -95,14 +95,13 @@ class _SensorsState extends State<Sensors> {
                           ),
                           child: Icon(
                             sensor.config.battery < 5
-                              ? Icons.battery_alert
-                              : Icons.battery_full,
+                                ? Icons.battery_alert
+                                : Icons.battery_full,
                             color: sensor.config.battery < 5
-                              ? Colors.red.shade300
-                              : stateColors.foreground,
+                                ? Colors.red.shade300
+                                : stateColors.foreground,
                           ),
                         ),
-
                         Opacity(
                           opacity: 0.6,
                           child: Text(
@@ -119,20 +118,16 @@ class _SensorsState extends State<Sensors> {
                 ],
               ),
             ),
-
             Positioned(
               top: 20.0,
               left: 20.0,
               child: IconButton(
                 tooltip: 'Turn ${sensor.config.on ? 'off' : 'on'}',
-                onPressed: () async{
+                onPressed: () async {
                   final isOn = sensor.config.on;
 
                   await userState.bridge.updateSensorConfig(
-                    sensor.rebuild(
-                      (s) => s..config.on = !isOn
-                    )
-                  );
+                      sensor.rebuild((s) => s..config.on = !isOn));
 
                   fetchSensors();
                 },
@@ -140,8 +135,8 @@ class _SensorsState extends State<Sensors> {
                   Icons.sensor_window_outlined,
                   size: 30.0,
                   color: sensor.config.on
-                    ? stateColors.primary
-                    : stateColors.foreground.withOpacity(0.6),
+                      ? stateColors.primary
+                      : stateColors.foreground.withOpacity(0.6),
                 ),
               ),
             ),
@@ -160,16 +155,16 @@ class _SensorsState extends State<Sensors> {
       final sensorsItems = await userState.bridge.sensors();
 
       sensorsItems
-        .retainWhere((s) => s.capabilities != null && s.capabilities.primary);
+          .retainWhere((s) => s.capabilities != null && s.capabilities.primary);
 
-      final title = '${sensorsItems.length} ${sensorsItems.length > 0 ? 'sensors' : 'sensor'}';
+      final title =
+          '${sensorsItems.length} ${sensorsItems.length > 0 ? 'sensors' : 'sensor'}';
       userState.setHomeSectionTitle(title);
 
       setState(() {
         sensors = sensorsItems;
         isLoading = false;
       });
-
     } on Exception catch (err) {
       setState(() {
         error = err;
