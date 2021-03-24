@@ -44,69 +44,67 @@ class _LightCardState extends State<LightCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Observer(builder: (context) {
-      return Hero(
-        tag: light.id,
-        child: Container(
-          width: 240.0,
-          height: 240.0,
-          child: Card(
-            elevation: elevation,
-            child: InkWell(
-              onTap: () => onNavigateToLightPage(light),
-              child: Stack(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(30.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            bottom: 8.0,
-                          ),
-                          child: Text(
-                            light.name,
-                            style: TextStyle(
-                              fontSize: 24.0,
-                              fontWeight: FontWeight.w500,
-                            ),
+    return Hero(
+      tag: light.id,
+      child: Container(
+        width: 240.0,
+        height: 240.0,
+        child: Card(
+          elevation: elevation,
+          child: InkWell(
+            onTap: () => onNavigateToLightPage(light),
+            child: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(30.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          bottom: 8.0,
+                        ),
+                        child: Text(
+                          light.name,
+                          style: TextStyle(
+                            fontSize: 24.0,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
-                        brightnessSlider(light),
-                      ],
-                    ),
+                      ),
+                      brightnessSlider(light),
+                    ],
                   ),
-                  Positioned(
-                    top: 20.0,
-                    left: 20.0,
-                    child: IconButton(
-                      tooltip: 'Turn ${light.state.on ? 'off' : 'on'}',
-                      onPressed: () async {
-                        final isOn = light.state.on;
+                ),
+                Positioned(
+                  top: 20.0,
+                  left: 20.0,
+                  child: IconButton(
+                    tooltip: 'Turn ${light.state.on ? 'off' : 'on'}',
+                    onPressed: () async {
+                      final isOn = light.state.on;
 
-                        LightState state = LightState((l) => l..on = !isOn);
+                      LightState state = LightState((l) => l..on = !isOn);
 
-                        await userState.bridge.updateLightState(
-                            light.rebuild((l) => l..state = state.toBuilder()));
+                      await userState.bridge.updateLightState(
+                          light.rebuild((l) => l..state = state.toBuilder()));
 
-                        fetch();
-                      },
-                      icon: Icon(Icons.lightbulb_outline,
-                          size: 30.0,
-                          color: light.state.on
-                              ? accentColor
-                              : stateColors.foreground.withOpacity(0.6)),
-                    ),
+                      fetch();
+                    },
+                    icon: Icon(Icons.lightbulb_outline,
+                        size: 30.0,
+                        color: light.state.on
+                            ? accentColor
+                            : stateColors.foreground.withOpacity(0.6)),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
-      );
-    });
+      ),
+    );
   }
 
   Widget brightnessSlider(Light light) {
