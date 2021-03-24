@@ -8,7 +8,6 @@ class NoAuthGuard extends AutoRouteGuard {
     List<PageRouteInfo> pendingRoutes,
     StackRouter router,
   ) async {
-    // appLogger.d(userState.isUserConnected);
     if (!userState.isUserConnected) {
       return true;
     }
