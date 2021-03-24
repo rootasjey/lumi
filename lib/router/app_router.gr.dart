@@ -59,7 +59,8 @@ class AppRouter extends _i1.RootStackRouter {
   List<_i1.RouteConfig> get routes => [
         _i1.RouteConfig<AppPresentationRoute>(AppPresentationRoute.name,
             path: '/',
-            routeBuilder: (match) => AppPresentationRoute.fromMatch(match)),
+            routeBuilder: (match) => AppPresentationRoute.fromMatch(match),
+            guards: [noAuthGuard]),
         _i1.RouteConfig<AboutRoute>(AboutRoute.name,
             path: '/about',
             routeBuilder: (match) => AboutRoute.fromMatch(match)),

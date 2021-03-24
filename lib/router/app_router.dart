@@ -10,7 +10,7 @@ import 'package:lumi/screens/tos.dart';
 import 'package:lumi/screens/undefined_page.dart';
 
 @MaterialAutoRouter(routes: [
-  AutoRoute(path: '/', page: AppPresentation),
+  AutoRoute(path: '/', page: AppPresentation, guards: [NoAuthGuard]),
   MaterialRoute(path: '/about', page: About),
   AutoRoute(path: '/connection', page: Connection, guards: [NoAuthGuard]),
   AutoRoute(

@@ -8,11 +8,17 @@ class NoAuthGuard extends AutoRouteGuard {
     List<PageRouteInfo> pendingRoutes,
     StackRouter router,
   ) async {
+    // appLogger.d(userState.isUserConnected);
     if (!userState.isUserConnected) {
       return true;
     }
 
-    router.root.replace(HomeRoute());
+    if (!router.root.hasEntries) {
+      router.root.push(DashboardPage(children: [HomeRoute()]));
+      return false;
+    }
+
+    router.root.replace(DashboardPage(children: [HomeRoute()]));
     return false;
   }
 }
