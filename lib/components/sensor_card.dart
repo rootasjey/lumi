@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:hue_api/hue_dart.dart' hide Timer;
 import 'package:lumi/screens/home/sensor_page.dart';
 import 'package:lumi/state/colors.dart';
