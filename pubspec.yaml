@@ -15,7 +15,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.0+1
+version: 0.4.0+1
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -51,8 +51,10 @@ dependencies:
   url_strategy: 0.2.0
 
 dev_dependencies:
-  build_runner:
   auto_route_generator: 1.0.0-beta.11
+  build_runner:
+  flutter_launcher_icons: 0.9.0
+  # flutter_rename_app: 1.0.0
   flutter_test:
     sdk: flutter
   hive_generator: 1.0.0
@@ -71,7 +73,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/images/bulb.png
+    - assets/images/app_icon/128.png
     - assets/images/bridge_v2.png
     - assets/translations/
 
@@ -100,3 +102,16 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+flutter_icons:
+  android: "launcher_icon"
+  ios: "launcher_icon"
+  image_path_android: "assets/images/app_icon/512.png"
+  image_path_ios: "assets/images/app_icon/ios.jpg"
+
+flutter_rename_app:
+  application_name: lumi
+  dart_package_name: lumi
+  application_id: app.android.lumi
+  bundle_id: app.ios.lumi
+  android_package_name: app.android.lumi

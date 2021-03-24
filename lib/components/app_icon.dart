@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:unicons/unicons.dart';
 
 class AppIcon extends StatelessWidget {
   final Function onTap;
@@ -22,10 +21,15 @@ class AppIcon extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          child: Icon(
-            UniconsLine.lightbulb_alt,
-            size: size,
+          child: Image.asset(
+            'assets/images/app_icon/128.png',
+            width: size,
+            height: size,
           ),
+          // child: Icon(
+          //   UniconsLine.lightbulb_alt,
+          //   size: size,
+          // ),
         ),
       ),
     );
