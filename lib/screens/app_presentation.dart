@@ -11,11 +11,14 @@ class AppPresentation extends StatelessWidget {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          SliverList(
-            delegate: SliverChildListDelegate.fixed([
-              header(),
-              connectionButton(context),
-            ]),
+          SliverPadding(
+            padding: const EdgeInsets.all(80.0),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate.fixed([
+                header(),
+                connectionButton(context),
+              ]),
+            ),
           ),
         ],
       ),
@@ -23,48 +26,48 @@ class AppPresentation extends StatelessWidget {
   }
 
   Widget header() {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 16.0),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                AppIcon(
-                  padding: const EdgeInsets.only(
-                    right: 8.0,
-                  ),
-                ),
-                Text(
-                  "Lumi",
-                  style: FontsUtils.mainStyle(
-                    fontSize: 60.0,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(
+            top: 16.0,
+            bottom: 8.0,
           ),
-          Opacity(
-            opacity: 0.6,
-            child: Text(
-              "presentation_subtitle".tr(),
-              style: FontsUtils.mainStyle(
-                fontSize: 20.0,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AppIcon(
+                padding: const EdgeInsets.only(
+                  right: 32.0,
+                ),
               ),
+              Text(
+                "lumi",
+                style: FontsUtils.mainStyle(
+                  fontSize: 60.0,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Opacity(
+          opacity: 0.6,
+          child: Text(
+            "presentation_subtitle".tr(),
+            style: FontsUtils.mainStyle(
+              fontSize: 20.0,
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
   Widget connectionButton(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(24.0),
+      padding: const EdgeInsets.only(top: 24.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

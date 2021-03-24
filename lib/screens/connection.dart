@@ -150,7 +150,10 @@ class _ConnectionState extends State<Connection> {
                       color: Colors.white,
                     ),
                   ),
-                  child: Text('CONNECT TO BRIDGE'),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text('CONNECT TO BRIDGE'),
+                  ),
                 ),
               ],
             ),
@@ -200,7 +203,10 @@ class _ConnectionState extends State<Connection> {
                     color: Colors.white,
                   ),
                 ),
-                child: Text('CANCEL'),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text('CANCEL'),
+                ),
               ),
             ],
           ),
