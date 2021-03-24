@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:http/browser_client.dart';
+import 'package:http/http.dart';
 import 'package:hue_api/hue_dart.dart' hide Timer;
 import 'package:lumi/components/home_app_bar.dart';
 import 'package:lumi/screens/home.dart';
@@ -12,6 +12,10 @@ import 'package:lumi/utils/constants.dart';
 import 'package:supercharged/supercharged.dart';
 
 class Connection extends StatefulWidget {
+  final void Function(bool isAuthenticated) onSigninResult;
+
+  const Connection({Key key, this.onSigninResult}) : super(key: key);
+
   @override
   _ConnectionState createState() => _ConnectionState();
 }
@@ -213,7 +217,7 @@ class _ConnectionState extends State<Connection> {
     attempts++;
 
     try {
-      final client = BrowserClient();
+      final client = Client();
       final discovery = BridgeDiscovery(client);
 
       final discoveryResults = await discovery.automatic();

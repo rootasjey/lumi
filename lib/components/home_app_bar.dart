@@ -1,4 +1,3 @@
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:hive/hive.dart';
@@ -33,15 +32,13 @@ class HomeAppBar extends StatefulWidget {
 class _HomeAppBarState extends State<HomeAppBar> {
   @override
   Widget build(BuildContext context) {
-    return Observer(
-      builder: (context) {
-        return SliverLayoutBuilder(
-          builder: (context, constrains) {
-            final isNarrow = constrains.crossAxisExtent < 700.0;
-            final leftPadding = isNarrow
-              ? 0.0
-              : 100.0;
+    return SliverLayoutBuilder(
+      builder: (context, constrains) {
+        final isNarrow = constrains.crossAxisExtent < 700.0;
+        final leftPadding = isNarrow ? 0.0 : 100.0;
 
+        return Observer(
+          builder: (context) {
             return SliverAppBar(
               floating: true,
               snap: true,
@@ -49,13 +46,6 @@ class _HomeAppBarState extends State<HomeAppBar> {
               expandedHeight: 140.0,
               backgroundColor: stateColors.appBackground.withOpacity(1.0),
               automaticallyImplyLeading: false,
-              // title: Padding(
-              //   padding: EdgeInsets.only(
-              //     top: 60.0,
-              //     left: leftPadding,
-              //   ),
-              //   child:
-              // ),
               flexibleSpace: Padding(
                 padding: EdgeInsets.only(
                   top: 80.0,
@@ -75,12 +65,10 @@ class _HomeAppBarState extends State<HomeAppBar> {
                           icon: Icon(Icons.arrow_back),
                         ),
                       ),
-
                     AppIcon(
                       padding: EdgeInsets.zero,
                       onTap: widget.onTapIconHeader,
                     ),
-
                     if (widget.title != null)
                       Expanded(
                         child: Padding(
@@ -88,7 +76,6 @@ class _HomeAppBarState extends State<HomeAppBar> {
                           child: widget.title,
                         ),
                       ),
-
                     themeButton(),
                     menu(),
                   ],
@@ -109,26 +96,23 @@ class _HomeAppBarState extends State<HomeAppBar> {
     if (!autoBrightness) {
       bool darkMode = Hive.box(KEY_SETTINGS).get(KEY_DARK_MODE);
 
-      iconBrightness = darkMode
-        ? Icons.brightness_2
-        : Icons.brightness_low;
+      iconBrightness = darkMode ? Icons.brightness_2 : Icons.brightness_low;
     }
 
     return PopupMenuButton<String>(
-      icon: Icon(iconBrightness, color: stateColors.foreground,),
+      icon: Icon(
+        iconBrightness,
+        color: stateColors.foreground,
+      ),
       tooltip: 'Brightness',
       onSelected: (value) {
         if (value == 'auto') {
-          setAutoBrightness(context: context);
+          BrightnessUtils.setAutoBrightness(context);
           return;
         }
 
-        final brightness = value == 'dark'
-          ? Brightness.dark
-          : Brightness.light;
-
-        setBrightness(brightness: brightness, context: context);
-        DynamicTheme.of(context).setBrightness(brightness);
+        final brightness = value == 'dark' ? Brightness.dark : Brightness.light;
+        BrightnessUtils.setBrightness(context, brightness);
       },
       itemBuilder: (context) => [
         const PopupMenuItem(
@@ -138,7 +122,6 @@ class _HomeAppBarState extends State<HomeAppBar> {
             title: Text('Auto'),
           ),
         ),
-
         const PopupMenuItem(
           value: 'dark',
           child: ListTile(
@@ -146,7 +129,6 @@ class _HomeAppBarState extends State<HomeAppBar> {
             title: Text('Dark'),
           ),
         ),
-
         const PopupMenuItem(
           value: 'light',
           child: ListTile(
@@ -164,33 +146,29 @@ class _HomeAppBarState extends State<HomeAppBar> {
     return PopupMenuButton(
       icon: Icon(Icons.more_vert, color: stateColors.foreground),
       itemBuilder: (context) => <PopupMenuEntry<String>>[
-        if (isConnected)
-          ...[
-              PopupMenuItem(
-              value: 'disconnect',
-              child: ListTile(
-                leading: Icon(Icons.exit_to_app),
-                title: Text('Disconnect'),
-              ),
+        if (isConnected) ...[
+          PopupMenuItem(
+            value: 'disconnect',
+            child: ListTile(
+              leading: Icon(Icons.exit_to_app),
+              title: Text('Disconnect'),
             ),
-
-            PopupMenuItem(
-              value: 'users',
-              child: ListTile(
-                leading: Icon(Icons.person_outline),
-                title: Text('Users'),
-              ),
+          ),
+          PopupMenuItem(
+            value: 'users',
+            child: ListTile(
+              leading: Icon(Icons.person_outline),
+              title: Text('Users'),
             ),
-
-            PopupMenuItem(
-              value: 'config',
-              child: ListTile(
-                leading: Icon(Icons.settings),
-                title: Text('Configuration'),
-              ),
+          ),
+          PopupMenuItem(
+            value: 'config',
+            child: ListTile(
+              leading: Icon(Icons.settings),
+              title: Text('Configuration'),
             ),
-          ],
-
+          ),
+        ],
         PopupMenuItem(
           value: AboutRoute,
           child: ListTile(
@@ -232,11 +210,9 @@ class _HomeAppBarState extends State<HomeAppBar> {
     userState.setUserDisconnected();
 
     Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) {
-          return Connection();
-        }
-      ),
+      MaterialPageRoute(builder: (_) {
+        return Connection();
+      }),
     );
   }
 }

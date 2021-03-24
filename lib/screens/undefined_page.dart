@@ -1,10 +1,10 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:lumi/components/app_icon.dart';
+import 'package:lumi/router/app_router.gr.dart';
 
 class UndefinedPage extends StatefulWidget {
-  final String name;
-
-  UndefinedPage({this.name});
+  UndefinedPage();
 
   @override
   _UndefinedPageState createState() => _UndefinedPageState();
@@ -24,14 +24,17 @@ class _UndefinedPageState extends State<UndefinedPage> {
         ),
         Opacity(
           opacity: .6,
-          child: Text('Route for "${widget.name}" is not defined.'),
+          child: Text(
+              'Route for "${context.router.current.name}" is not defined.'),
         ),
         Padding(
-            padding: const EdgeInsets.only(top: 50.0),
-            child: Icon(
-              Icons.pageview,
-              size: 40.0,
-            )),
+          padding: const EdgeInsets.only(top: 50.0),
+          child: Image(
+            image: AssetImage('assets/images/page-not-found-4.png'),
+            width: 350.0,
+            height: 350.0,
+          ),
+        ),
         Padding(padding: EdgeInsets.only(bottom: 100.0)),
         Padding(
           padding: const EdgeInsets.all(8.0),
@@ -71,7 +74,9 @@ class _UndefinedPageState extends State<UndefinedPage> {
         Padding(
           padding: const EdgeInsets.only(top: 100.0),
           child: TextButton(
-            onPressed: () {},
+            onPressed: () {
+              context.router.navigate(HomeRoute());
+            },
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text('Go home'),
