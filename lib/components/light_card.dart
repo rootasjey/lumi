@@ -2,56 +2,71 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:hue_api/hue_dart.dart' hide Timer;
-import 'package:lumi/screens/home/light_page.dart';
 import 'package:lumi/state/colors.dart';
-import 'package:lumi/state/user_state.dart';
 import 'package:supercharged/supercharged.dart';
 
 class LightCard extends StatefulWidget {
+  final Color lightColor;
+  final double brightness;
+
   final Light light;
 
-  LightCard({@required this.light});
+  final Function(double, VoidCallback) onBrightnessChanged;
+
+  final VoidCallback onToggle;
+  final VoidCallback onTap;
+
+  const LightCard({
+    Key key,
+    @required this.light,
+    this.onToggle,
+    this.onTap,
+    this.onBrightnessChanged,
+    this.lightColor,
+    this.brightness = 0.0,
+  }) : super(key: key);
 
   @override
   _LightCardState createState() => _LightCardState();
 }
 
 class _LightCardState extends State<LightCard> {
-  bool isLoading = false;
-  Color accentColor;
+  bool _overrideBrightness = false;
 
-  double brightness;
-  double elevation;
-  Light light;
+  double _elevation = 0.0;
+  double _brightnessSliderValue = 0.0;
 
-  Timer updateBrightnessTimer;
-  Timer timerUpdate;
+  Timer _brightnessUpdateTimer;
 
   @override
   void initState() {
     super.initState();
 
     setState(() {
-      light = widget.light;
-      brightness = light.state.brightness.toDouble();
-      accentColor = stateColors.primary;
-      updateElevation();
+      _elevation = widget.light.state.on ? 6.0 : 0.0;
+      _brightnessSliderValue = widget.light.state.brightness.toDouble();
     });
+  }
 
-    fetch();
+  @override
+  void dispose() {
+    _brightnessUpdateTimer?.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final light = widget.light;
+
     return Hero(
       tag: light.id,
       child: Container(
         width: 240.0,
         height: 240.0,
         child: Card(
-          elevation: elevation,
+          elevation: _elevation,
           child: InkWell(
-            onTap: () => onNavigateToLightPage(light),
+            onTap: widget.onTap,
             child: Stack(
               children: [
                 Padding(
@@ -81,20 +96,11 @@ class _LightCardState extends State<LightCard> {
                   left: 20.0,
                   child: IconButton(
                     tooltip: 'Turn ${light.state.on ? 'off' : 'on'}',
-                    onPressed: () async {
-                      final isOn = light.state.on;
-
-                      LightState state = LightState((l) => l..on = !isOn);
-
-                      await userState.bridge.updateLightState(
-                          light.rebuild((l) => l..state = state.toBuilder()));
-
-                      fetch();
-                    },
+                    onPressed: widget.onToggle,
                     icon: Icon(Icons.lightbulb_outline,
                         size: 30.0,
                         color: light.state.on
-                            ? accentColor
+                            ? widget.lightColor
                             : stateColors.foreground.withOpacity(0.6)),
                   ),
                 ),
@@ -108,131 +114,30 @@ class _LightCardState extends State<LightCard> {
 
   Widget brightnessSlider(Light light) {
     return Slider(
-      value: brightness,
+      value: _overrideBrightness ? _brightnessSliderValue : widget.brightness,
       min: 0,
       max: 254,
       activeColor: light.state.on
-          ? accentColor
+          ? widget.lightColor
           : stateColors.foreground.withOpacity(0.4),
       inactiveColor: stateColors.foreground.withOpacity(0.4),
-      label: brightness.round().toString(),
+      label: _overrideBrightness
+          ? _brightnessSliderValue.round().toString()
+          : widget.brightness.round().toString(),
       onChanged: (double value) async {
         setState(() {
-          brightness = value;
+          _overrideBrightness = true;
+          _brightnessSliderValue = value;
         });
 
-        if (updateBrightnessTimer != null) {
-          updateBrightnessTimer.cancel();
-        }
-
-        updateBrightnessTimer = Timer(250.milliseconds, () async {
-          LightState state = LightState((l) => l..brightness = value.toInt());
-
-          if (!light.state.on) {
-            state = LightState((l) => l
-              ..on = true
-              ..brightness = value.toInt());
-          }
-
-          await userState.bridge.updateLightState(
-              light.rebuild((l) => l..state = state.toBuilder()));
-
-          fetch();
+        _brightnessUpdateTimer = Timer(500.milliseconds, () {
+          widget.onBrightnessChanged(value, resetOverrideBrightness);
         });
       },
     );
   }
 
-  void onNavigateToLightPage(Light light) async {
-    await Navigator.of(context).push(MaterialPageRoute(
-      fullscreenDialog: true,
-      builder: (context) {
-        return Scaffold(
-          body: GestureDetector(
-            onTap: () => Navigator.pop(context),
-            child: Container(
-              color: Colors.transparent, // onTap doesn't work without this
-              child: Hero(
-                tag: light.id,
-                child: Center(
-                  child: Container(
-                    width: 800,
-                    padding: const EdgeInsets.all(80.0),
-                    child: Card(
-                      elevation: 8.0,
-                      child: GestureDetector(
-                        onTap: () {}, // to block parent onTap()
-                        child: LightPage(
-                          light: light,
-                          color: accentColor,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    ));
-
-    fetch();
-  }
-
-  /// Fetch a single light's data.
-  void fetch() async {
-    if (isLoading && timerUpdate != null) {
-      timerUpdate.cancel();
-    }
-
-    isLoading = true;
-
-    timerUpdate = Timer(150.milliseconds, () async {
-      try {
-        light = await userState.bridge.light(light.id);
-
-        if (!mounted) {
-          return;
-        }
-
-        var color = accentColor;
-
-        if (light.state.on && light.state.hue != null) {
-          final hsl = HSLColor.fromAHSL(
-            1.0,
-            light.state.hue / 65535 * 360,
-            light.state.saturation / 255,
-            light.state.brightness / 255,
-          );
-
-          color = hsl.toColor();
-
-          if (color.red < 100 && color.green < 100 && color.blue < 100) {
-            color = Color.fromARGB(
-              color.alpha,
-              color.red + 100,
-              color.green + 100,
-              color.blue + 100,
-            );
-          }
-        }
-
-        setState(() {
-          isLoading = false;
-          accentColor = color;
-          brightness = light.state.brightness.toDouble();
-          updateElevation();
-        });
-      } catch (error) {
-        debugPrint(error.toString());
-        isLoading = false;
-        setState(() {});
-      }
-    });
-  }
-
-  void updateElevation() {
-    elevation = light.state.on ? 6.0 : 0.0;
+  void resetOverrideBrightness() {
+    setState(() => _overrideBrightness = false);
   }
 }
