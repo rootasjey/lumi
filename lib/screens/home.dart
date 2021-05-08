@@ -45,55 +45,30 @@ class _HomeState extends State<Home> {
       body: CustomScrollView(
         controller: scrollController,
         slivers: <Widget>[
-          HomeAppBar(
-            title: Text(
-              'lumi',
-              style: TextStyle(
-                fontSize: 50.0,
-              ),
-            ),
-            onTapIconHeader: () {
-              scrollController.animateTo(
-                0,
-                duration: 250.milliseconds,
-                curve: Curves.decelerate,
-              );
-            },
-          ),
+          appBar(),
           navigation(),
-          SliverPadding(
-            padding: const EdgeInsets.only(
-              top: 40.0,
-              left: 100.0,
-            ),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate.fixed([
-                Observer(
-                  builder: (context) {
-                    return Opacity(
-                      opacity: 0.6,
-                      child: Text(
-                        '${userState.homeSectionTitle}',
-                        style: TextStyle(
-                          fontSize: 40.0,
-                          fontWeight: FontWeight.w300,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ]),
-            ),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 100.0,
-              vertical: 80.0,
-            ),
-            sliver: body(),
-          ),
+          title(),
+          body(),
         ],
       ),
+    );
+  }
+
+  Widget appBar() {
+    return HomeAppBar(
+      title: Text(
+        'lumi',
+        style: TextStyle(
+          fontSize: 50.0,
+        ),
+      ),
+      onTapIconHeader: () {
+        scrollController.animateTo(
+          0,
+          duration: 250.milliseconds,
+          curve: Curves.decelerate,
+        );
+      },
     );
   }
 
@@ -174,6 +149,39 @@ class _HomeState extends State<Home> {
   }
 
   Widget body() {
-    return childrenBody[selectedIndex];
+    return SliverPadding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 100.0,
+        vertical: 80.0,
+      ),
+      sliver: childrenBody[selectedIndex],
+    );
+  }
+
+  Widget title() {
+    return SliverPadding(
+      padding: const EdgeInsets.only(
+        top: 40.0,
+        left: 100.0,
+      ),
+      sliver: SliverList(
+        delegate: SliverChildListDelegate.fixed([
+          Observer(
+            builder: (context) {
+              return Opacity(
+                opacity: 0.6,
+                child: Text(
+                  '${userState.homeSectionTitle}',
+                  style: TextStyle(
+                    fontSize: 40.0,
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
+              );
+            },
+          ),
+        ]),
+      ),
+    );
   }
 }
