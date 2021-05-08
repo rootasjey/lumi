@@ -1,52 +1,41 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:hue_api/hue_dart.dart' hide Timer;
-import 'package:lumi/screens/home/sensor_page.dart';
 import 'package:lumi/state/colors.dart';
-import 'package:lumi/state/user_state.dart';
-import 'package:supercharged/supercharged.dart';
 
 class SensorCard extends StatefulWidget {
+  final double elevation;
+
   final Sensor sensor;
 
-  SensorCard({@required this.sensor});
+  final VoidCallback onTap;
+  final VoidCallback onToggle;
+
+  const SensorCard({
+    Key key,
+    @required this.sensor,
+    this.onTap,
+    this.onToggle,
+    this.elevation = 0.0,
+  }) : super(key: key);
 
   @override
   _SensorCardState createState() => _SensorCardState();
 }
 
 class _SensorCardState extends State<SensorCard> {
-  bool isLoading = false;
-  Color accentColor;
-
-  double elevation;
-
-  Sensor sensor;
-  Timer timerUpdate;
-
-  @override
-  void initState() {
-    super.initState();
-
-    setState(() {
-      sensor = widget.sensor;
-      accentColor = stateColors.primary;
-      updateElevation();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    final sensor = widget.sensor;
+
     return Hero(
       tag: sensor.id,
       child: SizedBox(
         width: 240.0,
         height: 240.0,
         child: Card(
-          elevation: elevation,
+          elevation: widget.elevation,
           child: InkWell(
-            onTap: () => onNavigateToSensorPage(sensor),
+            onTap: widget.onTap,
             child: Stack(
               children: [
                 Padding(
@@ -106,14 +95,7 @@ class _SensorCardState extends State<SensorCard> {
                   left: 20.0,
                   child: IconButton(
                     tooltip: 'Turn ${sensor.config.on ? 'off' : 'on'}',
-                    onPressed: () async {
-                      final isOn = sensor.config.on;
-
-                      await userState.bridge.updateSensorConfig(
-                          sensor.rebuild((s) => s..config.on = !isOn));
-
-                      fetch();
-                    },
+                    onPressed: widget.onToggle,
                     icon: Icon(
                       Icons.sensor_window_outlined,
                       size: 30.0,
@@ -129,73 +111,5 @@ class _SensorCardState extends State<SensorCard> {
         ),
       ),
     );
-  }
-
-  void onNavigateToSensorPage(Sensor sensor) async {
-    await Navigator.of(context).push(MaterialPageRoute(
-      fullscreenDialog: true,
-      builder: (context) {
-        return Scaffold(
-          body: GestureDetector(
-            onTap: () => Navigator.pop(context),
-            child: Container(
-              color: Colors.transparent, // onTap doesn't work without this
-              child: Hero(
-                tag: sensor.id,
-                child: Center(
-                  child: Container(
-                    width: 800,
-                    padding: const EdgeInsets.all(80.0),
-                    child: Card(
-                      elevation: 8.0,
-                      child: GestureDetector(
-                        onTap: () {}, // to block parent onTap()
-                        child: SensorPage(
-                          sensor: sensor,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    ));
-
-    fetch();
-  }
-
-  /// Fetch a single light's data.
-  void fetch() async {
-    if (isLoading && timerUpdate != null) {
-      timerUpdate.cancel();
-    }
-
-    isLoading = true;
-
-    timerUpdate = Timer(150.milliseconds, () async {
-      try {
-        final newSensor = await userState.bridge.sensor(sensor.id.toString());
-
-        if (!mounted) {
-          return;
-        }
-
-        setState(() {
-          isLoading = false;
-          sensor = newSensor;
-          updateElevation();
-        });
-      } catch (error) {
-        debugPrint(error.toString());
-        setState(() => isLoading = false);
-      }
-    });
-  }
-
-  void updateElevation() {
-    elevation = sensor.config.on ? 6.0 : 0.0;
   }
 }
