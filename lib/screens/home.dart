@@ -59,7 +59,7 @@ class _HomeState extends State<Home> {
       title: Text(
         'lumi',
         style: TextStyle(
-          fontSize: 50.0,
+          fontSize: 30.0,
         ),
       ),
       onTapIconHeader: () {

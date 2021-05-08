@@ -11,6 +11,7 @@ import 'package:lumi/state/colors.dart';
 import 'package:lumi/state/user_state.dart';
 import 'package:lumi/utils/brightness.dart';
 import 'package:lumi/utils/constants.dart';
+import 'package:unicons/unicons.dart';
 
 class HomeAppBar extends StatefulWidget {
   final bool automaticallyImplyLeading;
@@ -42,13 +43,13 @@ class _HomeAppBarState extends State<HomeAppBar> {
             return SliverAppBar(
               floating: true,
               snap: true,
-              pinned: true,
+              pinned: false,
               expandedHeight: 140.0,
               backgroundColor: stateColors.appBackground.withOpacity(1.0),
               automaticallyImplyLeading: false,
-              flexibleSpace: Padding(
+              title: Padding(
                 padding: EdgeInsets.only(
-                  top: 80.0,
+                  top: 12.0,
                   left: leftPadding,
                   right: leftPadding,
                 ),
@@ -61,8 +62,8 @@ class _HomeAppBarState extends State<HomeAppBar> {
                         padding: const EdgeInsets.only(right: 16.0),
                         child: IconButton(
                           color: stateColors.foreground,
-                          onPressed: () => Navigator.of(context).pop(),
-                          icon: Icon(Icons.arrow_back),
+                          onPressed: Navigator.of(context).pop,
+                          icon: Icon(UniconsLine.arrow_left),
                         ),
                       ),
                     AppIcon(
@@ -100,9 +101,12 @@ class _HomeAppBarState extends State<HomeAppBar> {
     }
 
     return PopupMenuButton<String>(
-      icon: Icon(
-        iconBrightness,
-        color: stateColors.foreground,
+      icon: Opacity(
+        opacity: 0.6,
+        child: Icon(
+          iconBrightness,
+          color: stateColors.foreground,
+        ),
       ),
       tooltip: 'Brightness',
       onSelected: (value) {
@@ -144,27 +148,33 @@ class _HomeAppBarState extends State<HomeAppBar> {
     bool isConnected = userState.isUserConnected;
 
     return PopupMenuButton(
-      icon: Icon(Icons.more_vert, color: stateColors.foreground),
+      icon: Opacity(
+        opacity: 0.6,
+        child: Icon(
+          Icons.more_vert,
+          color: stateColors.foreground,
+        ),
+      ),
       itemBuilder: (context) => <PopupMenuEntry<String>>[
         if (isConnected) ...[
           PopupMenuItem(
             value: 'disconnect',
             child: ListTile(
-              leading: Icon(Icons.exit_to_app),
+              leading: Icon(UniconsLine.exit),
               title: Text('Disconnect'),
             ),
           ),
           PopupMenuItem(
             value: 'users',
             child: ListTile(
-              leading: Icon(Icons.person_outline),
+              leading: Icon(UniconsLine.user),
               title: Text('Users'),
             ),
           ),
           PopupMenuItem(
             value: 'config',
             child: ListTile(
-              leading: Icon(Icons.settings),
+              leading: Icon(UniconsLine.setting),
               title: Text('Configuration'),
             ),
           ),
@@ -172,7 +182,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
         PopupMenuItem(
           value: AboutRoute,
           child: ListTile(
-            leading: Icon(Icons.help),
+            leading: Icon(UniconsLine.question),
             title: Text('About'),
           ),
         ),

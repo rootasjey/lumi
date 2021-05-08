@@ -8,7 +8,7 @@ class AppIcon extends StatelessWidget {
   AppIcon({
     this.onTap,
     this.padding = EdgeInsets.zero,
-    this.size = 60.0,
+    this.size = 40.0,
   });
 
   @override
