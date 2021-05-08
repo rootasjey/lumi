@@ -2,15 +2,19 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:hue_api/hue_dart.dart' hide Timer;
-import 'package:lumi/screens/home/group_page.dart';
 import 'package:lumi/state/colors.dart';
-import 'package:lumi/state/user_state.dart';
-import 'package:supercharged/supercharged.dart';
 
 class GroupCard extends StatefulWidget {
   final Group group;
+  final VoidCallback onTap;
+  final VoidCallback onToggle;
 
-  GroupCard({@required this.group});
+  const GroupCard({
+    Key key,
+    @required this.group,
+    this.onTap,
+    this.onToggle,
+  }) : super(key: key);
 
   @override
   _GroupCardState createState() => _GroupCardState();
@@ -22,7 +26,6 @@ class _GroupCardState extends State<GroupCard> {
 
   double elevation;
 
-  Group group;
   Timer timerUpdate;
 
   @override
@@ -30,7 +33,6 @@ class _GroupCardState extends State<GroupCard> {
     super.initState();
 
     setState(() {
-      group = widget.group;
       accentColor = stateColors.primary;
       updateElevation();
     });
@@ -38,6 +40,8 @@ class _GroupCardState extends State<GroupCard> {
 
   @override
   Widget build(BuildContext context) {
+    final group = widget.group;
+
     return Hero(
       tag: group.id,
       child: SizedBox(
@@ -46,7 +50,7 @@ class _GroupCardState extends State<GroupCard> {
         child: Card(
           elevation: 6.0,
           child: InkWell(
-            onTap: onNavigateToGroupPage,
+            onTap: widget.onTap,
             child: Stack(
               children: [
                 Padding(
@@ -97,16 +101,7 @@ class _GroupCardState extends State<GroupCard> {
                     tooltip: group.action.on
                         ? 'Turn OFF this scene'
                         : 'Turn ON this scene',
-                    onPressed: () async {
-                      final isOn = group.action.on;
-
-                      final action = GroupAction((g) => g..on = !isOn);
-
-                      await userState.bridge.updateGroupState(
-                          group.rebuild((g) => g..action = action.toBuilder()));
-
-                      fetch();
-                    },
+                    onPressed: widget.onToggle,
                     icon: Icon(
                       Icons.kitchen,
                       size: 30.0,
@@ -124,71 +119,7 @@ class _GroupCardState extends State<GroupCard> {
     );
   }
 
-  void onNavigateToGroupPage() async {
-    await Navigator.of(context).push(MaterialPageRoute(
-      fullscreenDialog: true,
-      builder: (context) {
-        return Scaffold(
-          body: GestureDetector(
-            onTap: () => Navigator.pop(context),
-            child: Container(
-              color: Colors.transparent, // onTap doesn't work without this
-              child: Hero(
-                tag: group.id,
-                child: Center(
-                  child: Container(
-                    width: 800,
-                    padding: const EdgeInsets.all(80.0),
-                    child: Card(
-                      elevation: 8.0,
-                      child: GestureDetector(
-                        onTap: () {}, // to block parent onTap()
-                        child: GroupPage(
-                          group: group,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    ));
-
-    fetch();
-  }
-
-  /// Fetch a single light's data.
-  void fetch() async {
-    if (isLoading && timerUpdate != null) {
-      timerUpdate.cancel();
-    }
-
-    isLoading = true;
-
-    timerUpdate = Timer(150.milliseconds, () async {
-      try {
-        final newSensor = await userState.bridge.group(group.id);
-
-        if (!mounted) {
-          return;
-        }
-
-        setState(() {
-          isLoading = false;
-          group = newSensor;
-          updateElevation();
-        });
-      } catch (error) {
-        debugPrint(error.toString());
-        setState(() => isLoading = false);
-      }
-    });
-  }
-
   void updateElevation() {
-    elevation = group.action.on ? 6.0 : 0.0;
+    elevation = widget.group.action.on ? 6.0 : 0.0;
   }
 }
