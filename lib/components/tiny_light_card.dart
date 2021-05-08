@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:hue_api/hue_dart.dart' hide Timer;
 import 'package:lumi/screens/home/light_page.dart';
 import 'package:lumi/state/colors.dart';
@@ -39,36 +38,32 @@ class _TinyLightCardState extends State<TinyLightCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Observer(builder: (context) {
-      return Container(
-        width: 100.0,
-        height: 100.0,
-        child: Card(
-          elevation: elevation,
-          child: InkWell(
-            onTap: () => onNavigateToLightPage(light),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.lightbulb_outline,
-                ),
-                Opacity(
-                  opacity: 0.6,
-                  child: Text(
-                    widget.id,
-                    style: TextStyle(
-                      fontSize: 15.0,
-                      fontWeight: FontWeight.w600,
-                    ),
+    return Container(
+      width: 100.0,
+      height: 100.0,
+      child: Card(
+        elevation: elevation,
+        child: InkWell(
+          onTap: () => onNavigateToLightPage(light),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.lightbulb_outline),
+              Opacity(
+                opacity: 0.6,
+                child: Text(
+                  widget.id,
+                  style: TextStyle(
+                    fontSize: 15.0,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
-      );
-    });
+      ),
+    );
   }
 
   void onNavigateToLightPage(Light light) async {
