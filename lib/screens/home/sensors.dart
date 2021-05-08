@@ -15,12 +15,12 @@ class Sensors extends StatefulWidget {
 }
 
 class _SensorsState extends State<Sensors> {
-  List<Sensor> sensors = [];
-  Exception error;
+  List<Sensor> _sensors = [];
+  Exception _error;
 
-  bool isLoading = false;
+  bool _isLoading = false;
 
-  Timer pageUpdateTimer;
+  Timer _pageUpdateTimer;
 
   @override
   void initState() {
@@ -31,13 +31,13 @@ class _SensorsState extends State<Sensors> {
 
   @override
   void dispose() {
-    pageUpdateTimer?.cancel();
+    _pageUpdateTimer?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) {
+    if (_isLoading) {
       return SliverList(
         delegate: SliverChildListDelegate([
           LoadingView(),
@@ -45,7 +45,7 @@ class _SensorsState extends State<Sensors> {
       );
     }
 
-    if (error != null && sensors.length == 0) {
+    if (_error != null && _sensors.length == 0) {
       return SliverList(
         delegate: SliverChildListDelegate([
           ErrorView(),
@@ -61,7 +61,7 @@ class _SensorsState extends State<Sensors> {
       ),
       delegate: SliverChildBuilderDelegate(
         (context, index) {
-          final sensor = sensors[index];
+          final sensor = _sensors[index];
           return SensorCard(
               sensor: sensor,
               elevation: sensor.config.on ? 6.0 : 0.0,
@@ -108,13 +108,13 @@ class _SensorsState extends State<Sensors> {
                 ));
               });
         },
-        childCount: sensors.length,
+        childCount: _sensors.length,
       ),
     );
   }
 
   void startPolling() async {
-    pageUpdateTimer = Timer.periodic(
+    _pageUpdateTimer = Timer.periodic(
       2.seconds,
       (timer) {
         fetchSensors(showLoading: false);
@@ -124,7 +124,7 @@ class _SensorsState extends State<Sensors> {
 
   void fetchSensors({showLoading = false}) async {
     if (showLoading) {
-      setState(() => isLoading = true);
+      setState(() => _isLoading = true);
     }
 
     try {
@@ -138,16 +138,16 @@ class _SensorsState extends State<Sensors> {
       userState.setHomeSectionTitle(title);
 
       setState(() {
-        sensors = sensorsItems;
-        isLoading = false;
+        _sensors = sensorsItems;
+        _isLoading = false;
       });
     } on Exception catch (err) {
       setState(() {
-        error = err;
-        isLoading = false;
+        _error = err;
+        _isLoading = false;
       });
 
-      debugPrint(error.toString());
+      debugPrint(_error.toString());
     }
   }
 }

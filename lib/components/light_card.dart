@@ -16,6 +16,8 @@ class LightCard extends StatefulWidget {
   final VoidCallback onToggle;
   final VoidCallback onTap;
 
+  final double elevation;
+
   const LightCard({
     Key key,
     @required this.light,
@@ -24,6 +26,7 @@ class LightCard extends StatefulWidget {
     this.onBrightnessChanged,
     this.lightColor,
     this.brightness = 0.0,
+    this.elevation = 0.0,
   }) : super(key: key);
 
   @override
@@ -33,7 +36,6 @@ class LightCard extends StatefulWidget {
 class _LightCardState extends State<LightCard> {
   bool _overrideBrightness = false;
 
-  double _elevation = 0.0;
   double _brightnessSliderValue = 0.0;
 
   Timer _brightnessUpdateTimer;
@@ -43,7 +45,6 @@ class _LightCardState extends State<LightCard> {
     super.initState();
 
     setState(() {
-      _elevation = widget.light.state.on ? 6.0 : 0.0;
       _brightnessSliderValue = widget.light.state.brightness.toDouble();
     });
   }
@@ -64,7 +65,7 @@ class _LightCardState extends State<LightCard> {
         width: 240.0,
         height: 240.0,
         child: Card(
-          elevation: _elevation,
+          elevation: widget.elevation,
           child: InkWell(
             onTap: widget.onTap,
             child: Stack(

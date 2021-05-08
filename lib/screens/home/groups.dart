@@ -15,12 +15,12 @@ class Groups extends StatefulWidget {
 }
 
 class _GroupsState extends State<Groups> {
-  List<Group> groups = [];
-  Exception error;
+  List<Group> _groups = [];
+  Exception _error;
 
-  bool isLoading = false;
+  bool _isLoading = false;
 
-  Timer pageUpdateTimer;
+  Timer _pageUpdateTimer;
 
   @override
   void initState() {
@@ -31,13 +31,13 @@ class _GroupsState extends State<Groups> {
 
   @override
   dispose() {
-    pageUpdateTimer?.cancel();
+    _pageUpdateTimer?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) {
+    if (_isLoading) {
       return SliverList(
         delegate: SliverChildListDelegate([
           LoadingView(),
@@ -45,7 +45,7 @@ class _GroupsState extends State<Groups> {
       );
     }
 
-    if (error != null && groups.length == 0) {
+    if (_error != null && _groups.length == 0) {
       return SliverList(
         delegate: SliverChildListDelegate([
           ErrorView(),
@@ -61,10 +61,11 @@ class _GroupsState extends State<Groups> {
       ),
       delegate: SliverChildBuilderDelegate(
         (context, index) {
-          final group = groups[index];
+          final group = _groups[index];
           return GroupCard(
               key: Key(group.uniqueId),
               group: group,
+              elevation: group.action.on ? 6.0 : 0.0,
               onToggle: () async {
                 final isOn = group.action.on;
 
@@ -79,13 +80,13 @@ class _GroupsState extends State<Groups> {
                 onTap(group);
               });
         },
-        childCount: groups.length,
+        childCount: _groups.length,
       ),
     );
   }
 
   void startPolling() async {
-    pageUpdateTimer = Timer.periodic(
+    _pageUpdateTimer = Timer.periodic(
       2.seconds,
       (timer) {
         fetchGroups(showLoading: false);
@@ -95,7 +96,7 @@ class _GroupsState extends State<Groups> {
 
   void fetchGroups({showLoading = false}) async {
     if (showLoading) {
-      setState(() => isLoading = true);
+      setState(() => _isLoading = true);
     }
 
     try {
@@ -107,16 +108,16 @@ class _GroupsState extends State<Groups> {
       userState.setHomeSectionTitle(title);
 
       setState(() {
-        groups = groupsItems;
-        isLoading = false;
+        _groups = groupsItems;
+        _isLoading = false;
       });
     } on Exception catch (err) {
       setState(() {
-        error = err;
-        isLoading = false;
+        _error = err;
+        _isLoading = false;
       });
 
-      debugPrint(error.toString());
+      debugPrint(_error.toString());
     }
   }
 

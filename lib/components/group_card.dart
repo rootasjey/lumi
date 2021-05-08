@@ -5,7 +5,10 @@ import 'package:hue_api/hue_dart.dart' hide Timer;
 import 'package:lumi/state/colors.dart';
 
 class GroupCard extends StatefulWidget {
+  final double elevation;
+
   final Group group;
+
   final VoidCallback onTap;
   final VoidCallback onToggle;
 
@@ -14,6 +17,7 @@ class GroupCard extends StatefulWidget {
     @required this.group,
     this.onTap,
     this.onToggle,
+    this.elevation = 0.0,
   }) : super(key: key);
 
   @override
@@ -22,21 +26,8 @@ class GroupCard extends StatefulWidget {
 
 class _GroupCardState extends State<GroupCard> {
   bool isLoading = false;
-  Color accentColor;
-
-  double elevation;
 
   Timer timerUpdate;
-
-  @override
-  void initState() {
-    super.initState();
-
-    setState(() {
-      accentColor = stateColors.primary;
-      updateElevation();
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +39,7 @@ class _GroupCardState extends State<GroupCard> {
         width: 240.0,
         height: 240.0,
         child: Card(
-          elevation: 6.0,
+          elevation: widget.elevation,
           child: InkWell(
             onTap: widget.onTap,
             child: Stack(
@@ -117,9 +108,5 @@ class _GroupCardState extends State<GroupCard> {
         ),
       ),
     );
-  }
-
-  void updateElevation() {
-    elevation = widget.group.action.on ? 6.0 : 0.0;
   }
 }

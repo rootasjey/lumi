@@ -15,15 +15,15 @@ class Lights extends StatefulWidget {
 }
 
 class _LightsState extends State<Lights> {
-  List<Light> lights = [];
-  Exception error;
+  List<Light> _lights = [];
+  Exception _error;
 
-  bool isLoading = false;
+  bool _isLoading = false;
 
-  Timer pageUpdateTimer;
-  Timer updateBrightnessTimer;
+  Timer _pageUpdateTimer;
+  Timer _updateBrightnessTimer;
 
-  final sliderValues = Map<int, double>();
+  final _sliderValues = Map<int, double>();
 
   @override
   void initState() {
@@ -34,14 +34,14 @@ class _LightsState extends State<Lights> {
 
   @override
   dispose() {
-    pageUpdateTimer?.cancel();
-    updateBrightnessTimer?.cancel();
+    _pageUpdateTimer?.cancel();
+    _updateBrightnessTimer?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) {
+    if (_isLoading) {
       return SliverList(
         delegate: SliverChildListDelegate([
           LoadingView(),
@@ -49,7 +49,7 @@ class _LightsState extends State<Lights> {
       );
     }
 
-    if (error != null && lights.length == 0) {
+    if (_error != null && _lights.length == 0) {
       return SliverList(
         delegate: SliverChildListDelegate([
           ErrorView(),
@@ -65,9 +65,10 @@ class _LightsState extends State<Lights> {
       ),
       delegate: SliverChildBuilderDelegate(
         (context, index) {
-          final light = lights[index];
+          final light = _lights[index];
           return LightCard(
             light: light,
+            elevation: light.state.on ? 6.0 : 0.0,
             lightColor: getLightcolor(light),
             brightness: light.state.brightness.toDouble(),
             onTap: () => onTap(light),
@@ -82,11 +83,11 @@ class _LightsState extends State<Lights> {
               fetch();
             },
             onBrightnessChanged: (value, resetOverrideBrightness) {
-              if (updateBrightnessTimer != null) {
-                updateBrightnessTimer.cancel();
+              if (_updateBrightnessTimer != null) {
+                _updateBrightnessTimer.cancel();
               }
 
-              updateBrightnessTimer = Timer(250.milliseconds, () async {
+              _updateBrightnessTimer = Timer(250.milliseconds, () async {
                 LightState state =
                     LightState((l) => l..brightness = value.toInt());
 
@@ -105,13 +106,13 @@ class _LightsState extends State<Lights> {
             },
           );
         },
-        childCount: lights.length,
+        childCount: _lights.length,
       ),
     );
   }
 
   void startPolling() async {
-    pageUpdateTimer = Timer.periodic(
+    _pageUpdateTimer = Timer.periodic(
       2.seconds,
       (timer) {
         fetch(showLoading: false);
@@ -122,29 +123,29 @@ class _LightsState extends State<Lights> {
   /// Fetch all lights' data.
   Future fetch({showLoading = false}) async {
     if (showLoading) {
-      setState(() => isLoading = true);
+      setState(() => _isLoading = true);
     }
 
     try {
-      lights = await userState.bridge.lights();
+      _lights = await userState.bridge.lights();
 
       final title =
-          '${lights.length} ${lights.length > 0 ? 'lights' : 'light'}';
+          '${_lights.length} ${_lights.length > 0 ? 'lights' : 'light'}';
 
       userState.setHomeSectionTitle(title);
 
-      lights.forEach((light) {
-        sliderValues[light.id] = light.state.brightness.toDouble();
+      _lights.forEach((light) {
+        _sliderValues[light.id] = light.state.brightness.toDouble();
       });
 
-      setState(() => isLoading = false);
+      setState(() => _isLoading = false);
     } on Exception catch (err) {
       setState(() {
-        error = err;
-        isLoading = false;
+        _error = err;
+        _isLoading = false;
       });
 
-      debugPrint(error.toString());
+      debugPrint(_error.toString());
     }
   }
 
