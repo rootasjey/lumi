@@ -173,7 +173,7 @@ class _ConnectionState extends State<Connection> {
               Padding(
                 padding: const EdgeInsets.all(50.0),
                 child: Image.asset(
-                  'assets/images/bridge_v2.png',
+                  'assets/images/bridge_v2.gif',
                   width: 200.0,
                   height: 200.0,
                   color: stateColors.foreground,
