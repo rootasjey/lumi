@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:hue_api/hue_dart.dart' hide Timer;
 import 'package:lumi/state/colors.dart';
+import 'package:lumi/utils/fonts.dart';
 import 'package:supercharged/supercharged.dart';
 
 class GroupCard extends StatefulWidget {
@@ -90,8 +91,10 @@ class _GroupCardState extends State<GroupCard> with TickerProviderStateMixin {
                         ),
                         child: Text(
                           group.name,
-                          style: TextStyle(
-                            fontSize: 24.0,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                          style: FontsUtils.mainStyle(
+                            fontSize: 20.0,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -100,6 +103,7 @@ class _GroupCardState extends State<GroupCard> with TickerProviderStateMixin {
                         opacity: 0.6,
                         child: Text(
                           group.type,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       Padding(
@@ -110,8 +114,9 @@ class _GroupCardState extends State<GroupCard> with TickerProviderStateMixin {
                           opacity: 0.6,
                           child: Text(
                             '${group.lightIds.length} lights',
-                            style: TextStyle(
-                              fontSize: 20.0,
+                            overflow: TextOverflow.ellipsis,
+                            style: FontsUtils.mainStyle(
+                              fontSize: 18.0,
                             ),
                           ),
                         ),

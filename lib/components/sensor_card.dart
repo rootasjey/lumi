@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hue_api/hue_dart.dart' hide Timer;
 import 'package:lumi/state/colors.dart';
+import 'package:lumi/utils/fonts.dart';
 import 'package:unicons/unicons.dart';
 import 'package:supercharged/supercharged.dart';
 
@@ -119,7 +120,7 @@ class _SensorCardState extends State<SensorCard> with TickerProviderStateMixin {
             opacity: 0.6,
             child: Text(
               '${sensor.config.battery}%',
-              style: TextStyle(
+              style: FontsUtils.mainStyle(
                 fontSize: 18.0,
                 fontWeight: FontWeight.w400,
               ),
@@ -137,8 +138,10 @@ class _SensorCardState extends State<SensorCard> with TickerProviderStateMixin {
       ),
       child: Text(
         widget.sensor.name,
-        style: TextStyle(
-          fontSize: 24.0,
+        overflow: TextOverflow.ellipsis,
+        maxLines: 2,
+        style: FontsUtils.mainStyle(
+          fontSize: 20.0,
           fontWeight: FontWeight.w500,
         ),
       ),

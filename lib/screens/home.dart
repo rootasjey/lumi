@@ -7,6 +7,7 @@ import 'package:lumi/screens/home/groups.dart';
 import 'package:lumi/screens/home/sensors.dart';
 import 'package:lumi/state/colors.dart';
 import 'package:lumi/state/user_state.dart';
+import 'package:lumi/utils/fonts.dart';
 import 'package:supercharged/supercharged.dart';
 import 'package:unicons/unicons.dart';
 
@@ -65,7 +66,7 @@ class _HomeState extends State<Home> {
     return HomeAppBar(
       title: Text(
         'lumi',
-        style: TextStyle(
+        style: FontsUtils.titleStyle(
           fontSize: 30.0,
         ),
       ),
@@ -94,7 +95,6 @@ class _HomeState extends State<Home> {
   Widget title() {
     return SliverPadding(
       padding: const EdgeInsets.only(
-        top: 0.0,
         left: 100.0,
       ),
       sliver: SliverList(
@@ -105,7 +105,7 @@ class _HomeState extends State<Home> {
                 opacity: 0.6,
                 child: Text(
                   '${userState.homeSectionTitle}',
-                  style: TextStyle(
+                  style: FontsUtils.titleStyle(
                     fontSize: 40.0,
                     fontWeight: FontWeight.w300,
                   ),

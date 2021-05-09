@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 ///
 /// See https://github.com/material-foundation/google-fonts-flutter/issues/35
 class FontsUtils {
-  static String fontFamily = GoogleFonts.barlow().fontFamily;
+  static String fontFamily = GoogleFonts.hammersmithOne().fontFamily;
 
   /// Return main text style for this app.
   static TextStyle mainStyle({
@@ -15,13 +15,13 @@ class FontsUtils {
     Color color,
   }) {
     if (color == null) {
-      return GoogleFonts.barlow(
+      return GoogleFonts.hammersmithOne(
         fontSize: fontSize,
         fontWeight: fontWeight,
       );
     }
 
-    return GoogleFonts.barlow(
+    return GoogleFonts.hammersmithOne(
       color: color,
       fontSize: fontSize,
       fontWeight: fontWeight,
@@ -30,9 +30,28 @@ class FontsUtils {
 
   /// Return main text style for this app.
   static TextStyle boldTitleStyle() {
-    return GoogleFonts.barlow(
+    return GoogleFonts.pacifico(
       fontSize: 80.0,
       fontWeight: FontWeight.w700,
+    );
+  }
+
+  static TextStyle titleStyle({
+    FontWeight fontWeight = FontWeight.w400,
+    double fontSize = 16.0,
+    Color color,
+  }) {
+    if (color == null) {
+      return GoogleFonts.pacifico(
+        fontSize: fontSize,
+        fontWeight: fontWeight,
+      );
+    }
+
+    return GoogleFonts.pacifico(
+      color: color,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
     );
   }
 }

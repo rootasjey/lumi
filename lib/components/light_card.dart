@@ -110,8 +110,10 @@ class _LightCardState extends State<LightCard> with TickerProviderStateMixin {
                         ),
                         child: Text(
                           light.name,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 3,
                           style: TextStyle(
-                            fontSize: 24.0,
+                            fontSize: 20.0,
                             fontWeight: FontWeight.w500,
                           ),
                         ),

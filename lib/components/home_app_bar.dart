@@ -36,7 +36,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
     return SliverLayoutBuilder(
       builder: (context, constrains) {
         final isNarrow = constrains.crossAxisExtent < 700.0;
-        final leftPadding = isNarrow ? 0.0 : 100.0;
+        final leftPadding = isNarrow ? 0.0 : 80.0;
 
         return Observer(
           builder: (context) {
