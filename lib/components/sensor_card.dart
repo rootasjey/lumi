@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hue_api/hue_dart.dart' hide Timer;
 import 'package:lumi/state/colors.dart';
+import 'package:unicons/unicons.dart';
+import 'package:supercharged/supercharged.dart';
 
 class SensorCard extends StatefulWidget {
   final double elevation;
@@ -22,18 +24,51 @@ class SensorCard extends StatefulWidget {
   _SensorCardState createState() => _SensorCardState();
 }
 
-class _SensorCardState extends State<SensorCard> {
+class _SensorCardState extends State<SensorCard> with TickerProviderStateMixin {
+  Animation<double> scaleAnimation;
+  AnimationController scaleAnimationController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    scaleAnimationController = AnimationController(
+      lowerBound: 0.8,
+      upperBound: 1.0,
+      duration: 250.milliseconds,
+      vsync: this,
+    );
+
+    scaleAnimation = CurvedAnimation(
+      parent: scaleAnimationController,
+      curve: Curves.fastOutSlowIn,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Hero(
-      tag: widget.sensor.id,
+    return ScaleTransition(
+      scale: scaleAnimation,
       child: SizedBox(
         width: 240.0,
         height: 240.0,
         child: Card(
           elevation: widget.elevation,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.0),
+            side: BorderSide(color: Colors.transparent),
+          ),
+          clipBehavior: Clip.hardEdge,
           child: InkWell(
             onTap: widget.onTap,
+            onHover: (isHover) {
+              if (isHover) {
+                scaleAnimationController.forward();
+                return;
+              }
+
+              scaleAnimationController.reverse();
+            },
             child: Stack(
               children: [
                 texts(),
@@ -47,58 +82,65 @@ class _SensorCardState extends State<SensorCard> {
   }
 
   Widget texts() {
-    final sensor = widget.sensor;
-
     return Padding(
       padding: const EdgeInsets.all(30.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          name(),
+          battery(),
+        ],
+      ),
+    );
+  }
+
+  Widget battery() {
+    final sensor = widget.sensor;
+
+    return Tooltip(
+      message: "${sensor.config.battery}% of battery remaining for this sensor",
+      child: Row(
+        children: [
           Padding(
             padding: const EdgeInsets.only(
-              bottom: 8.0,
+              right: 8.0,
             ),
+            child: Icon(
+              sensor.config.battery < 5
+                  ? UniconsLine.battery_bolt
+                  : UniconsLine.battery_empty,
+              color: sensor.config.battery < 5
+                  ? Colors.red.shade300
+                  : stateColors.foreground,
+            ),
+          ),
+          Opacity(
+            opacity: 0.6,
             child: Text(
-              sensor.name,
+              '${sensor.config.battery}%',
               style: TextStyle(
-                fontSize: 24.0,
-                fontWeight: FontWeight.w500,
+                fontSize: 18.0,
+                fontWeight: FontWeight.w400,
               ),
             ),
           ),
-          Tooltip(
-            message:
-                "${sensor.config.battery}% of battery remaining for this sensor",
-            child: Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(
-                    right: 8.0,
-                  ),
-                  child: Icon(
-                    sensor.config.battery < 5
-                        ? Icons.battery_alert
-                        : Icons.battery_full,
-                    color: sensor.config.battery < 5
-                        ? Colors.red.shade300
-                        : stateColors.foreground,
-                  ),
-                ),
-                Opacity(
-                  opacity: 0.6,
-                  child: Text(
-                    '${sensor.config.battery}%',
-                    style: TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
         ],
+      ),
+    );
+  }
+
+  Widget name() {
+    return Padding(
+      padding: const EdgeInsets.only(
+        bottom: 8.0,
+      ),
+      child: Text(
+        widget.sensor.name,
+        style: TextStyle(
+          fontSize: 24.0,
+          fontWeight: FontWeight.w500,
+        ),
       ),
     );
   }
@@ -113,8 +155,8 @@ class _SensorCardState extends State<SensorCard> {
         tooltip: 'Turn ${sensor.config.on ? 'off' : 'on'}',
         onPressed: widget.onToggle,
         icon: Icon(
-          Icons.sensor_window_outlined,
-          size: 30.0,
+          UniconsLine.dice_one,
+          size: 25.0,
           color: sensor.config.on
               ? stateColors.primary
               : stateColors.foreground.withOpacity(0.6),
