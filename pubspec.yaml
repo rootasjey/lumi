@@ -43,7 +43,7 @@ dependencies:
   line_awesome_flutter: 1.0.1
   logger: 1.0.0
   mobx: 1.2.1+4
-  random_color: 1.0.5
+  random_color: 1.0.6-nullsafety
   sticky_headers: 0.2.0
   supercharged: 2.0.0
   unicons: 1.0.2
