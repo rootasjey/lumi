@@ -8,6 +8,7 @@ import 'package:lumi/screens/home/sensors.dart';
 import 'package:lumi/state/colors.dart';
 import 'package:lumi/state/user_state.dart';
 import 'package:supercharged/supercharged.dart';
+import 'package:unicons/unicons.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -15,12 +16,12 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final scrollController = ScrollController();
+  final _scrollController = ScrollController();
 
   /// Selected tab (sensors, lights, scenes, ...).
-  int selectedIndex = 0;
+  int _selectedIndex = 0;
 
-  final childrenBody = [
+  final _bodyChildren = [
     Lights(),
     Sensors(),
     Groups(),
@@ -42,13 +43,19 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        controller: scrollController,
-        slivers: <Widget>[
-          appBar(),
-          navigation(),
-          title(),
-          body(),
+      body: Row(
+        children: [
+          Expanded(
+            child: CustomScrollView(
+              controller: _scrollController,
+              slivers: <Widget>[
+                appBar(),
+                title(),
+                body(),
+              ],
+            ),
+          ),
+          sideBar(),
         ],
       ),
     );
@@ -63,7 +70,7 @@ class _HomeState extends State<Home> {
         ),
       ),
       onTapIconHeader: () {
-        scrollController.animateTo(
+        _scrollController.animateTo(
           0,
           duration: 250.milliseconds,
           curve: Curves.decelerate,
@@ -72,96 +79,22 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget navigation() {
-    return SliverList(
-      delegate: SliverChildListDelegate([
-        Container(
-          height: 100.0,
-          padding: const EdgeInsets.only(
-            top: 60.0,
-            left: 100.0,
-          ),
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: [
-              navButton(
-                title: 'LIGHTS',
-                index: 0,
-              ),
-              navButton(
-                title: 'SENSORS',
-                index: 1,
-              ),
-              navButton(
-                title: 'SCENES',
-                index: 2,
-              ),
-            ],
-          ),
-        ),
-      ]),
-    );
-  }
-
-  Widget navButton({
-    String title,
-    int index = 0,
-  }) {
-    Widget childButton;
-
-    if (index != selectedIndex) {
-      childButton = TextButton(
-        onPressed: () => setState(() => selectedIndex = index),
-        child: Opacity(
-          opacity: 0.6,
-          child: Text(
-            title,
-            style: TextStyle(
-              fontSize: 20.0,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-        ),
-      );
-    } else {
-      childButton = ElevatedButton(
-        onPressed: () => setState(() => selectedIndex = index),
-        style: ElevatedButton.styleFrom(
-          primary: stateColors.primary,
-          textStyle: TextStyle(
-            color: Colors.white,
-          ),
-        ),
-        child: Text(
-          title,
-          style: TextStyle(
-            fontSize: 20.0,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      );
-    }
-
-    return Padding(
-      padding: const EdgeInsets.only(right: 20.0),
-      child: childButton,
-    );
-  }
-
   Widget body() {
     return SliverPadding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 100.0,
-        vertical: 80.0,
+      padding: const EdgeInsets.only(
+        left: 100.0,
+        right: 100.0,
+        top: 40,
+        bottom: 300.0,
       ),
-      sliver: childrenBody[selectedIndex],
+      sliver: _bodyChildren[_selectedIndex],
     );
   }
 
   Widget title() {
     return SliverPadding(
       padding: const EdgeInsets.only(
-        top: 40.0,
+        top: 0.0,
         left: 100.0,
       ),
       sliver: SliverList(
@@ -181,6 +114,60 @@ class _HomeState extends State<Home> {
             },
           ),
         ]),
+      ),
+    );
+  }
+
+  Widget navButton({
+    String title,
+    int index = 0,
+    Widget icon,
+  }) {
+    return IconButton(
+      tooltip: title,
+      color: index == _selectedIndex ? stateColors.primary : null,
+      onPressed: () {
+        setState(() => _selectedIndex = index);
+      },
+      icon: Opacity(
+        opacity: index == _selectedIndex ? 1.0 : 0.6,
+        child: icon,
+      ),
+    );
+  }
+
+  Widget sideBar() {
+    return Container(
+      width: 80.0,
+      child: Material(
+        color: stateColors.appBackground,
+        elevation: 6.0,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            navButton(
+              index: 0,
+              title: "Lights",
+              icon: Icon(UniconsLine.lightbulb_alt),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 24.0),
+            ),
+            navButton(
+              index: 1,
+              title: "Sensors",
+              icon: Icon(UniconsLine.dice_one),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 24.0),
+            ),
+            navButton(
+              index: 2,
+              title: "Rooms",
+              icon: Icon(UniconsLine.bed_double),
+            ),
+          ],
+        ),
       ),
     );
   }
