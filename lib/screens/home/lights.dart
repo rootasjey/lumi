@@ -7,6 +7,7 @@ import 'package:lumi/components/light_card.dart';
 import 'package:lumi/components/loading_view.dart';
 import 'package:lumi/screens/home/light_page.dart';
 import 'package:lumi/state/user_state.dart';
+import 'package:lumi/utils/app_logger.dart';
 import 'package:supercharged/supercharged.dart';
 
 class Lights extends StatefulWidget {
@@ -145,7 +146,7 @@ class _LightsState extends State<Lights> {
         _isLoading = false;
       });
 
-      debugPrint(_error.toString());
+      appLogger.e(err);
     }
   }
 

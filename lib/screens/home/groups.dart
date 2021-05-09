@@ -7,6 +7,7 @@ import 'package:lumi/components/group_card.dart';
 import 'package:lumi/components/loading_view.dart';
 import 'package:lumi/screens/home/group_page.dart';
 import 'package:lumi/state/user_state.dart';
+import 'package:lumi/utils/app_logger.dart';
 import 'package:supercharged/supercharged.dart';
 
 class Groups extends StatefulWidget {
@@ -117,7 +118,7 @@ class _GroupsState extends State<Groups> {
         _isLoading = false;
       });
 
-      debugPrint(_error.toString());
+      appLogger.e(err);
     }
   }
 
