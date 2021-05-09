@@ -24,10 +24,24 @@
   "dark": "Sombre",
   "dashboard": "Tableau de bord",
   "developers": "Développeurs",
+  "groups_number": {
+    "zero": "{} scène",
+    "one": "{} scène",
+    "two": "{} scènes",
+    "many": "{} scènes",
+    "other": "{} scènes"
+  },
   "iap": "Achats intégrés",
   "iap_content": "Cette app peut contenir des achats intégrés dans le but de vous fournir des fonctionnalités supplémentaires.",
   "language": "Langue",
   "light": "Clair",
+  "lights_number": {
+    "zero": "{} éclairage",
+    "one": "{} éclairage",
+    "two": "{} éclairages",
+    "many": "{} éclairages",
+    "other": "{} éclairages"
+  },
   "loading": "Chargement...",
   "next": "Suivant",
   "posts": "Posts",
@@ -36,6 +50,13 @@
   "quit": "Quitter",
   "report_bug": "Signaler a bug",
   "resources": "Ressources",
+  "sensors_number": {
+    "zero": "{} capteurs",
+    "one": "{} capteur",
+    "two": "{} capteurs",
+    "many": "{} capteurs",
+    "other": "{} capteurss"
+  },
   "settings": "Paramètres",
   "settings_subtitle": "Vous pouvez modifier vos préférences ici",
   "share_on_twitter": "Partager sur Twitter",

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hue_api/hue_dart.dart' hide Timer;
 import 'package:lumi/components/error_view.dart';
@@ -130,8 +131,7 @@ class _LightsState extends State<Lights> {
     try {
       _lights = await userState.bridge.lights();
 
-      final title =
-          '${_lights.length} ${_lights.length > 0 ? 'lights' : 'light'}';
+      final title = "lights_number".plural(_lights.length);
 
       userState.setHomeSectionTitle(title);
 

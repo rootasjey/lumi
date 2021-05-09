@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hue_api/hue_dart.dart' hide Timer;
 import 'package:lumi/state/colors.dart';
 import 'package:supercharged/supercharged.dart';
+import 'package:unicons/unicons.dart';
 
 class LightCard extends StatefulWidget {
   final Color lightColor;
@@ -104,37 +105,12 @@ class _LightCardState extends State<LightCard> with TickerProviderStateMixin {
                     mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          bottom: 8.0,
-                        ),
-                        child: Text(
-                          light.name,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 3,
-                          style: TextStyle(
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
+                      name(),
                       brightnessSlider(light),
                     ],
                   ),
                 ),
-                Positioned(
-                  top: 20.0,
-                  left: 20.0,
-                  child: IconButton(
-                    tooltip: 'Turn ${light.state.on ? 'off' : 'on'}',
-                    onPressed: widget.onToggle,
-                    icon: Icon(Icons.lightbulb_outline,
-                        size: 30.0,
-                        color: light.state.on
-                            ? widget.lightColor
-                            : stateColors.foreground.withOpacity(0.6)),
-                  ),
-                ),
+                toggleButton(),
               ],
             ),
           ),
@@ -165,6 +141,41 @@ class _LightCardState extends State<LightCard> with TickerProviderStateMixin {
           widget.onBrightnessChanged(value, resetOverrideBrightness);
         });
       },
+    );
+  }
+
+  Widget name() {
+    return Padding(
+      padding: const EdgeInsets.only(
+        bottom: 8.0,
+      ),
+      child: Text(
+        widget.light.name,
+        overflow: TextOverflow.ellipsis,
+        maxLines: 3,
+        style: TextStyle(
+          fontSize: 20.0,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    );
+  }
+
+  Widget toggleButton() {
+    final light = widget.light;
+
+    return Positioned(
+      top: 20.0,
+      left: 20.0,
+      child: IconButton(
+        tooltip: 'Turn ${light.state.on ? 'off' : 'on'}',
+        onPressed: widget.onToggle,
+        icon: Icon(UniconsLine.lightbulb_alt,
+            size: 25.0,
+            color: light.state.on
+                ? widget.lightColor
+                : stateColors.foreground.withOpacity(0.6)),
+      ),
     );
   }
 

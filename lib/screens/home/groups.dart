@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hue_api/hue_dart.dart' hide Timer;
 import 'package:lumi/components/error_view.dart';
@@ -103,8 +104,7 @@ class _GroupsState extends State<Groups> {
     try {
       final groupsItems = await userState.bridge.groups();
 
-      final title =
-          '${groupsItems.length} ${groupsItems.length > 0 ? 'scenes' : 'scene'}';
+      final title = "groups_number".plural(groupsItems.length);
 
       userState.setHomeSectionTitle(title);
 

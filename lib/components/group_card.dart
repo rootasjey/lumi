@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hue_api/hue_dart.dart' hide Timer;
 import 'package:lumi/state/colors.dart';
 import 'package:lumi/utils/fonts.dart';
 import 'package:supercharged/supercharged.dart';
+import 'package:unicons/unicons.dart';
 
 class GroupCard extends StatefulWidget {
   final double elevation;
@@ -113,7 +115,7 @@ class _GroupCardState extends State<GroupCard> with TickerProviderStateMixin {
                         child: Opacity(
                           opacity: 0.6,
                           child: Text(
-                            '${group.lightIds.length} lights',
+                            "lights_number".plural(group.lightIds.length),
                             overflow: TextOverflow.ellipsis,
                             style: FontsUtils.mainStyle(
                               fontSize: 18.0,
@@ -124,26 +126,31 @@ class _GroupCardState extends State<GroupCard> with TickerProviderStateMixin {
                     ],
                   ),
                 ),
-                Positioned(
-                  top: 20.0,
-                  left: 20.0,
-                  child: IconButton(
-                    tooltip: group.action.on
-                        ? 'Turn OFF this scene'
-                        : 'Turn ON this scene',
-                    onPressed: widget.onToggle,
-                    icon: Icon(
-                      Icons.kitchen,
-                      size: 30.0,
-                      color: group.action.on
-                          ? stateColors.primary
-                          : stateColors.foreground.withOpacity(0.6),
-                    ),
-                  ),
-                ),
+                toggleButton(),
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget toggleButton() {
+    final group = widget.group;
+
+    return Positioned(
+      top: 20.0,
+      left: 20.0,
+      child: IconButton(
+        tooltip:
+            group.action.on ? "turn_scene_off".tr() : "turn_scene_off".tr(),
+        onPressed: widget.onToggle,
+        icon: Icon(
+          UniconsLine.bed_double,
+          size: 30.0,
+          color: group.action.on
+              ? stateColors.primary
+              : stateColors.foreground.withOpacity(0.6),
         ),
       ),
     );

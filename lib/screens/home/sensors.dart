@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hue_api/hue_dart.dart' hide Timer;
 import 'package:lumi/components/error_view.dart';
@@ -134,8 +135,7 @@ class _SensorsState extends State<Sensors> {
       sensorsItems
           .retainWhere((s) => s.capabilities != null && s.capabilities.primary);
 
-      final title =
-          '${sensorsItems.length} ${sensorsItems.length > 0 ? 'sensors' : 'sensor'}';
+      final title = "sensors_number".plural(sensorsItems.length);
       userState.setHomeSectionTitle(title);
 
       setState(() {
