@@ -2,8 +2,9 @@ import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:lumi/router/auth_guard.dart';
 import 'package:lumi/router/no_auth_guard.dart';
-import 'package:lumi/screens/about.dart';
+import 'package:lumi/screens/about_page.dart';
 import 'package:lumi/screens/app_presentation.dart';
+import 'package:lumi/screens/config_page.dart';
 import 'package:lumi/screens/connect_page.dart';
 import 'package:lumi/screens/home.dart';
 import 'package:lumi/screens/home/group_page.dart';
@@ -14,6 +15,7 @@ import 'package:lumi/screens/home/sensor_page.dart';
 import 'package:lumi/screens/home/sensors_page.dart';
 import 'package:lumi/screens/tos.dart';
 import 'package:lumi/screens/undefined_page.dart';
+import 'package:lumi/screens/users_page.dart';
 
 @MaterialAutoRouter(routes: [
   AutoRoute(
@@ -54,16 +56,27 @@ import 'package:lumi/screens/undefined_page.dart';
       ),
     ],
   ),
+  MaterialRoute(path: '/about', page: AboutPage),
   AutoRoute(
     path: '/presentation',
     page: AppPresentation,
     guards: [NoAuthGuard],
   ),
-  MaterialRoute(path: '/about', page: About),
   AutoRoute(
     path: '/connect',
     page: ConnectPage,
     guards: [NoAuthGuard],
+  ),
+  AutoRoute(
+    path: '/settings',
+    name: 'SettingsRouter',
+    page: EmptyRouterPage,
+    guards: [AuthGuard],
+    children: [
+      AutoRoute(path: '', page: ConfigPage),
+      AutoRoute(path: 'users', page: UsersPage),
+      RedirectRoute(path: '*', redirectTo: ''),
+    ],
   ),
   MaterialRoute(path: '/tos', page: Tos),
   MaterialRoute(path: '*', page: UndefinedPage),

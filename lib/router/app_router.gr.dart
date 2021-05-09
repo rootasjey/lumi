@@ -4,12 +4,15 @@
 // AutoRouteGenerator
 // **************************************************************************
 
+import 'dart:ui' as _i20;
+
 import 'package:auto_route/auto_route.dart' as _i1;
 import 'package:flutter/material.dart' as _i2;
-import 'package:hue_api/hue_dart.dart' as _i17;
+import 'package:hue_api/hue_dart.dart' as _i19;
 
-import '../screens/about.dart' as _i7;
-import '../screens/app_presentation.dart' as _i6;
+import '../screens/about_page.dart' as _i6;
+import '../screens/app_presentation.dart' as _i7;
+import '../screens/config_page.dart' as _i17;
 import '../screens/connect_page.dart' as _i8;
 import '../screens/home.dart' as _i5;
 import '../screens/home/group_page.dart' as _i12;
@@ -20,6 +23,7 @@ import '../screens/home/sensor_page.dart' as _i16;
 import '../screens/home/sensors_page.dart' as _i15;
 import '../screens/tos.dart' as _i9;
 import '../screens/undefined_page.dart' as _i10;
+import '../screens/users_page.dart' as _i18;
 import 'auth_guard.dart' as _i3;
 import 'no_auth_guard.dart' as _i4;
 
@@ -37,11 +41,11 @@ class AppRouter extends _i1.RootStackRouter {
     HomeRoute.name: (entry) {
       return _i1.MaterialPageX(entry: entry, child: _i5.Home());
     },
-    AppPresentationRoute.name: (entry) {
-      return _i1.MaterialPageX(entry: entry, child: _i6.AppPresentation());
+    AboutPageRoute.name: (entry) {
+      return _i1.MaterialPageX(entry: entry, child: _i6.AboutPage());
     },
-    AboutRoute.name: (entry) {
-      return _i1.MaterialPageX(entry: entry, child: _i7.About());
+    AppPresentationRoute.name: (entry) {
+      return _i1.MaterialPageX(entry: entry, child: _i7.AppPresentation());
     },
     ConnectPageRoute.name: (entry) {
       var route = entry.routeData.as<ConnectPageRoute>();
@@ -49,6 +53,10 @@ class AppRouter extends _i1.RootStackRouter {
           entry: entry,
           child: _i8.ConnectPage(
               key: route.key, onSigninResult: route.onSigninResult));
+    },
+    SettingsRouter.name: (entry) {
+      return _i1.MaterialPageX(
+          entry: entry, child: const _i1.EmptyRouterPage());
     },
     TosRoute.name: (entry) {
       return _i1.MaterialPageX(entry: entry, child: _i9.Tos());
@@ -96,6 +104,12 @@ class AppRouter extends _i1.RootStackRouter {
           entry: entry,
           child:
               _i16.SensorPage(sensor: route.sensor, sensorId: route.sensorId));
+    },
+    ConfigPageRoute.name: (entry) {
+      return _i1.MaterialPageX(entry: entry, child: _i17.ConfigPage());
+    },
+    UsersPageRoute.name: (entry) {
+      return _i1.MaterialPageX(entry: entry, child: _i18.UsersPage());
     }
   };
 
@@ -155,17 +169,33 @@ class AppRouter extends _i1.RootStackRouter {
                         path: '*', redirectTo: '', fullMatch: true)
                   ])
             ]),
+        _i1.RouteConfig<AboutPageRoute>(AboutPageRoute.name,
+            path: '/about',
+            routeBuilder: (match) => AboutPageRoute.fromMatch(match)),
         _i1.RouteConfig<AppPresentationRoute>(AppPresentationRoute.name,
             path: '/presentation',
             routeBuilder: (match) => AppPresentationRoute.fromMatch(match),
             guards: [noAuthGuard]),
-        _i1.RouteConfig<AboutRoute>(AboutRoute.name,
-            path: '/about',
-            routeBuilder: (match) => AboutRoute.fromMatch(match)),
         _i1.RouteConfig<ConnectPageRoute>(ConnectPageRoute.name,
             path: '/connect',
             routeBuilder: (match) => ConnectPageRoute.fromMatch(match),
             guards: [noAuthGuard]),
+        _i1.RouteConfig<SettingsRouter>(SettingsRouter.name,
+            path: '/settings',
+            routeBuilder: (match) => SettingsRouter.fromMatch(match),
+            guards: [
+              authGuard
+            ],
+            children: [
+              _i1.RouteConfig<ConfigPageRoute>(ConfigPageRoute.name,
+                  path: '',
+                  routeBuilder: (match) => ConfigPageRoute.fromMatch(match)),
+              _i1.RouteConfig<UsersPageRoute>(UsersPageRoute.name,
+                  path: 'users',
+                  routeBuilder: (match) => UsersPageRoute.fromMatch(match)),
+              _i1.RouteConfig('*#redirect',
+                  path: '*', redirectTo: '', fullMatch: true)
+            ]),
         _i1.RouteConfig<TosRoute>(TosRoute.name,
             path: '/tos', routeBuilder: (match) => TosRoute.fromMatch(match)),
         _i1.RouteConfig<UndefinedPageRoute>(UndefinedPageRoute.name,
@@ -183,20 +213,20 @@ class HomeRoute extends _i1.PageRouteInfo {
   static const String name = 'HomeRoute';
 }
 
+class AboutPageRoute extends _i1.PageRouteInfo {
+  const AboutPageRoute() : super(name, path: '/about');
+
+  AboutPageRoute.fromMatch(_i1.RouteMatch match) : super.fromMatch(match);
+
+  static const String name = 'AboutPageRoute';
+}
+
 class AppPresentationRoute extends _i1.PageRouteInfo {
   const AppPresentationRoute() : super(name, path: '/presentation');
 
   AppPresentationRoute.fromMatch(_i1.RouteMatch match) : super.fromMatch(match);
 
   static const String name = 'AppPresentationRoute';
-}
-
-class AboutRoute extends _i1.PageRouteInfo {
-  const AboutRoute() : super(name, path: '/about');
-
-  AboutRoute.fromMatch(_i1.RouteMatch match) : super.fromMatch(match);
-
-  static const String name = 'AboutRoute';
 }
 
 class ConnectPageRoute extends _i1.PageRouteInfo {
@@ -213,6 +243,15 @@ class ConnectPageRoute extends _i1.PageRouteInfo {
   final void Function(bool) onSigninResult;
 
   static const String name = 'ConnectPageRoute';
+}
+
+class SettingsRouter extends _i1.PageRouteInfo {
+  const SettingsRouter({List<_i1.PageRouteInfo> children})
+      : super(name, path: '/settings', initialChildren: children);
+
+  SettingsRouter.fromMatch(_i1.RouteMatch match) : super.fromMatch(match);
+
+  static const String name = 'SettingsRouter';
 }
 
 class TosRoute extends _i1.PageRouteInfo {
@@ -275,7 +314,7 @@ class GroupPageRoute extends _i1.PageRouteInfo {
         groupId = match.pathParams.getString('groupId'),
         super.fromMatch(match);
 
-  final _i17.Group group;
+  final _i19.Group group;
 
   final String groupId;
 
@@ -300,11 +339,11 @@ class LightPageRoute extends _i1.PageRouteInfo {
         color = null,
         super.fromMatch(match);
 
-  final _i17.Light light;
+  final _i19.Light light;
 
   final String lightId;
 
-  final _i2.Color color;
+  final _i20.Color color;
 
   static const String name = 'LightPageRoute';
 }
@@ -326,9 +365,25 @@ class SensorPageRoute extends _i1.PageRouteInfo {
         sensorId = match.pathParams.getString('sensorId'),
         super.fromMatch(match);
 
-  final _i17.Sensor sensor;
+  final _i19.Sensor sensor;
 
   final String sensorId;
 
   static const String name = 'SensorPageRoute';
+}
+
+class ConfigPageRoute extends _i1.PageRouteInfo {
+  const ConfigPageRoute() : super(name, path: '');
+
+  ConfigPageRoute.fromMatch(_i1.RouteMatch match) : super.fromMatch(match);
+
+  static const String name = 'ConfigPageRoute';
+}
+
+class UsersPageRoute extends _i1.PageRouteInfo {
+  const UsersPageRoute() : super(name, path: 'users');
+
+  UsersPageRoute.fromMatch(_i1.RouteMatch match) : super.fromMatch(match);
+
+  static const String name = 'UsersPageRoute';
 }

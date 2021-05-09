@@ -1,7 +1,8 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hue_api/hue_dart.dart';
 import 'package:lumi/components/home_app_bar.dart';
-import 'package:lumi/screens/home.dart';
+import 'package:lumi/router/app_router.gr.dart';
 import 'package:lumi/state/user_state.dart';
 
 class ConfigPage extends StatefulWidget {
@@ -28,26 +29,9 @@ class _ConfigPageState extends State<ConfigPage> {
         slivers: [
           HomeAppBar(
             automaticallyImplyLeading: true,
-            title: Text(
-              'lumi',
-              style: TextStyle(
-                fontSize: 50.0,
-              ),
-            ),
             onTapIconHeader: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) {
-                    return Home();
-                  },
-                ),
-              );
+              context.router.navigate(HomeRoute());
             },
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.only(
-              top: 100.0,
-            ),
           ),
           header(),
           body(),

@@ -3,11 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:hive/hive.dart';
 import 'package:lumi/components/app_icon.dart';
+import 'package:lumi/router/app_router.gr.dart';
 import 'package:lumi/router/route_names.dart';
-import 'package:lumi/screens/about.dart';
-import 'package:lumi/screens/config.dart';
-import 'package:lumi/screens/connect_page.dart';
-import 'package:lumi/screens/users.dart';
 import 'package:lumi/state/colors.dart';
 import 'package:lumi/state/user_state.dart';
 import 'package:lumi/utils/brightness.dart';
@@ -205,19 +202,15 @@ class _HomeAppBarState extends State<HomeAppBar> {
             disconnect();
             break;
           case 'users':
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => UsersPage()),
-            );
+            context.router.root
+                .push(SettingsRouter(children: [UsersPageRoute()]));
             break;
           case 'config':
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => ConfigPage()),
-            );
+            context.router.root
+                .push(SettingsRouter(children: [ConfigPageRoute()]));
             break;
           case AboutRoute:
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => About()),
-            );
+            context.router.root.push(AboutPageRoute());
 
             break;
           default:
@@ -231,10 +224,6 @@ class _HomeAppBarState extends State<HomeAppBar> {
     userState.bridge.username = '';
     userState.setUserDisconnected();
 
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) {
-        return ConnectPage();
-      }),
-    );
+    context.router.root.push(ConnectPageRoute());
   }
 }

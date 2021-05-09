@@ -1,18 +1,22 @@
 import 'dart:ui';
 
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:lumi/components/home_app_bar.dart';
-import 'package:lumi/screens/home.dart';
+import 'package:lumi/router/app_router.gr.dart';
 import 'package:lumi/state/colors.dart';
+import 'package:lumi/utils/constants.dart';
+import 'package:lumi/utils/fonts.dart';
+import 'package:unicons/unicons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class About extends StatefulWidget {
+class AboutPage extends StatefulWidget {
   @override
-  _AboutState createState() => _AboutState();
+  _AboutPageState createState() => _AboutPageState();
 }
 
-class _AboutState extends State<About> {
+class _AboutPageState extends State<AboutPage> {
   final titleStyle = TextStyle(
     fontSize: 30.0,
     fontWeight: FontWeight.w400,
@@ -24,9 +28,7 @@ class _AboutState extends State<About> {
   );
 
   final titleOpacity = 0.9;
-
   final paragraphOpacity = 0.6;
-
   final captionOpacity = 0.6;
 
   @override
@@ -35,78 +37,73 @@ class _AboutState extends State<About> {
       body: CustomScrollView(
         slivers: [
           HomeAppBar(
-            automaticallyImplyLeading: false,
-            title: Text(
-              'lumi',
-              style: TextStyle(
-                fontSize: 50.0,
-              ),
-            ),
-            onTapIconHeader: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) {
-                    return Home();
-                  },
-                ),
-              );
-            },
+            onTapIconHeader: () => context.router.navigate(HomeRoute()),
           ),
-          SliverList(
-            delegate: SliverChildListDelegate([
-              headerTitle(),
-            ]),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.only(
-              left: 150.0,
-              bottom: 300.0,
-            ),
-            sliver: body(),
-          ),
+          header(),
+          body(),
         ],
       ),
     );
   }
 
   Widget body() {
-    return SliverList(
-      delegate: SliverChildListDelegate([
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            thePurpose(),
-            theDevStack(),
-            thePerson(),
-          ],
-        ),
-      ]),
+    return SliverPadding(
+      padding: const EdgeInsets.only(
+        left: 150.0,
+        bottom: 300.0,
+      ),
+      sliver: SliverList(
+        delegate: SliverChildListDelegate([
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              thePurpose(),
+              theDevStack(),
+              thePerson(),
+            ],
+          ),
+        ]),
+      ),
     );
   }
 
-  Widget headerTitle() {
-    return Padding(
-      padding: const EdgeInsets.all(
-        90.0,
-      ),
-      child: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: IconButton(
-              onPressed: () => Navigator.of(context).pop(),
-              icon: Icon(Icons.arrow_back),
-            ),
+  Widget header() {
+    return SliverList(
+      delegate: SliverChildListDelegate([
+        Padding(
+          padding: const EdgeInsets.all(
+            90.0,
           ),
-          Text(
-            'About',
-            style: TextStyle(
-              fontSize: 70.0,
-              fontWeight: FontWeight.bold,
-            ),
+          child: Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(right: 16.0),
+                child: IconButton(
+                  onPressed: context.router.pop,
+                  icon: Icon(UniconsLine.arrow_left),
+                ),
+              ),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'About',
+                    style: TextStyle(
+                      fontSize: 70.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Opacity(
+                    opacity: 0.6,
+                    child: Text(Constants.appVersion),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ]),
     );
   }
 
@@ -192,12 +189,18 @@ class _AboutState extends State<About> {
               style: ElevatedButton.styleFrom(
                 primary: stateColors.primary,
                 textStyle: TextStyle(
-                  color: Colors.white,
+                  color: Colors.black,
                 ),
               ),
-              icon: Icon(LineAwesomeIcons.github),
-              label: Text(
-                'Github',
+              icon: Icon(LineAwesomeIcons.github, color: Colors.black54),
+              label: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Text(
+                  'Github',
+                  style: FontsUtils.mainStyle(
+                    color: Colors.black54,
+                  ),
+                ),
               ),
             ),
           ),
@@ -254,12 +257,18 @@ class _AboutState extends State<About> {
               style: ElevatedButton.styleFrom(
                 primary: stateColors.primary,
                 textStyle: TextStyle(
-                  color: Colors.white,
+                  color: Colors.black,
                 ),
               ),
-              icon: Icon(LineAwesomeIcons.box_open),
-              label: Text(
-                'rootasjey.dev',
+              icon: Icon(LineAwesomeIcons.box_open, color: Colors.black54),
+              label: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Text(
+                  'rootasjey.dev',
+                  style: FontsUtils.mainStyle(
+                    color: Colors.black54,
+                  ),
+                ),
               ),
             ),
           ),
