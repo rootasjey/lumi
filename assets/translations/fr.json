@@ -12,6 +12,8 @@
   "analytics_content": "Les applications web et mobiles collectent des statistiques d'usage afin d'améliorer nos services. Cependant, vos données personnelles ne sont jamais volontairement partagées ou monétisées avec des tiers.",
   "apps": "Applications",
   "back": "Retour",
+  "battery_level": "Niveau de la batterie",
+  "battery_remaining": "{}% de batterie restant pour ce capteur",
   "brightness": "Luminosité",
   "cancel": "Annuler",
   "confirm": "Confirmer",
@@ -35,6 +37,8 @@
   "iap_content": "Cette app peut contenir des achats intégrés dans le but de vous fournir des fonctionnalités supplémentaires.",
   "language": "Langue",
   "light": "Clair",
+  "light_one": "Éclairage",
+  "lights": "Éclairages",
   "lights_number": {
     "zero": "{} éclairage",
     "one": "{} éclairage",
@@ -43,13 +47,21 @@
     "other": "{} éclairages"
   },
   "loading": "Chargement...",
+  "motion": "Mouvement",
   "next": "Suivant",
+  "no": "Non",
   "posts": "Posts",
   "presentation_subtitle": "Pour commencer à utiliser l'app, appuyez sur le bouton de connecxion ci-dessous, puis lier votre pont Philips Hue avec l'app.",
   "projects": "Projets",
   "quit": "Quitter",
   "report_bug": "Signaler a bug",
   "resources": "Ressources",
+  "scene": "Scène",
+  "scenes": "Scènes",
+  "sensor": "Capteur",
+  "sensor_active": "Actif: {}",
+  "sensor_last": "Dernière: {}",
+  "sensors": "Capteurs",
   "sensors_number": {
     "zero": "{} capteurs",
     "one": "{} capteur",
@@ -74,5 +86,6 @@
   "tos_7": "Votre utilisation prolongée de notre site web et nos applications sera comprise comme l'acceptation et l'adhésion à nos conditions générales d'utilisation, notre politique de confidentialité, ainsi que nos pratiques concernant l'utilisation de vos données. Si vous avez des questions à propos de l'utilisaiton des données personnelles et de vos données, vous pouvez nous contacter à feedback@fig.style.",
   "tos_8": "Cette politique est applicable depuis le 1 Mai 2020.",
   "tos_created_with": "Politique de confidentialité créée avec GetTerms.",
+  "yes": "Oui",
   "zoom": "Agrandir l'image"
 }

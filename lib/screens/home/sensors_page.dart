@@ -1,28 +1,33 @@
 import 'dart:async';
 
+import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hue_api/hue_dart.dart' hide Timer;
 import 'package:lumi/components/error_view.dart';
+import 'package:lumi/components/home_app_bar.dart';
 import 'package:lumi/components/loading_view.dart';
 import 'package:lumi/components/sensor_card.dart';
-import 'package:lumi/screens/home/sensor_page.dart';
+import 'package:lumi/router/app_router.gr.dart';
 import 'package:lumi/state/user_state.dart';
 import 'package:lumi/utils/app_logger.dart';
+import 'package:lumi/utils/fonts.dart';
 import 'package:supercharged/supercharged.dart';
 
-class Sensors extends StatefulWidget {
+class SensorsPage extends StatefulWidget {
   @override
-  _SensorsState createState() => _SensorsState();
+  _SensorsPageState createState() => _SensorsPageState();
 }
 
-class _SensorsState extends State<Sensors> {
+class _SensorsPageState extends State<SensorsPage> {
   List<Sensor> _sensors = [];
   Exception _error;
 
   bool _isLoading = false;
 
   Timer _pageUpdateTimer;
+
+  final _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -39,6 +44,34 @@ class _SensorsState extends State<Sensors> {
 
   @override
   Widget build(BuildContext context) {
+    return CustomScrollView(
+      slivers: [
+        appBar(),
+        title(),
+        body(),
+      ],
+    );
+  }
+
+  Widget appBar() {
+    return HomeAppBar(
+      title: Text(
+        'lumi',
+        style: FontsUtils.titleStyle(
+          fontSize: 30.0,
+        ),
+      ),
+      onTapIconHeader: () {
+        _scrollController.animateTo(
+          0,
+          duration: 250.milliseconds,
+          curve: Curves.decelerate,
+        );
+      },
+    );
+  }
+
+  Widget body() {
     if (_isLoading) {
       return SliverList(
         delegate: SliverChildListDelegate([
@@ -55,16 +88,27 @@ class _SensorsState extends State<Sensors> {
       );
     }
 
-    return SliverGrid(
-      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-        maxCrossAxisExtent: 300.0,
-        mainAxisSpacing: 20.0,
-        crossAxisSpacing: 20.0,
+    return gridView();
+  }
+
+  Widget gridView() {
+    return SliverPadding(
+      padding: const EdgeInsets.only(
+        left: 100.0,
+        right: 100.0,
+        top: 40,
+        bottom: 300.0,
       ),
-      delegate: SliverChildBuilderDelegate(
-        (context, index) {
-          final sensor = _sensors[index];
-          return SensorCard(
+      sliver: SliverGrid(
+        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 300.0,
+          mainAxisSpacing: 20.0,
+          crossAxisSpacing: 20.0,
+        ),
+        delegate: SliverChildBuilderDelegate(
+          (context, index) {
+            final sensor = _sensors[index];
+            return SensorCard(
               sensor: sensor,
               elevation: sensor.config.on ? 6.0 : 0.0,
               onToggle: () async {
@@ -75,42 +119,33 @@ class _SensorsState extends State<Sensors> {
 
                 fetchSensors();
               },
-              onTap: () async {
-                await Navigator.of(context).push(MaterialPageRoute(
-                  fullscreenDialog: true,
-                  builder: (context) {
-                    return Scaffold(
-                      body: GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: Container(
-                          color: Colors
-                              .transparent, // onTap doesn't work without this
-                          child: Hero(
-                            tag: sensor.id,
-                            child: Center(
-                              child: Container(
-                                width: 800,
-                                padding: const EdgeInsets.all(80.0),
-                                child: Card(
-                                  elevation: 8.0,
-                                  child: GestureDetector(
-                                    onTap: () {}, // to block parent onTap()
-                                    child: SensorPage(
-                                      sensor: sensor,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ));
-              });
-        },
-        childCount: _sensors.length,
+              onTap: () => onNavigate(sensor),
+            );
+          },
+          childCount: _sensors.length,
+        ),
+      ),
+    );
+  }
+
+  Widget title() {
+    return SliverPadding(
+      padding: const EdgeInsets.only(
+        left: 100.0,
+      ),
+      sliver: SliverList(
+        delegate: SliverChildListDelegate.fixed([
+          Opacity(
+            opacity: 0.6,
+            child: Text(
+              "sensors_number".plural(_sensors.length),
+              style: FontsUtils.titleStyle(
+                fontSize: 40.0,
+                fontWeight: FontWeight.w300,
+              ),
+            ),
+          ),
+        ]),
       ),
     );
   }
@@ -135,9 +170,6 @@ class _SensorsState extends State<Sensors> {
       sensorsItems
           .retainWhere((s) => s.capabilities != null && s.capabilities.primary);
 
-      final title = "sensors_number".plural(sensorsItems.length);
-      userState.setHomeSectionTitle(title);
-
       setState(() {
         _sensors = sensorsItems;
         _isLoading = false;
@@ -150,5 +182,14 @@ class _SensorsState extends State<Sensors> {
 
       appLogger.e(err);
     }
+  }
+
+  void onNavigate(Sensor sensor) {
+    context.router.push(
+      SensorPageRoute(
+        sensor: sensor,
+        sensorId: sensor.id.toString(),
+      ),
+    );
   }
 }

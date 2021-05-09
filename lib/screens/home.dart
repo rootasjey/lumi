@@ -1,14 +1,8 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:lumi/components/home_app_bar.dart';
-import 'package:lumi/screens/connection.dart';
-import 'package:lumi/screens/home/lights.dart';
-import 'package:lumi/screens/home/groups.dart';
-import 'package:lumi/screens/home/sensors.dart';
+import 'package:lumi/router/app_router.gr.dart';
 import 'package:lumi/state/colors.dart';
-import 'package:lumi/state/user_state.dart';
-import 'package:lumi/utils/fonts.dart';
-import 'package:supercharged/supercharged.dart';
 import 'package:unicons/unicons.dart';
 
 class Home extends StatefulWidget {
@@ -17,126 +11,49 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final _scrollController = ScrollController();
-
-  /// Selected tab (sensors, lights, scenes, ...).
-  int _selectedIndex = 0;
-
-  final _bodyChildren = [
-    Lights(),
-    Sensors(),
-    Groups(),
-  ];
-
-  @override
-  initState() {
-    super.initState();
-
-    if (!userState.isUserConnected) {
-      Navigator.of(context).push(MaterialPageRoute(
-        builder: (_) {
-          return Connection();
-        },
-      ));
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Row(
-        children: [
-          Expanded(
-            child: CustomScrollView(
-              controller: _scrollController,
-              slivers: <Widget>[
-                appBar(),
-                title(),
-                body(),
+      body: AutoTabsRouter(
+        routes: [
+          LightsRouter(),
+          SensorsRouter(),
+          GroupsRouter(),
+        ],
+        builder: (context, child, animation) {
+          return Scaffold(
+            body: Row(
+              children: [
+                Expanded(child: child),
+                sideBar(context.tabsRouter),
               ],
             ),
-          ),
-          sideBar(),
-        ],
-      ),
-    );
-  }
-
-  Widget appBar() {
-    return HomeAppBar(
-      title: Text(
-        'lumi',
-        style: FontsUtils.titleStyle(
-          fontSize: 30.0,
-        ),
-      ),
-      onTapIconHeader: () {
-        _scrollController.animateTo(
-          0,
-          duration: 250.milliseconds,
-          curve: Curves.decelerate,
-        );
-      },
-    );
-  }
-
-  Widget body() {
-    return SliverPadding(
-      padding: const EdgeInsets.only(
-        left: 100.0,
-        right: 100.0,
-        top: 40,
-        bottom: 300.0,
-      ),
-      sliver: _bodyChildren[_selectedIndex],
-    );
-  }
-
-  Widget title() {
-    return SliverPadding(
-      padding: const EdgeInsets.only(
-        left: 100.0,
-      ),
-      sliver: SliverList(
-        delegate: SliverChildListDelegate.fixed([
-          Observer(
-            builder: (context) {
-              return Opacity(
-                opacity: 0.6,
-                child: Text(
-                  '${userState.homeSectionTitle}',
-                  style: FontsUtils.titleStyle(
-                    fontSize: 40.0,
-                    fontWeight: FontWeight.w300,
-                  ),
-                ),
-              );
-            },
-          ),
-        ]),
+          );
+        },
       ),
     );
   }
 
   Widget navButton({
-    String title,
+    @required String title,
     int index = 0,
-    Widget icon,
+    @required TabsRouter tabsRouter,
+    @required Widget icon,
   }) {
     return IconButton(
       tooltip: title,
-      color: index == _selectedIndex ? stateColors.primary : null,
+      color: index == tabsRouter.activeIndex ? stateColors.primary : null,
       onPressed: () {
-        setState(() => _selectedIndex = index);
+        tabsRouter.setActiveIndex(index);
       },
       icon: Opacity(
-        opacity: index == _selectedIndex ? 1.0 : 0.6,
+        opacity: index == tabsRouter.activeIndex ? 1.0 : 0.6,
         child: icon,
       ),
     );
   }
 
-  Widget sideBar() {
+  Widget sideBar(TabsRouter tabsRouter) {
     return Container(
       width: 80.0,
       child: Material(
@@ -147,7 +64,8 @@ class _HomeState extends State<Home> {
           children: [
             navButton(
               index: 0,
-              title: "Lights",
+              tabsRouter: tabsRouter,
+              title: "lights".tr(),
               icon: Icon(UniconsLine.lightbulb_alt),
             ),
             Padding(
@@ -155,7 +73,8 @@ class _HomeState extends State<Home> {
             ),
             navButton(
               index: 1,
-              title: "Sensors",
+              tabsRouter: tabsRouter,
+              title: "sensors".tr(),
               icon: Icon(UniconsLine.dice_one),
             ),
             Padding(
@@ -163,7 +82,8 @@ class _HomeState extends State<Home> {
             ),
             navButton(
               index: 2,
-              title: "Rooms",
+              tabsRouter: tabsRouter,
+              title: "scenes".tr(),
               icon: Icon(UniconsLine.bed_double),
             ),
           ],

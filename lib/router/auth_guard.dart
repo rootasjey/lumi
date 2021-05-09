@@ -13,7 +13,7 @@ class AuthGuard extends AutoRouteGuard {
     }
 
     router.root.push(
-      ConnectionRoute(onSigninResult: (isAuthenticated) {
+      ConnectPageRoute(onSigninResult: (isAuthenticated) {
         if (isAuthenticated) {
           router.replaceAll(pendingRoutes);
         }

@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hue_api/hue_dart.dart' hide Timer;
@@ -29,26 +27,22 @@ class GroupCard extends StatefulWidget {
 }
 
 class _GroupCardState extends State<GroupCard> with TickerProviderStateMixin {
-  Animation<double> scaleAnimation;
-  AnimationController scaleAnimationController;
-
-  bool isLoading = false;
-
-  Timer timerUpdate;
+  Animation<double> _scaleAnimation;
+  AnimationController _scaleAnimationController;
 
   @override
   initState() {
     super.initState();
 
-    scaleAnimationController = AnimationController(
+    _scaleAnimationController = AnimationController(
       lowerBound: 0.8,
       upperBound: 1.0,
       duration: 250.milliseconds,
       vsync: this,
     );
 
-    scaleAnimation = CurvedAnimation(
-      parent: scaleAnimationController,
+    _scaleAnimation = CurvedAnimation(
+      parent: _scaleAnimationController,
       curve: Curves.fastOutSlowIn,
     );
   }
@@ -58,7 +52,7 @@ class _GroupCardState extends State<GroupCard> with TickerProviderStateMixin {
     final group = widget.group;
 
     return ScaleTransition(
-      scale: scaleAnimation,
+      scale: _scaleAnimation,
       child: SizedBox(
         width: 240.0,
         height: 240.0,
@@ -73,11 +67,11 @@ class _GroupCardState extends State<GroupCard> with TickerProviderStateMixin {
             onTap: widget.onTap,
             onHover: (isHover) {
               if (isHover) {
-                scaleAnimationController.forward();
+                _scaleAnimationController.forward();
                 return;
               }
 
-              scaleAnimationController.reverse();
+              _scaleAnimationController.reverse();
             },
             child: Stack(
               children: [

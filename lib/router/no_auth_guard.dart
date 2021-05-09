@@ -13,11 +13,11 @@ class NoAuthGuard extends AutoRouteGuard {
     }
 
     if (!router.root.hasEntries) {
-      router.root.push(DashboardPage(children: [HomeRoute()]));
+      router.root.push(HomeRoute(children: [LightsRouter()]));
       return false;
     }
 
-    router.root.replace(DashboardPage(children: [HomeRoute()]));
+    router.root.replace(HomeRoute(children: [LightsRouter()]));
     return false;
   }
 }

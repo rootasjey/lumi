@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:hive/hive.dart';
@@ -5,12 +6,13 @@ import 'package:lumi/components/app_icon.dart';
 import 'package:lumi/router/route_names.dart';
 import 'package:lumi/screens/about.dart';
 import 'package:lumi/screens/config.dart';
-import 'package:lumi/screens/connection.dart';
+import 'package:lumi/screens/connect_page.dart';
 import 'package:lumi/screens/users.dart';
 import 'package:lumi/state/colors.dart';
 import 'package:lumi/state/user_state.dart';
 import 'package:lumi/utils/brightness.dart';
 import 'package:lumi/utils/constants.dart';
+import 'package:lumi/utils/fonts.dart';
 import 'package:unicons/unicons.dart';
 
 class HomeAppBar extends StatefulWidget {
@@ -38,6 +40,16 @@ class _HomeAppBarState extends State<HomeAppBar> {
         final isNarrow = constrains.crossAxisExtent < 700.0;
         final leftPadding = isNarrow ? 0.0 : 80.0;
 
+        Widget _titleWidget = widget.title;
+        if (_titleWidget == null) {
+          _titleWidget = Text(
+            'lumi',
+            style: FontsUtils.titleStyle(
+              fontSize: 30.0,
+            ),
+          );
+        }
+
         return Observer(
           builder: (context) {
             return SliverAppBar(
@@ -62,7 +74,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
                         padding: const EdgeInsets.only(right: 16.0),
                         child: IconButton(
                           color: stateColors.foreground,
-                          onPressed: Navigator.of(context).pop,
+                          onPressed: context.router.pop,
                           icon: Icon(UniconsLine.arrow_left),
                         ),
                       ),
@@ -70,11 +82,11 @@ class _HomeAppBarState extends State<HomeAppBar> {
                       padding: EdgeInsets.zero,
                       onTap: widget.onTapIconHeader,
                     ),
-                    if (widget.title != null)
+                    if (_titleWidget != null)
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.only(left: 40.0),
-                          child: widget.title,
+                          child: _titleWidget,
                         ),
                       ),
                     themeButton(),
@@ -221,7 +233,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
 
     Navigator.of(context).push(
       MaterialPageRoute(builder: (_) {
-        return Connection();
+        return ConnectPage();
       }),
     );
   }

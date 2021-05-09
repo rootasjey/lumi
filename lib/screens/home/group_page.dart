@@ -1,18 +1,24 @@
 import 'dart:async';
 
+import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:hue_api/hue_dart.dart' hide Timer;
+import 'package:lumi/components/home_app_bar.dart';
 import 'package:lumi/components/tiny_light_card.dart';
 import 'package:lumi/state/colors.dart';
 import 'package:lumi/state/user_state.dart';
 import 'package:lumi/utils/colors.dart';
+import 'package:lumi/utils/fonts.dart';
 import 'package:supercharged/supercharged.dart';
+import 'package:unicons/unicons.dart';
 
 class GroupPage extends StatefulWidget {
   final Group group;
+  final String groupId;
 
   GroupPage({
-    @required this.group,
+    this.group,
+    @PathParam('groupId') this.groupId,
   });
 
   @override
@@ -53,25 +59,31 @@ class _GroupPageState extends State<GroupPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(
-        padding: const EdgeInsets.only(
-          bottom: 200.0,
-        ),
-        children: [
-          header(),
-          powerSwitch(),
-          groupType(),
-          lightsCount(),
-          if (groupOn)
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                brightnessSlider(),
-                if (saturation != null) saturationSlider(),
-                if (hue != null) hueContainer(),
-                groupLights(),
-              ],
+      body: CustomScrollView(
+        slivers: [
+          HomeAppBar(automaticallyImplyLeading: true),
+          SliverPadding(
+            padding: const EdgeInsets.only(
+              bottom: 200.0,
             ),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate.fixed([
+                header(),
+                powerSwitch(),
+                groupTypeAndLights(),
+                if (groupOn)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      brightnessSlider(),
+                      if (saturation != null) saturationSlider(),
+                      if (hue != null) hueContainer(),
+                      groupLights(),
+                    ],
+                  ),
+              ]),
+            ),
+          ),
         ],
       ),
     );
@@ -184,20 +196,15 @@ class _GroupPageState extends State<GroupPage> {
 
   Widget header() {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 40.0,
-        vertical: 40.0,
+      padding: const EdgeInsets.only(
+        left: 60.0,
+        right: 20.0,
       ),
       child: Wrap(
         crossAxisAlignment: WrapCrossAlignment.center,
         children: [
           IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: Icon(
-              Icons.close,
-            ),
-          ),
-          IconButton(
+            iconSize: 40.0,
             onPressed: () async {
               setState(() => groupOn = !group.action.on);
 
@@ -209,8 +216,7 @@ class _GroupPageState extends State<GroupPage> {
               fetch();
             },
             icon: Icon(
-              Icons.kitchen,
-              size: 35.0,
+              UniconsLine.bed_double,
               color: group.action.on
                   ? stateColors.primary
                   : stateColors.foreground.withOpacity(0.6),
@@ -221,12 +227,14 @@ class _GroupPageState extends State<GroupPage> {
               left: 16.0,
             ),
             child: Opacity(
-              opacity: 0.7,
-              child: Text(group.name.toUpperCase(),
-                  style: TextStyle(
-                    fontSize: 40.0,
-                    fontWeight: FontWeight.w500,
-                  )),
+              opacity: 0.6,
+              child: Text(
+                group.name,
+                style: FontsUtils.mainStyle(
+                  fontSize: 60.0,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ),
           ),
         ],
@@ -272,32 +280,25 @@ class _GroupPageState extends State<GroupPage> {
   }
 
   Widget groupType() {
-    return Padding(
-      padding: const EdgeInsets.only(
-        top: 20.0,
-        left: 74.0,
-      ),
-      child: Row(
-        // crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          getGroupIcon(),
-          Padding(
-            padding: const EdgeInsets.only(
-              left: 10.0,
-            ),
-            child: Opacity(
-              opacity: 0.6,
-              child: Text(
-                group.type,
-                style: TextStyle(
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.w400,
-                ),
+    return Row(
+      children: [
+        getGroupIcon(),
+        Padding(
+          padding: const EdgeInsets.only(
+            left: 10.0,
+          ),
+          child: Opacity(
+            opacity: 0.6,
+            child: Text(
+              group.type,
+              style: FontsUtils.mainStyle(
+                fontSize: 24.0,
+                fontWeight: FontWeight.w400,
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -364,34 +365,28 @@ class _GroupPageState extends State<GroupPage> {
   }
 
   Widget lightsCount() {
-    return Padding(
-      padding: const EdgeInsets.only(
-        top: 10.0,
-        left: 74.0,
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.lightbulb_outline,
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Icon(
+          Icons.lightbulb_outline,
+        ),
+        Padding(
+          padding: const EdgeInsets.only(
+            left: 10.0,
           ),
-          Padding(
-            padding: const EdgeInsets.only(
-              left: 10.0,
-            ),
-            child: Opacity(
-              opacity: 0.6,
-              child: Text(
-                lightsCountText(),
-                style: TextStyle(
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.w300,
-                ),
+          child: Opacity(
+            opacity: 0.6,
+            child: Text(
+              lightsCountText(),
+              style: TextStyle(
+                fontSize: 24.0,
+                fontWeight: FontWeight.w300,
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -538,5 +533,30 @@ class _GroupPageState extends State<GroupPage> {
     final suffix = count > 1 ? 'lights' : 'light';
 
     return '$count $suffix';
+  }
+
+  Widget groupTypeAndLights() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 60.0),
+      child: Align(
+        alignment: Alignment.topLeft,
+        child: Container(
+          width: 500.0,
+          padding: const EdgeInsets.only(top: 60.0),
+          child: Card(
+            elevation: 4.0,
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                children: [
+                  groupType(),
+                  lightsCount(),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

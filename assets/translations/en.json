@@ -12,6 +12,8 @@
   "analytics_content": "The web & mobile apps collect usage data to improve the apps & services. However, personal data is never purposely shared or sell to third parties.",
   "apps": "Apps",
   "back": "Back",
+  "battery_level": "Battery level",
+  "battery_remaining": "{}% of battery remaining for this sensor",
   "brightness": "Brightness",
   "cancel": "Cancel",
   "confirm": "Confirm",
@@ -35,6 +37,8 @@
   "iap_content": "The apps contain in-app purchases which offer additional features.",
   "language": "Language",
   "light": "Light",
+  "light_one": "Light",
+  "lights": "Lights",
   "lights_number": {
     "zero": "{} light",
     "one": "{} light",
@@ -43,13 +47,21 @@
     "other": "{} lights"
   },
   "loading": "Loading...",
+  "motion": "Motion",
   "next": "Next",
+  "no": "No",
   "posts": "Posts",
   "presentation_subtitle": "To start using the app, push the connection button below & link your bridge.",
   "projects": "Projects",
   "quit": "Quitter",
   "report_bug": "Report a bug",
   "resources": "Resources",
+  "scene": "Scene",
+  "scenes": "Scenes",
+  "sensor": "Sensor",
+  "sensor_active": "Active: {}",
+  "sensor_last": "Last: {}",
+  "sensors": "Sensors",
   "sensors_number": {
     "zero": "{} sensor",
     "one": "{} sensor",
@@ -76,5 +88,6 @@
   "tos_created_with": "Privacy Policy created with GetTerms.",
   "turn_scene_off": "Turn OFF this scene",
   "turn_scene_on": "Turn ON this scene",
+  "yes": "Yes",
   "zoom": "Zoom"
 }

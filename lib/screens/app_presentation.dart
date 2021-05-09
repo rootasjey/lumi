@@ -73,7 +73,7 @@ class AppPresentation extends StatelessWidget {
         children: [
           ElevatedButton(
             onPressed: () {
-              context.router.push(ConnectionRoute());
+              context.router.push(ConnectPageRoute());
             },
             child: Padding(
               padding: const EdgeInsets.all(12.0),

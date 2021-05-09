@@ -11,16 +11,16 @@ import 'package:lumi/state/user_state.dart';
 import 'package:lumi/utils/constants.dart';
 import 'package:supercharged/supercharged.dart';
 
-class Connection extends StatefulWidget {
+class ConnectPage extends StatefulWidget {
   final void Function(bool isAuthenticated) onSigninResult;
 
-  const Connection({Key key, this.onSigninResult}) : super(key: key);
+  const ConnectPage({Key key, this.onSigninResult}) : super(key: key);
 
   @override
-  _ConnectionState createState() => _ConnectionState();
+  _ConnectPageState createState() => _ConnectPageState();
 }
 
-class _ConnectionState extends State<Connection> {
+class _ConnectPageState extends State<ConnectPage> {
   int maxAttempts = 15;
   int attempts = 0;
 
