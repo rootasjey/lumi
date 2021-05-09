@@ -20,7 +20,7 @@ abstract class StateColorsBase with Store {
   @observable
   String iconExt = 'light';
 
-  Color primary = Color(0xFF6AB04C);
+  Color primary = Colors.amber;
 
   @observable
   Color softBackground = Color(0xFFEEEEEE);
@@ -37,7 +37,6 @@ abstract class StateColorsBase with Store {
       appBackground = Color(0xFF303030);
       softBackground = Color(0xFF303030);
       iconExt = 'light';
-
     } else {
       foreground = Colors.black;
       background = Colors.white;
