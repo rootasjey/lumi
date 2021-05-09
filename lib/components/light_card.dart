@@ -33,7 +33,10 @@ class LightCard extends StatefulWidget {
   _LightCardState createState() => _LightCardState();
 }
 
-class _LightCardState extends State<LightCard> {
+class _LightCardState extends State<LightCard> with TickerProviderStateMixin {
+  Animation<double> scaleAnimation;
+  AnimationController scaleAnimationController;
+
   bool _overrideBrightness = false;
 
   double _brightnessSliderValue = 0.0;
@@ -47,6 +50,18 @@ class _LightCardState extends State<LightCard> {
     setState(() {
       _brightnessSliderValue = widget.light.state.brightness.toDouble();
     });
+
+    scaleAnimationController = AnimationController(
+      lowerBound: 0.8,
+      upperBound: 1.0,
+      duration: 250.milliseconds,
+      vsync: this,
+    );
+
+    scaleAnimation = CurvedAnimation(
+      parent: scaleAnimationController,
+      curve: Curves.fastOutSlowIn,
+    );
   }
 
   @override
@@ -59,15 +74,28 @@ class _LightCardState extends State<LightCard> {
   Widget build(BuildContext context) {
     final light = widget.light;
 
-    return Hero(
-      tag: light.id,
-      child: Container(
+    return ScaleTransition(
+      scale: scaleAnimation,
+      child: SizedBox(
         width: 240.0,
         height: 240.0,
         child: Card(
           elevation: widget.elevation,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.0),
+            side: BorderSide(color: Colors.transparent),
+          ),
+          clipBehavior: Clip.hardEdge,
           child: InkWell(
             onTap: widget.onTap,
+            onHover: (isHover) {
+              if (isHover) {
+                scaleAnimationController.forward();
+                return;
+              }
+
+              scaleAnimationController.reverse();
+            },
             child: Stack(
               children: [
                 Padding(
