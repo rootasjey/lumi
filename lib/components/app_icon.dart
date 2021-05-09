@@ -22,7 +22,7 @@ class AppIcon extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           child: Image.asset(
-            'assets/images/app_icon/128.png',
+            'assets/images/app_icon/64.png',
             width: size,
             height: size,
           ),
