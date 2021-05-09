@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:hue_api/hue_dart.dart' hide Timer;
 import 'package:lumi/state/colors.dart';
+import 'package:supercharged/supercharged.dart';
 
 class GroupCard extends StatefulWidget {
   final double elevation;
@@ -24,24 +25,57 @@ class GroupCard extends StatefulWidget {
   _GroupCardState createState() => _GroupCardState();
 }
 
-class _GroupCardState extends State<GroupCard> {
+class _GroupCardState extends State<GroupCard> with TickerProviderStateMixin {
+  Animation<double> scaleAnimation;
+  AnimationController scaleAnimationController;
+
   bool isLoading = false;
 
   Timer timerUpdate;
 
   @override
+  initState() {
+    super.initState();
+
+    scaleAnimationController = AnimationController(
+      lowerBound: 0.8,
+      upperBound: 1.0,
+      duration: 250.milliseconds,
+      vsync: this,
+    );
+
+    scaleAnimation = CurvedAnimation(
+      parent: scaleAnimationController,
+      curve: Curves.fastOutSlowIn,
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     final group = widget.group;
 
-    return Hero(
-      tag: group.id,
+    return ScaleTransition(
+      scale: scaleAnimation,
       child: SizedBox(
         width: 240.0,
         height: 240.0,
         child: Card(
           elevation: widget.elevation,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.0),
+            side: BorderSide(color: Colors.transparent),
+          ),
+          clipBehavior: Clip.hardEdge,
           child: InkWell(
             onTap: widget.onTap,
+            onHover: (isHover) {
+              if (isHover) {
+                scaleAnimationController.forward();
+                return;
+              }
+
+              scaleAnimationController.reverse();
+            },
             child: Stack(
               children: [
                 Padding(
