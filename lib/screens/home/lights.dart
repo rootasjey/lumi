@@ -196,7 +196,6 @@ class _LightsState extends State<Lights> {
                         onTap: () {}, // to block parent onTap()
                         child: LightPage(
                           light: light,
-                          // color: accentColor,
                           color: Colors.green,
                         ),
                       ),
