@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:auto_route/annotations.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hue_api/hue_dart.dart' hide Timer;
@@ -21,7 +20,7 @@ class LightPage extends StatefulWidget {
 
   LightPage({
     this.light,
-    @PathParam('lightId') this.lightId,
+    this.lightId,
     this.color,
   });
 

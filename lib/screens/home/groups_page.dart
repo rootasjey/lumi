@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:auto_route/auto_route.dart';
+import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hue_api/hue_dart.dart' hide Timer;
@@ -8,7 +8,6 @@ import 'package:lumi/components/error_view.dart';
 import 'package:lumi/components/group_card.dart';
 import 'package:lumi/components/home_app_bar.dart';
 import 'package:lumi/components/loading_view.dart';
-import 'package:lumi/router/app_router.gr.dart';
 import 'package:lumi/state/user_state.dart';
 import 'package:lumi/utils/app_logger.dart';
 import 'package:lumi/utils/fonts.dart';
@@ -186,11 +185,13 @@ class _GroupsPageState extends State<GroupsPage> {
   }
 
   void onNavigate(Group group) async {
-    context.router.push(
-      GroupPageRoute(
-        group: group,
-        groupId: group.id.toString(),
-      ),
+    context.currentBeamLocation.update(
+      (state) => state.copyWith(pathBlueprintSegments: [
+        'groups',
+        ':groupId'
+      ], pathParameters: {
+        'groupId': group.id.toString(),
+      }),
     );
   }
 }

@@ -1,10 +1,11 @@
 import 'dart:ui';
 
-import 'package:auto_route/auto_route.dart';
+import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:lumi/components/home_app_bar.dart';
-import 'package:lumi/router/app_router.gr.dart';
+import 'package:lumi/router/locations/home_location.dart';
+
 import 'package:lumi/state/colors.dart';
 import 'package:lumi/utils/constants.dart';
 import 'package:lumi/utils/fonts.dart';
@@ -37,7 +38,9 @@ class _AboutPageState extends State<AboutPage> {
       body: CustomScrollView(
         slivers: [
           HomeAppBar(
-            onTapIconHeader: () => context.router.navigate(HomeRoute()),
+            onTapIconHeader: () => Beamer.of(context).beamToNamed(
+              HomeLocation.route,
+            ),
           ),
           header(),
           body(),
@@ -79,7 +82,7 @@ class _AboutPageState extends State<AboutPage> {
               Padding(
                 padding: const EdgeInsets.only(right: 16.0),
                 child: IconButton(
-                  onPressed: context.router.pop,
+                  onPressed: Beamer.of(context).beamBack,
                   icon: Icon(UniconsLine.arrow_left),
                 ),
               ),

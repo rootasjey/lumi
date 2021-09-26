@@ -9,12 +9,12 @@ import 'package:supercharged/supercharged.dart';
 import '../components/home_app_bar.dart';
 
 /// Terms Of Service.
-class Tos extends StatefulWidget {
+class TosPage extends StatefulWidget {
   @override
-  _TosState createState() => _TosState();
+  _TosPageState createState() => _TosPageState();
 }
 
-class _TosState extends State<Tos> {
+class _TosPageState extends State<TosPage> {
   bool isFabVisible = false;
 
   final _pageScrollController = ScrollController();

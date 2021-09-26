@@ -1,19 +1,19 @@
-import 'package:auto_route/auto_route.dart';
+import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:lumi/components/home_app_bar.dart';
-import 'package:lumi/router/app_router.gr.dart';
+import 'package:lumi/router/locations/home_location.dart';
 import 'package:lumi/state/user_state.dart';
 import 'package:lumi/types/user.dart';
 import 'package:unicons/unicons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class UsersPage extends StatefulWidget {
+class SettingsUsersPage extends StatefulWidget {
   @override
-  _UsersPageState createState() => _UsersPageState();
+  _SettingsUsersPageState createState() => _SettingsUsersPageState();
 }
 
-class _UsersPageState extends State<UsersPage> {
+class _SettingsUsersPageState extends State<SettingsUsersPage> {
   final scrollController = ScrollController();
   List<User> usersList = [];
 
@@ -37,7 +37,7 @@ class _UsersPageState extends State<UsersPage> {
               ),
             ),
             onTapIconHeader: () {
-              context.router.navigate(HomeRoute());
+              Beamer.of(context).beamToNamed(HomeLocation.route);
             },
           ),
           SliverPadding(

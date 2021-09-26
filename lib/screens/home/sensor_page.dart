@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:auto_route/annotations.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hue_api/hue_dart.dart' hide Timer;
@@ -19,7 +18,7 @@ class SensorPage extends StatefulWidget {
 
   SensorPage({
     this.sensor,
-    @PathParam('sensorId') this.sensorId,
+    this.sensorId,
   });
 
   @override

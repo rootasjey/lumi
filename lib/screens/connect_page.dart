@@ -5,7 +5,7 @@ import 'package:glutton/glutton.dart';
 import 'package:http/http.dart';
 import 'package:hue_api/hue_dart.dart' hide Timer;
 import 'package:lumi/components/home_app_bar.dart';
-import 'package:lumi/screens/home.dart';
+import 'package:lumi/screens/home_page.dart';
 import 'package:lumi/state/colors.dart';
 import 'package:lumi/state/user_state.dart';
 import 'package:lumi/utils/app_logger.dart';
@@ -44,7 +44,7 @@ class _ConnectPageState extends State<ConnectPage> {
     if (userState.isUserConnected) {
       Navigator.of(context).push(MaterialPageRoute(
         builder: (_) {
-          return Home();
+          return HomePage();
         },
       ));
     }
@@ -248,7 +248,7 @@ class _ConnectPageState extends State<ConnectPage> {
 
       Navigator.of(context).push(MaterialPageRoute(
         builder: (_) {
-          return Home();
+          return HomePage();
         },
       ));
     } catch (error) {

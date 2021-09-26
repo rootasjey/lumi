@@ -1,7 +1,7 @@
-import 'package:auto_route/auto_route.dart';
+import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:lumi/components/app_icon.dart';
-import 'package:lumi/router/app_router.gr.dart';
+import 'package:lumi/router/locations/home_location.dart';
 
 class UndefinedPage extends StatefulWidget {
   UndefinedPage();
@@ -25,7 +25,7 @@ class _UndefinedPageState extends State<UndefinedPage> {
         Opacity(
           opacity: .6,
           child: Text(
-              'Route for "${context.router.current.name}" is not defined.'),
+              'Route for "${Beamer.of(context).currentBeamLocation.pathBlueprints.join('/')}" is not defined.'),
         ),
         Padding(
           padding: const EdgeInsets.only(top: 50.0),
@@ -75,7 +75,7 @@ class _UndefinedPageState extends State<UndefinedPage> {
           padding: const EdgeInsets.only(top: 100.0),
           child: TextButton(
             onPressed: () {
-              context.router.navigate(HomeRoute());
+              Beamer.of(context).beamToNamed(HomeLocation.route);
             },
             child: Padding(
               padding: const EdgeInsets.all(8.0),

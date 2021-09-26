@@ -1,16 +1,16 @@
-import 'package:auto_route/auto_route.dart';
+import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:hue_api/hue_dart.dart';
 import 'package:lumi/components/home_app_bar.dart';
-import 'package:lumi/router/app_router.gr.dart';
+import 'package:lumi/router/locations/home_location.dart';
 import 'package:lumi/state/user_state.dart';
 
-class ConfigPage extends StatefulWidget {
+class SettingsPage extends StatefulWidget {
   @override
-  _ConfigPageState createState() => _ConfigPageState();
+  _SettingsPageState createState() => _SettingsPageState();
 }
 
-class _ConfigPageState extends State<ConfigPage> {
+class _SettingsPageState extends State<SettingsPage> {
   final scrollController = ScrollController();
   bool isLoading = false;
 
@@ -30,7 +30,7 @@ class _ConfigPageState extends State<ConfigPage> {
           HomeAppBar(
             automaticallyImplyLeading: true,
             onTapIconHeader: () {
-              context.router.navigate(HomeRoute());
+              Beamer.of(context).beamToNamed(HomeLocation.route);
             },
           ),
           header(),

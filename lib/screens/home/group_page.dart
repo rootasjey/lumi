@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:hue_api/hue_dart.dart' hide Timer;
 import 'package:lumi/components/home_app_bar.dart';
@@ -18,7 +17,7 @@ class GroupPage extends StatefulWidget {
 
   GroupPage({
     this.group,
-    @PathParam('groupId') this.groupId,
+    this.groupId,
   });
 
   @override

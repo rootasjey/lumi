@@ -1,10 +1,11 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
-import 'package:auto_route/auto_route.dart';
+import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:glutton/glutton.dart';
 import 'package:lumi/components/app_icon.dart';
-import 'package:lumi/router/app_router.gr.dart';
+import 'package:lumi/router/locations/about_location.dart';
+import 'package:lumi/router/locations/connect_location.dart';
 import 'package:lumi/router/route_names.dart';
 import 'package:lumi/state/colors.dart';
 import 'package:lumi/state/user_state.dart';
@@ -72,7 +73,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
                         padding: const EdgeInsets.only(right: 16.0),
                         child: IconButton(
                           color: stateColors.foreground,
-                          onPressed: context.router.pop,
+                          onPressed: Beamer.of(context).popRoute,
                           icon: Icon(UniconsLine.arrow_left),
                         ),
                       ),
@@ -189,7 +190,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
             ),
           ),
           PopupMenuItem(
-            value: 'config',
+            value: 'settings',
             child: ListTile(
               leading: Icon(UniconsLine.setting),
               title: Text('Configuration'),
@@ -210,16 +211,13 @@ class _HomeAppBarState extends State<HomeAppBar> {
             disconnect();
             break;
           case 'users':
-            context.router.root
-                .push(SettingsRouter(children: [UsersPageRoute()]));
+            Beamer.of(context).beamToNamed('/settings/users');
             break;
-          case 'config':
-            context.router.root
-                .push(SettingsRouter(children: [ConfigPageRoute()]));
+          case 'settings':
+            Beamer.of(context).beamToNamed('/settings');
             break;
           case AboutRoute:
-            context.router.root.push(AboutPageRoute());
-
+            Beamer.of(context).beamToNamed(AboutLocation.route);
             break;
           default:
         }
@@ -232,6 +230,6 @@ class _HomeAppBarState extends State<HomeAppBar> {
     userState.bridge.username = '';
     userState.setUserDisconnected();
 
-    context.router.root.push(ConnectPageRoute());
+    Beamer.of(context).beamToNamed(ConnectLocation.route);
   }
 }
