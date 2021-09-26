@@ -15,50 +15,47 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 0.40.0+1
+version: 0.50.0+1
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
-  adaptive_theme: 2.0.0
-  animations: 2.0.0
+  adaptive_theme: 2.2.0
+  animations: 2.0.1
   auto_route:  1.0.0-beta.10
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: 1.0.2
+  cupertino_icons: 1.0.3
   easy_localization: 3.0.0
   flutter:
     sdk: flutter
-  flutter_mobx: 1.1.0+2
-  flutter_sticky_header: 0.5.0
-  google_fonts: 2.0.0
-  hive: 2.0.0
-  hive_flutter: 1.0.0
+  flutter_mobx: 2.0.2
+  flutter_sticky_header: 0.6.0
+  glutton: 2.0.0
+  google_fonts: 2.1.0
   hue_api:
     git:
       url: git://github.com/rootasjey/hue_api.git
   jiffy: 4.1.0
-  line_awesome_flutter: 1.0.1
+  line_awesome_flutter: 2.0.0
   logger: 1.0.0
-  mobx: 1.2.1+4
-  random_color: 1.0.6-nullsafety
+  mobx: 2.0.4
+  random_color: 1.0.5
   sticky_headers: 0.2.0
-  supercharged: 2.0.0
-  unicons: 1.0.2
-  url_launcher: 6.0.2
+  supercharged: 2.1.1
+  unicons: 2.0.1
+  url_launcher: 6.0.12
   url_strategy: 0.2.0
 
 dev_dependencies:
-  auto_route_generator: 1.0.0-beta.11
   build_runner:
-  flutter_launcher_icons: 0.9.0
+  flutter_launcher_icons: 0.9.2
   # flutter_rename_app: 1.0.0
   flutter_test:
     sdk: flutter
-  hive_generator: 1.0.0
-  mobx_codegen: 1.1.2
+  mobx_codegen: 2.0.3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

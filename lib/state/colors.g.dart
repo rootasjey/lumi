@@ -84,18 +84,12 @@ mixin _$StateColors on StateColorsBase, Store {
     });
   }
 
-  final _$StateColorsBaseActionController =
-      ActionController(name: 'StateColorsBase');
+  final _$refreshThemeAsyncAction = AsyncAction('StateColorsBase.refreshTheme');
 
   @override
-  void refreshTheme({@required Brightness brightness}) {
-    final _$actionInfo = _$StateColorsBaseActionController.startAction(
-        name: 'StateColorsBase.refreshTheme');
-    try {
-      return super.refreshTheme(brightness: brightness);
-    } finally {
-      _$StateColorsBaseActionController.endAction(_$actionInfo);
-    }
+  Future<void> refreshTheme({Brightness brightness}) {
+    return _$refreshThemeAsyncAction
+        .run(() => super.refreshTheme(brightness: brightness));
   }
 
   @override

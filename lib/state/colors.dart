@@ -28,9 +28,7 @@ abstract class StateColorsBase with Store {
   ThemeData themeData;
 
   @action
-  void refreshTheme({
-    @required Brightness brightness,
-  }) {
+  Future<void> refreshTheme({@required Brightness brightness}) async {
     if (brightness == Brightness.dark) {
       foreground = Colors.white;
       background = Colors.black;

@@ -1,7 +1,8 @@
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:hive/hive.dart';
+import 'package:glutton/glutton.dart';
 import 'package:lumi/components/app_icon.dart';
 import 'package:lumi/router/app_router.gr.dart';
 import 'package:lumi/router/route_names.dart';
@@ -101,56 +102,63 @@ class _HomeAppBarState extends State<HomeAppBar> {
   /// Switch from dark to light and vice-versa.
   Widget themeButton() {
     IconData iconBrightness = Icons.brightness_auto;
-    bool autoBrightness = Hive.box(KEY_SETTINGS).get(KEY_AUTO_BRIGHTNESS);
+    iconBrightness = BrightnessUtils.currentBrightness == Brightness.dark
+        ? Icons.brightness_2
+        : Icons.brightness_low;
 
-    if (!autoBrightness) {
-      bool darkMode = Hive.box(KEY_SETTINGS).get(KEY_DARK_MODE);
-
-      iconBrightness = darkMode ? Icons.brightness_2 : Icons.brightness_low;
-    }
-
-    return PopupMenuButton<String>(
-      icon: Opacity(
-        opacity: 0.6,
-        child: Icon(
-          iconBrightness,
-          color: stateColors.foreground,
-        ),
-      ),
-      tooltip: 'Brightness',
-      onSelected: (value) {
-        if (value == 'auto') {
-          BrightnessUtils.setAutoBrightness(context);
-          return;
-        }
-
-        final brightness = value == 'dark' ? Brightness.dark : Brightness.light;
-        BrightnessUtils.setBrightness(context, brightness);
-      },
-      itemBuilder: (context) => [
-        const PopupMenuItem(
-          value: 'auto',
-          child: ListTile(
-            leading: Icon(Icons.brightness_auto),
-            title: Text('Auto'),
+    return Observer(builder: (context) {
+      return PopupMenuButton<AdaptiveThemeMode>(
+        icon: Opacity(
+          opacity: 0.6,
+          child: Icon(
+            iconBrightness,
+            color: stateColors.foreground,
           ),
         ),
-        const PopupMenuItem(
-          value: 'dark',
-          child: ListTile(
-            leading: Icon(Icons.brightness_2),
-            title: Text('Dark'),
+        tooltip: 'Brightness',
+        onSelected: (AdaptiveThemeMode mode) {
+          if (mode == AdaptiveThemeMode.system) {
+            AdaptiveTheme.of(context).setSystem();
+            return;
+          }
+
+          if (mode == AdaptiveThemeMode.dark) {
+            AdaptiveTheme.of(context).setDark();
+            BrightnessUtils.currentBrightness = Brightness.dark;
+            return;
+          }
+
+          if (mode == AdaptiveThemeMode.light) {
+            AdaptiveTheme.of(context).setLight();
+            BrightnessUtils.currentBrightness = Brightness.light;
+            return;
+          }
+        },
+        itemBuilder: (context) => [
+          const PopupMenuItem(
+            value: AdaptiveThemeMode.system,
+            child: ListTile(
+              leading: Icon(Icons.brightness_auto),
+              title: Text('Auto'),
+            ),
           ),
-        ),
-        const PopupMenuItem(
-          value: 'light',
-          child: ListTile(
-            leading: Icon(Icons.brightness_5),
-            title: Text('Light'),
+          const PopupMenuItem(
+            value: AdaptiveThemeMode.dark,
+            child: ListTile(
+              leading: Icon(Icons.brightness_2),
+              title: Text('Dark'),
+            ),
           ),
-        ),
-      ],
-    );
+          const PopupMenuItem(
+            value: AdaptiveThemeMode.light,
+            child: ListTile(
+              leading: Icon(Icons.brightness_5),
+              title: Text('Light'),
+            ),
+          ),
+        ],
+      );
+    });
   }
 
   Widget menu() {
@@ -220,7 +228,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
   }
 
   void disconnect() async {
-    await Hive.box(KEY_SETTINGS).put(KEY_USER_NAME, '');
+    await Glutton.digest(KEY_USER_NAME);
     userState.bridge.username = '';
     userState.setUserDisconnected();
 

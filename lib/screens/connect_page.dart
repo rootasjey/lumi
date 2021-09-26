@@ -1,13 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
+import 'package:glutton/glutton.dart';
 import 'package:http/http.dart';
 import 'package:hue_api/hue_dart.dart' hide Timer;
 import 'package:lumi/components/home_app_bar.dart';
 import 'package:lumi/screens/home.dart';
 import 'package:lumi/state/colors.dart';
 import 'package:lumi/state/user_state.dart';
+import 'package:lumi/utils/app_logger.dart';
 import 'package:lumi/utils/constants.dart';
 import 'package:supercharged/supercharged.dart';
 
@@ -238,7 +239,7 @@ class _ConnectPageState extends State<ConnectPage> {
       final whiteListItem = await bridge.createUser('lumi#desktop');
       bridge.username = whiteListItem.username;
 
-      await Hive.box(KEY_SETTINGS).put(KEY_USER_NAME, whiteListItem.username);
+      await Glutton.eat(KEY_USER_NAME, whiteListItem.username);
 
       userState.setBridge(bridge);
       userState.setUserConnected();
@@ -251,7 +252,7 @@ class _ConnectPageState extends State<ConnectPage> {
         },
       ));
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.e(error);
 
       Future.delayed(
         5.seconds,

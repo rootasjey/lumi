@@ -3,8 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hive/hive.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:glutton/glutton.dart';
 import 'package:http/http.dart';
 import 'package:hue_api/hue_dart.dart';
 import 'package:lumi/router/app_router.gr.dart';
@@ -26,14 +25,12 @@ void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Hive.initFlutter();
-  await Hive.openBox(KEY_SETTINGS);
-
   await Future.wait([_autoLogin(), _initStorage()]);
   await EasyLocalization.ensureInitialized();
 
-  final savedThemeMode = await AdaptiveTheme.getThemeMode();
-  final brightness = savedThemeMode.isDark ? Brightness.dark : Brightness.light;
+  final AdaptiveThemeMode savedThemeMode = await AdaptiveTheme.getThemeMode();
+  final Brightness brightness =
+      savedThemeMode.isDark ? Brightness.dark : Brightness.light;
 
   setPathUrlStrategy();
 
@@ -147,30 +144,27 @@ class _AppWithThemeState extends State<AppWithTheme> {
 }
 
 Future _initStorage() async {
-  final box = Hive.box(KEY_SETTINGS);
+  bool hasAutoBrightnessValue = await Glutton.have(KEY_AUTO_BRIGHTNESS);
+  bool hasDarkModeValue = await Glutton.have(KEY_DARK_MODE);
 
-  if (box.isNotEmpty) {
-    return;
+  if (!hasAutoBrightnessValue) {
+    await Glutton.eat(KEY_AUTO_BRIGHTNESS, true);
   }
 
-  if (!box.containsKey(KEY_AUTO_BRIGHTNESS)) {
-    box.put(KEY_AUTO_BRIGHTNESS, true);
-  }
-
-  if (!box.containsKey(KEY_DARK_MODE)) {
-    box.put(KEY_DARK_MODE, true);
+  if (!hasDarkModeValue) {
+    await Glutton.eat(KEY_DARK_MODE, true);
   }
 }
 
 Future _autoLogin() async {
   try {
-    final box = Hive.box(KEY_SETTINGS);
+    final bool hasUsernameValue = await Glutton.have(KEY_USER_NAME);
 
-    if (box.isEmpty) {
+    if (!hasUsernameValue) {
       return;
     }
 
-    String username = box.get(KEY_USER_NAME);
+    final String username = await Glutton.vomit(KEY_USER_NAME);
 
     if (username == null || username.isEmpty) {
       return;
