@@ -7,6 +7,7 @@ import 'package:lumi/router/locations/tos_location.dart';
 import 'package:lumi/router/locations/undefined_location.dart';
 
 final appRouterDelegate = BeamerDelegate(
+  initialPath: '/home',
   locationBuilder: BeamerLocationBuilder(
     beamLocations: [
       HomeLocation(),

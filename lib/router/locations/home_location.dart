@@ -1,5 +1,6 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/widgets.dart';
+import 'package:lumi/router/locations/connect_location.dart';
 import 'package:lumi/screens/home/group_page.dart';
 import 'package:lumi/screens/home/groups_page.dart';
 import 'package:lumi/screens/home/light_page.dart';
@@ -10,7 +11,7 @@ import 'package:lumi/screens/home_page.dart';
 import 'package:lumi/state/user_state.dart';
 
 class HomeLocation extends BeamLocation {
-  static const String route = '/';
+  static const String route = '/home/*';
 
   @override
   List get pathBlueprints => [route];
@@ -20,6 +21,7 @@ class HomeLocation extends BeamLocation {
         BeamGuard(
           pathBlueprints: [route],
           check: (context, state) => userState.isUserConnected,
+          beamToNamed: ConnectLocation.route,
         ),
       ];
 
@@ -55,26 +57,19 @@ class HomeContentLocation extends BeamLocation {
   @override
   List<BeamGuard> get guards => [
         BeamGuard(
-          pathBlueprints: [route],
-          check: (context, state) => userState.isUserConnected,
-        ),
+            pathBlueprints: [route],
+            check: (context, state) => false,
+            beamToNamed: lightsRoute),
       ];
 
   List<BeamPage> buildPages(BuildContext context, BeamState state) {
     return [
       BeamPage(
         child: LightsPage(),
-        key: ValueKey(lightsRoute),
+        key: ValueKey(route),
         title: "Lights",
         type: BeamPageType.fadeTransition,
       ),
-      if (state.pathBlueprintSegments.contains('lights'))
-        BeamPage(
-          child: LightsPage(),
-          key: ValueKey(lightsRoute),
-          title: "Lights",
-          type: BeamPageType.fadeTransition,
-        ),
       if (state.pathBlueprintSegments.contains('lights'))
         BeamPage(
           child: LightsPage(),
