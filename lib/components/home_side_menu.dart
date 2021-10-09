@@ -1,8 +1,8 @@
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:lumi/components/side_menu_item.dart';
 import 'package:lumi/router/locations/home_location.dart';
-import 'package:lumi/state/colors.dart';
 import 'package:lumi/utils/constants.dart';
 import 'package:lumi/utils/fonts.dart';
 import 'package:unicons/unicons.dart';
@@ -113,14 +113,17 @@ class _HomeSideMenuState extends State<HomeSideMenu> {
       sliver: SliverList(
           delegate: SliverChildListDelegate.fixed(
         _sidePanelItems.map((sidePanelItem) {
-          Color color = stateColors.foreground.withOpacity(0.6);
-          Color textColor = stateColors.foreground.withOpacity(0.4);
+          final Color foreground =
+              AdaptiveTheme.of(context).theme.textTheme.bodyText1.color;
+
+          Color color = foreground.withOpacity(0.6);
+          Color textColor = foreground.withOpacity(0.4);
           FontWeight fontWeight = FontWeight.w600;
 
           if (context.currentBeamLocation.state.uri.path
               .contains(sidePanelItem.routePath)) {
             color = sidePanelItem.hoverColor;
-            textColor = stateColors.foreground.withOpacity(0.6);
+            textColor = foreground.withOpacity(0.6);
             fontWeight = FontWeight.w700;
           }
 

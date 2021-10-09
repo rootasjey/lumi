@@ -1,3 +1,4 @@
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:hue_api/hue_dart.dart' hide Timer;
 import 'package:lumi/state/colors.dart';
@@ -113,7 +114,7 @@ class _SensorCardState extends State<SensorCard> with TickerProviderStateMixin {
                   : UniconsLine.battery_empty,
               color: sensor.config.battery < 5
                   ? Colors.red.shade300
-                  : stateColors.foreground,
+                  : AdaptiveTheme.of(context).theme.textTheme.bodyText1.color,
             ),
           ),
           Opacity(
@@ -162,7 +163,12 @@ class _SensorCardState extends State<SensorCard> with TickerProviderStateMixin {
           size: 25.0,
           color: sensor.config.on
               ? stateColors.primary
-              : stateColors.foreground.withOpacity(0.6),
+              : AdaptiveTheme.of(context)
+                  .theme
+                  .textTheme
+                  .bodyText1
+                  .color
+                  .withOpacity(0.6),
         ),
       ),
     );

@@ -1,8 +1,8 @@
 import 'dart:async';
 
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:hue_api/hue_dart.dart' hide Timer;
-import 'package:lumi/state/colors.dart';
 import 'package:supercharged/supercharged.dart';
 import 'package:unicons/unicons.dart';
 
@@ -68,6 +68,7 @@ class _LightCardState extends State<LightCard> with TickerProviderStateMixin {
   @override
   void dispose() {
     _brightnessUpdateTimer?.cancel();
+    scaleAnimationController?.dispose();
     super.dispose();
   }
 
@@ -120,14 +121,16 @@ class _LightCardState extends State<LightCard> with TickerProviderStateMixin {
   }
 
   Widget brightnessSlider(Light light) {
+    final Color foreground =
+        AdaptiveTheme.of(context).theme.textTheme.bodyText1.color;
+
     return Slider(
       value: _overrideBrightness ? _brightnessSliderValue : widget.brightness,
       min: 0,
       max: 254,
-      activeColor: light.state.on
-          ? widget.lightColor
-          : stateColors.foreground.withOpacity(0.4),
-      inactiveColor: stateColors.foreground.withOpacity(0.4),
+      activeColor:
+          light.state.on ? widget.lightColor : foreground.withOpacity(0.4),
+      inactiveColor: foreground.withOpacity(0.4),
       label: _overrideBrightness
           ? _brightnessSliderValue.round().toString()
           : widget.brightness.round().toString(),
@@ -170,11 +173,18 @@ class _LightCardState extends State<LightCard> with TickerProviderStateMixin {
       child: IconButton(
         tooltip: 'Turn ${light.state.on ? 'off' : 'on'}',
         onPressed: widget.onToggle,
-        icon: Icon(UniconsLine.lightbulb_alt,
-            size: 25.0,
-            color: light.state.on
-                ? widget.lightColor
-                : stateColors.foreground.withOpacity(0.6)),
+        icon: Icon(
+          UniconsLine.lightbulb_alt,
+          size: 25.0,
+          color: light.state.on
+              ? widget.lightColor
+              : AdaptiveTheme.of(context)
+                  .theme
+                  .textTheme
+                  .bodyText1
+                  .color
+                  .withOpacity(0.6),
+        ),
       ),
     );
   }

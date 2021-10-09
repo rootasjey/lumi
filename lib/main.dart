@@ -13,7 +13,6 @@ import 'package:lumi/state/user_state.dart';
 import 'package:lumi/utils/app_logger.dart';
 import 'package:lumi/utils/constants.dart';
 import 'package:lumi/utils/fonts.dart';
-import 'package:supercharged/supercharged.dart';
 import 'package:url_strategy/url_strategy.dart';
 
 void main() async {
@@ -28,8 +27,6 @@ void main() async {
   await EasyLocalization.ensureInitialized();
 
   final AdaptiveThemeMode savedThemeMode = await AdaptiveTheme.getThemeMode();
-  final Brightness brightness =
-      savedThemeMode.isDark ? Brightness.dark : Brightness.light;
 
   setPathUrlStrategy();
 
@@ -39,7 +36,6 @@ void main() async {
     fallbackLocale: Locale('en'),
     child: App(
       savedThemeMode: savedThemeMode,
-      brightness: brightness,
     ),
   ));
 }
@@ -62,7 +58,6 @@ class App extends StatefulWidget {
 class AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
-    stateColors.refreshTheme(brightness: widget.brightness);
     // stateUser.setFirstLaunch(appStorage.isFirstLanch());
 
     return AdaptiveTheme(
@@ -74,14 +69,11 @@ class AppState extends State<App> {
         brightness: Brightness.dark,
         fontFamily: FontsUtils.fontFamily,
       ),
-      initial: widget.brightness == Brightness.light
-          ? AdaptiveThemeMode.light
-          : AdaptiveThemeMode.dark,
+      initial: widget.savedThemeMode,
       builder: (theme, darkTheme) {
         stateColors.themeData = theme;
 
         return AppWithTheme(
-          brightness: widget.brightness,
           theme: theme,
           darkTheme: darkTheme,
         );
@@ -94,11 +86,9 @@ class AppState extends State<App> {
 class AppWithTheme extends StatefulWidget {
   final ThemeData theme;
   final ThemeData darkTheme;
-  final Brightness brightness;
 
   const AppWithTheme({
     Key key,
-    @required this.brightness,
     @required this.darkTheme,
     @required this.theme,
   }) : super(key: key);
@@ -108,19 +98,6 @@ class AppWithTheme extends StatefulWidget {
 }
 
 class _AppWithThemeState extends State<AppWithTheme> {
-  @override
-  initState() {
-    super.initState();
-    Future.delayed(250.milliseconds, () {
-      if (widget.brightness == Brightness.dark) {
-        AdaptiveTheme.of(context).setDark();
-        return;
-      }
-
-      AdaptiveTheme.of(context).setLight();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
