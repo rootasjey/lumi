@@ -170,15 +170,19 @@ class _GroupsPageState extends State<GroupsPage> {
     try {
       final groupsItems = await userState.bridge.groups();
 
-      setState(() {
-        _groups = groupsItems;
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _groups = groupsItems;
+          _isLoading = false;
+        });
+      }
     } on Exception catch (err) {
-      setState(() {
-        _error = err;
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _error = err;
+          _isLoading = false;
+        });
+      }
 
       appLogger.e(err);
     }

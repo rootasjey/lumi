@@ -200,12 +200,16 @@ class _LightsPageState extends State<LightsPage> {
         _sliderValues[light.id] = light.state.brightness.toDouble();
       });
 
-      setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     } on Exception catch (err) {
-      setState(() {
-        _error = err;
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _error = err;
+          _isLoading = false;
+        });
+      }
 
       appLogger.e(err);
     }

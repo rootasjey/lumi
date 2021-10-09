@@ -169,15 +169,19 @@ class _SensorsPageState extends State<SensorsPage> {
       sensorsItems
           .retainWhere((s) => s.capabilities != null && s.capabilities.primary);
 
-      setState(() {
-        _sensors = sensorsItems;
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _sensors = sensorsItems;
+          _isLoading = false;
+        });
+      }
     } on Exception catch (err) {
-      setState(() {
-        _error = err;
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _error = err;
+          _isLoading = false;
+        });
+      }
 
       appLogger.e(err);
     }
