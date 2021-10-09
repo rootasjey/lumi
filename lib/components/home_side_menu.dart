@@ -77,22 +77,24 @@ class _HomeSideMenuState extends State<HomeSideMenu> {
     }
 
     return Material(
-      color: Colors.white70,
+      elevation: 8.0,
       child: AnimatedContainer(
         duration: 500.milliseconds,
         curve: Curves.easeOutExpo,
-        width: _isExpanded ? 300.0 : 70.0,
+        width: _isExpanded ? 260.0 : 70.0,
         child: Stack(
           children: [
             OverflowBox(
               minWidth: 40.0,
               maxWidth: 300.0,
               alignment: Alignment.topLeft,
-              child: CustomScrollView(
-                slivers: <Widget>[
-                  topSidePanel(),
-                  bodySidePanel(),
-                ],
+              child: Center(
+                child: CustomScrollView(
+                  shrinkWrap: true,
+                  slivers: <Widget>[
+                    bodySidePanel(),
+                  ],
+                ),
               ),
             ),
             toggleExpandButton(),
@@ -123,7 +125,7 @@ class _HomeSideMenuState extends State<HomeSideMenu> {
           }
 
           return Align(
-            alignment: Alignment.topLeft,
+            alignment: Alignment.centerLeft,
             child: Padding(
               padding: EdgeInsets.only(
                 left: _isExpanded ? 24.0 : 0.0,
@@ -166,42 +168,10 @@ class _HomeSideMenuState extends State<HomeSideMenu> {
         child: IconButton(
           tooltip: _isExpanded ? "collapse" : "expand",
           icon: _isExpanded
-              ? Icon(UniconsLine.left_arrow_from_left)
-              : Icon(UniconsLine.arrow_from_right),
+              ? Icon(UniconsLine.arrow_from_right)
+              : Icon(UniconsLine.left_arrow_from_left),
           onPressed: _toggleSideMenu,
         ),
-      ),
-    );
-  }
-
-  Widget topSidePanel() {
-    return SliverPadding(
-      padding: EdgeInsets.only(
-        top: 40.0,
-        bottom: 50.0,
-        left: _isExpanded ? 0.0 : 16.0,
-      ),
-      sliver: SliverList(
-        delegate: SliverChildListDelegate.fixed([
-          Column(
-            crossAxisAlignment: _isExpanded
-                ? CrossAxisAlignment.center
-                : CrossAxisAlignment.start,
-            children: [
-              IconButton(
-                tooltip: "home",
-                onPressed: () {
-                  Beamer.of(context, root: true)
-                      .beamToNamed(HomeLocation.route);
-                },
-                icon: Opacity(
-                  opacity: 0.6,
-                  child: Icon(UniconsLine.home),
-                ),
-              ),
-            ],
-          ),
-        ]),
       ),
     );
   }
