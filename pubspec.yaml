@@ -42,7 +42,7 @@ dependencies:
   line_awesome_flutter: 2.0.0
   logger: 1.0.0
   mobx: 2.0.4
-  random_color: 1.0.5
+  random_color: 1.0.6-nullsafety
   sticky_headers: 0.2.0
   supercharged: 2.1.1
   unicons: 2.0.1

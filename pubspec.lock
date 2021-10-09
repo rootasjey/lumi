@@ -575,7 +575,7 @@ packages:
       name: random_color
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.5"
+    version: "1.0.6-nullsafety"
   shared_preferences:
     dependency: transitive
     description:
