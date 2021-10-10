@@ -45,7 +45,7 @@ class _HomeSideMenuState extends State<HomeSideMenu> {
       iconData: UniconsLine.bed_double,
       label: "scenes",
       hoverColor: Colors.amber,
-      routePath: HomeContentLocation.groupsRoute,
+      routePath: HomeContentLocation.scenesRoute,
     ),
   ];
 
