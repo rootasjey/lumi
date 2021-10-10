@@ -8,6 +8,7 @@ import 'package:lumi/components/error_view.dart';
 import 'package:lumi/components/home_app_bar.dart';
 import 'package:lumi/components/light_card.dart';
 import 'package:lumi/components/loading_view.dart';
+import 'package:lumi/router/navigation_state_helper.dart';
 import 'package:lumi/state/user_state.dart';
 import 'package:lumi/utils/app_logger.dart';
 import 'package:lumi/utils/fonts.dart';
@@ -242,9 +243,12 @@ class _LightsPageState extends State<LightsPage> {
   }
 
   void onNavigate(Light light) async {
+    NavigationStateHelper.light = light;
+
     context.currentBeamLocation.update(
       (state) => state.copyWith(
         pathBlueprintSegments: [
+          'home',
           'lights',
           ':lightId',
         ],

@@ -7,6 +7,7 @@ import 'package:lumi/components/color_card.dart';
 import 'package:lumi/components/home_app_bar.dart';
 import 'package:lumi/state/colors.dart';
 import 'package:lumi/state/user_state.dart';
+import 'package:lumi/utils/app_logger.dart';
 import 'package:lumi/utils/colors.dart';
 import 'package:lumi/utils/fonts.dart';
 import 'package:random_color/random_color.dart';
@@ -16,7 +17,7 @@ import 'package:unicons/unicons.dart';
 class LightPage extends StatefulWidget {
   final Color color;
   final Light light;
-  final String lightId;
+  final int lightId;
 
   LightPage({
     this.light,
@@ -60,11 +61,14 @@ class _LightPageState extends State<LightPage> {
     colorGenerator = RandomColor();
 
     setState(() {
-      light = widget.light;
-      brightness = light.state.brightness.toDouble();
-      saturation = light.state.saturation?.toDouble();
-      hue = light.state.hue?.toDouble();
       accentColor = widget.color ?? stateColors.primary;
+      light = widget.light;
+
+      if (light != null) {
+        brightness = light.state.brightness.toDouble();
+        saturation = light.state.saturation?.toDouble();
+        hue = light.state.hue?.toDouble();
+      }
     });
 
     if (hue != null) {
@@ -90,7 +94,7 @@ class _LightPageState extends State<LightPage> {
               delegate: SliverChildListDelegate.fixed([
                 header(),
                 powerSwitch(),
-                if (light.state.on)
+                if (light != null && light.state.on)
                   Padding(
                     padding: const EdgeInsets.only(top: 40.0),
                     child: Wrap(
@@ -125,6 +129,12 @@ class _LightPageState extends State<LightPage> {
   }
 
   Widget header() {
+    Color colorBulb = stateColors.foreground.withOpacity(0.6);
+
+    if (light != null && light.state.on) {
+      colorBulb = accentColor;
+    }
+
     return Padding(
       padding: const EdgeInsets.only(
         top: 12.0,
@@ -139,9 +149,7 @@ class _LightPageState extends State<LightPage> {
               onPressed: () => onToggle(!light.state.on),
               icon: Icon(
                 UniconsLine.lightbulb_alt,
-                color: light.state.on
-                    ? accentColor
-                    : stateColors.foreground.withOpacity(0.6),
+                color: colorBulb,
               ),
             ),
           ),
@@ -152,7 +160,7 @@ class _LightPageState extends State<LightPage> {
             child: Opacity(
               opacity: 0.6,
               child: Text(
-                light.name,
+                light?.name ?? 'loading...',
                 style: FontsUtils.mainStyle(
                   fontSize: 60.0,
                   fontWeight: FontWeight.w500,
@@ -166,6 +174,12 @@ class _LightPageState extends State<LightPage> {
   }
 
   Widget powerSwitch() {
+    String stateStr = 'OFF';
+
+    if (light != null && light.state.on) {
+      stateStr = 'ON';
+    }
+
     return Padding(
       padding: const EdgeInsets.only(
         left: 60.0,
@@ -178,7 +192,7 @@ class _LightPageState extends State<LightPage> {
               right: 12.0,
             ),
             child: Text(
-              light.state.on ? 'ON' : 'OFF',
+              stateStr,
               style: TextStyle(
                 fontSize: 20.0,
                 fontWeight: FontWeight.w500,
@@ -186,7 +200,7 @@ class _LightPageState extends State<LightPage> {
             ),
           ),
           Switch(
-            value: light.state.on,
+            value: light?.state?.on ?? false,
             activeColor: accentColor,
             onChanged: (isOn) => onToggle(isOn),
           ),
@@ -196,6 +210,12 @@ class _LightPageState extends State<LightPage> {
   }
 
   Widget brightnessSlider() {
+    Color activeColor = stateColors.foreground.withOpacity(0.4);
+
+    if (light != null && light.state.on) {
+      activeColor = accentColor;
+    }
+
     return Container(
       width: _cardWidth,
       child: Card(
@@ -229,9 +249,7 @@ class _LightPageState extends State<LightPage> {
                       value: brightness,
                       min: 0,
                       max: 254,
-                      activeColor: light.state.on
-                          ? accentColor
-                          : stateColors.foreground.withOpacity(0.4),
+                      activeColor: activeColor,
                       inactiveColor: stateColors.foreground.withOpacity(0.4),
                       label: brightness.round().toString(),
                       onChanged: (double value) async {
@@ -269,6 +287,12 @@ class _LightPageState extends State<LightPage> {
   }
 
   Widget saturationSlider() {
+    Color activeColor = stateColors.foreground.withOpacity(0.4);
+
+    if (light != null && light.state.on) {
+      activeColor = accentColor;
+    }
+
     return Container(
       width: _cardWidth,
       child: Card(
@@ -300,9 +324,7 @@ class _LightPageState extends State<LightPage> {
                   value: saturation,
                   min: 0,
                   max: 254,
-                  activeColor: light.state.on
-                      ? accentColor
-                      : stateColors.foreground.withOpacity(0.4),
+                  activeColor: activeColor,
                   inactiveColor: stateColors.foreground.withOpacity(0.4),
                   label: saturation.round().toString(),
                   onChanged: (double value) async {
@@ -383,15 +405,19 @@ class _LightPageState extends State<LightPage> {
   }
 
   Widget colorSlider() {
+    Color activeColor = stateColors.foreground.withOpacity(0.4);
+
+    if (light != null && light.state.on) {
+      activeColor = accentColor;
+    }
+
     return SizedBox(
       width: 250.0,
       child: Slider(
         value: hue,
         min: 0,
         max: 65535,
-        activeColor: light.state.on
-            ? accentColor
-            : stateColors.foreground.withOpacity(0.4),
+        activeColor: activeColor,
         inactiveColor: stateColors.foreground.withOpacity(0.4),
         label: hue.round().toString(),
         onChanged: (double value) async {
@@ -497,7 +523,8 @@ class _LightPageState extends State<LightPage> {
 
     timerUpdate = Timer(150.milliseconds, () async {
       try {
-        light = await userState.bridge.light(light.id);
+        final int lightId = light?.id ?? widget.lightId;
+        light = await userState.bridge.light(lightId);
 
         if (!mounted) {
           return;
@@ -515,16 +542,15 @@ class _LightPageState extends State<LightPage> {
         }
 
         setState(() {
-          isLoading = false;
           accentColor = hsl != null ? hsl.toColor() : accentColor;
           brightness = light.state.brightness.toDouble();
           saturation = light.state.saturation?.toDouble();
           hue = light.state.hue?.toDouble();
         });
       } catch (error) {
-        debugPrint(error.toString());
-        isLoading = false;
-        setState(() {});
+        appLogger.e(error);
+      } finally {
+        setState(() => isLoading = false);
       }
     });
   }
