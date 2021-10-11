@@ -49,6 +49,12 @@ class _GroupCardState extends State<GroupCard> with TickerProviderStateMixin {
   }
 
   @override
+  void dispose() {
+    _scaleAnimationController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final group = widget.group;
 

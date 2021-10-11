@@ -48,6 +48,12 @@ class _SensorCardState extends State<SensorCard> with TickerProviderStateMixin {
   }
 
   @override
+  void dispose() {
+    scaleAnimationController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ScaleTransition(
       scale: scaleAnimation,
