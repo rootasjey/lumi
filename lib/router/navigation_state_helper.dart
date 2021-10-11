@@ -14,9 +14,9 @@ class NavigationStateHelper {
 
   static Sensor sensor;
 
-  /// Last scene selected.
-  /// This should be affected before navigating to ScenePage.
+  /// Last group selected.
+  /// This should be affected before navigating to GroupPage.
   /// This external state avoid re-fetching book's data,
   /// and make hero forward hero animation work.
-  static Scene scene;
+  static Group group;
 }

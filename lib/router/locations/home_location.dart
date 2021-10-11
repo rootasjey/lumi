@@ -44,17 +44,17 @@ class HomeContentLocation extends BeamLocation {
   static const String route = '/home';
   static const String lightsRoute = '/home/lights';
   static const String sensorsRoute = '/home/sensors';
-  static const String scenesRoute = '/home/scenes';
+  static const String groupsRoute = '/home/groups';
   static const String lightRoute = '/home/lights/:lightId';
   static const String sensorRoute = '/home/sensors/:sensorId';
-  static const String sceneRoute = '/home/scenes/:sceneId';
+  static const String groupRoute = '/home/groups/:groupId';
 
   @override
   List get pathBlueprints => [
         route,
         lightsRoute,
         sensorsRoute,
-        scenesRoute,
+        groupsRoute,
       ];
 
   @override
@@ -101,17 +101,17 @@ class HomeContentLocation extends BeamLocation {
           title: "Sensor",
           type: BeamPageType.fadeTransition,
         ),
-      if (state.pathBlueprintSegments.contains('scenes'))
+      if (state.pathBlueprintSegments.contains('groups'))
         BeamPage(
           child: GroupsPage(),
-          key: ValueKey(scenesRoute),
-          title: "Scenes",
+          key: ValueKey(groupsRoute),
+          title: "Groups",
           type: BeamPageType.fadeTransition,
         ),
-      if (state.pathBlueprintSegments.contains(':sceneId'))
+      if (state.pathBlueprintSegments.contains(':groupId'))
         BeamPage(
-          child: GroupPage(groupId: state.pathParameters['sceneId']),
-          key: ValueKey('scenes/${state.pathParameters['sceneId']}'),
+          child: GroupPage(groupId: int.parse(state.pathParameters['groupId'])),
+          key: ValueKey('groups/${state.pathParameters['groupId']}'),
           title: "Group",
           type: BeamPageType.fadeTransition,
         ),

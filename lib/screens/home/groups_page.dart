@@ -8,6 +8,7 @@ import 'package:lumi/components/error_view.dart';
 import 'package:lumi/components/group_card.dart';
 import 'package:lumi/components/home_app_bar.dart';
 import 'package:lumi/components/loading_view.dart';
+import 'package:lumi/router/navigation_state_helper.dart';
 import 'package:lumi/state/user_state.dart';
 import 'package:lumi/utils/app_logger.dart';
 import 'package:lumi/utils/fonts.dart';
@@ -189,6 +190,8 @@ class _GroupsPageState extends State<GroupsPage> {
   }
 
   void onNavigate(Group group) async {
+    NavigationStateHelper.group = group;
+
     context.currentBeamLocation.update(
       (state) => state.copyWith(pathBlueprintSegments: [
         'groups',
