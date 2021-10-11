@@ -45,7 +45,7 @@ class _UndefinedPageState extends State<UndefinedPage> {
                         opacity: 0.8,
                         child: Text(
                           "It's dark in there. "
-                          "Follow the light to go back on track",
+                          "Follow the light to go back on track.",
                           style: TextStyle(
                             fontSize: 30.0,
                           ),
@@ -67,7 +67,7 @@ class _UndefinedPageState extends State<UndefinedPage> {
           padding: const EdgeInsets.only(top: 20.0),
           child: TextButton(
             onPressed: () {
-              Beamer.of(context).beamToNamed(HomeLocation.route);
+              Beamer.of(context).beamToNamed(HomeContentLocation.lightsRoute);
             },
             child: Padding(
               padding: const EdgeInsets.all(8.0),
