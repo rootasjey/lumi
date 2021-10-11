@@ -63,7 +63,6 @@ class _HomeAppBarState extends State<HomeAppBar> {
                       Padding(
                         padding: const EdgeInsets.only(right: 16.0),
                         child: IconButton(
-                          color: stateColors.foreground,
                           onPressed: Beamer.of(context).popRoute,
                           icon: Icon(UniconsLine.arrow_left),
                         ),
