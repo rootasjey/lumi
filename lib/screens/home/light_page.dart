@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hue_api/hue_dart.dart' hide Timer;
@@ -154,7 +155,7 @@ class _LightPageState extends State<LightPage> {
   }
 
   Widget header() {
-    Color colorBulb = stateColors.foreground.withOpacity(0.6);
+    Color colorBulb = AdaptiveTheme.of(context).theme.textTheme.bodyText1.color;
 
     if (light != null && light.state.on) {
       colorBulb = accentColor;

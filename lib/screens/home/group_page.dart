@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:hue_api/hue_dart.dart' hide Timer;
 import 'package:lumi/components/home_app_bar.dart';
@@ -204,7 +205,7 @@ class _GroupPageState extends State<GroupPage> {
   }
 
   Widget header() {
-    Color iconColor = stateColors.foreground.withOpacity(0.6);
+    Color iconColor = AdaptiveTheme.of(context).theme.textTheme.bodyText1.color;
 
     if (group != null && group.action.on) {
       iconColor = stateColors.primary;
