@@ -6,7 +6,6 @@ import 'package:lumi/components/app_icon.dart';
 import 'package:lumi/router/locations/about_location.dart';
 import 'package:lumi/router/locations/connect_location.dart';
 import 'package:lumi/router/route_names.dart';
-import 'package:lumi/state/colors.dart';
 import 'package:lumi/state/user_state.dart';
 import 'package:lumi/utils/brightness.dart';
 import 'package:lumi/utils/constants.dart';
