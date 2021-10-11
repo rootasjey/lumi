@@ -8,6 +8,7 @@ import 'package:lumi/components/error_view.dart';
 import 'package:lumi/components/home_app_bar.dart';
 import 'package:lumi/components/loading_view.dart';
 import 'package:lumi/components/sensor_card.dart';
+import 'package:lumi/router/navigation_state_helper.dart';
 import 'package:lumi/state/user_state.dart';
 import 'package:lumi/utils/app_logger.dart';
 import 'package:lumi/utils/fonts.dart';
@@ -188,14 +189,17 @@ class _SensorsPageState extends State<SensorsPage> {
   }
 
   void onNavigate(Sensor sensor) {
+    NavigationStateHelper.sensor = sensor;
+
     context.currentBeamLocation.update(
       (state) => state.copyWith(
         pathBlueprintSegments: [
+          'home',
           'sensors',
           ':sensorId',
         ],
         pathParameters: {
-          'lightId': sensor.id.toString(),
+          'sensorId': sensor.id.toString(),
         },
       ),
     );

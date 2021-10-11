@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hue_api/hue_dart.dart' hide Timer;
 import 'package:jiffy/jiffy.dart';
 import 'package:lumi/components/home_app_bar.dart';
+import 'package:lumi/router/navigation_state_helper.dart';
 import 'package:lumi/state/colors.dart';
 import 'package:lumi/state/user_state.dart';
 import 'package:lumi/utils/app_logger.dart';
@@ -13,11 +15,9 @@ import 'package:supercharged/supercharged.dart';
 import 'package:unicons/unicons.dart';
 
 class SensorPage extends StatefulWidget {
-  final Sensor sensor;
-  final String sensorId;
+  final int sensorId;
 
   SensorPage({
-    this.sensor,
     this.sensorId,
   });
 
@@ -33,8 +33,6 @@ class _SensorPageState extends State<SensorPage> {
   bool _sensorOn;
   bool _timeInitialized = false;
 
-  Color _cardColor = stateColors.appBackground;
-
   double _cardWidth = 500.0;
   double _cardElevation = 4.0;
 
@@ -45,11 +43,25 @@ class _SensorPageState extends State<SensorPage> {
     super.initState();
 
     setState(() {
-      _sensor = widget.sensor;
-      _sensorOn = _sensor.config.on;
+      _sensor = NavigationStateHelper.sensor;
     });
 
+    initProps();
     initLocalTime();
+  }
+
+  @override
+  void dispose() {
+    _timerUpdate?.cancel();
+    super.dispose();
+  }
+
+  void initProps() {
+    if (_sensor == null) {
+      return;
+    }
+
+    _sensorOn = _sensor.config.on;
   }
 
   @override
@@ -99,7 +111,7 @@ class _SensorPageState extends State<SensorPage> {
                 UniconsLine.dice_one,
                 color: _sensorOn
                     ? stateColors.primary
-                    : stateColors.foreground.withOpacity(0.6),
+                    : AdaptiveTheme.of(context).theme.textTheme.bodyText1.color,
               ),
             ),
           ),
@@ -110,7 +122,7 @@ class _SensorPageState extends State<SensorPage> {
             child: Opacity(
               opacity: 0.6,
               child: Text(
-                _sensor.name,
+                _sensor?.name ?? 'Loading...',
                 style: FontsUtils.mainStyle(
                   fontSize: 60.0,
                   fontWeight: FontWeight.w600,
@@ -160,16 +172,13 @@ class _SensorPageState extends State<SensorPage> {
       ),
       child: Card(
         elevation: _cardElevation,
-        color: _cardColor,
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.only(
-                  left: 24.0,
-                ),
+                padding: const EdgeInsets.only(),
                 child: Opacity(
                   opacity: 0.6,
                   child: Text(
@@ -192,7 +201,6 @@ class _SensorPageState extends State<SensorPage> {
                     Padding(
                       padding: const EdgeInsets.only(
                         right: 8.0,
-                        left: 20.0,
                       ),
                       child: Icon(
                         _sensor.config.battery < 5
@@ -200,7 +208,11 @@ class _SensorPageState extends State<SensorPage> {
                             : UniconsLine.battery_empty,
                         color: _sensor.config.battery < 5
                             ? Colors.red.shade300
-                            : stateColors.foreground,
+                            : AdaptiveTheme.of(context)
+                                .theme
+                                .textTheme
+                                .bodyText1
+                                .color,
                       ),
                     ),
                     Opacity(
@@ -234,7 +246,6 @@ class _SensorPageState extends State<SensorPage> {
           left: 54.0,
         ),
         elevation: _cardElevation,
-        color: _cardColor,
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(

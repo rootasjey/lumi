@@ -96,7 +96,9 @@ class HomeContentLocation extends BeamLocation {
         ),
       if (state.pathBlueprintSegments.contains(':sensorId'))
         BeamPage(
-          child: SensorPage(sensorId: state.pathParameters['sensorId']),
+          child: SensorPage(
+            sensorId: int.parse(state.pathParameters['sensorId']),
+          ),
           key: ValueKey('sensors/${state.pathParameters['sensorId']}'),
           title: "Sensor",
           type: BeamPageType.fadeTransition,
