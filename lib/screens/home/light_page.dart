@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:hue_api/hue_dart.dart' hide Timer;
 import 'package:lumi/components/color_card.dart';
 import 'package:lumi/components/home_app_bar.dart';
+import 'package:lumi/router/navigation_state_helper.dart';
 import 'package:lumi/state/colors.dart';
 import 'package:lumi/state/user_state.dart';
 import 'package:lumi/utils/app_logger.dart';
@@ -16,11 +17,9 @@ import 'package:unicons/unicons.dart';
 
 class LightPage extends StatefulWidget {
   final Color color;
-  final Light light;
   final int lightId;
 
   LightPage({
-    this.light,
     this.lightId,
     this.color,
   });
@@ -31,8 +30,6 @@ class LightPage extends StatefulWidget {
 
 class _LightPageState extends State<LightPage> {
   bool isLoading = false;
-
-  Color _cardColor = stateColors.appBackground;
 
   double brightness = 0;
   double saturation = 0;
@@ -57,25 +54,41 @@ class _LightPageState extends State<LightPage> {
   @override
   void initState() {
     super.initState();
-
     colorGenerator = RandomColor();
 
     setState(() {
       accentColor = widget.color ?? stateColors.primary;
-      light = widget.light;
-
-      if (light != null) {
-        brightness = light.state.brightness.toDouble();
-        saturation = light.state.saturation?.toDouble();
-        hue = light.state.hue?.toDouble();
-      }
+      light = NavigationStateHelper.light;
+      initProps();
     });
+
+    fetch();
+  }
+
+  void initProps() {
+    if (light == null) {
+      return;
+    }
+
+    HSLColor hsl;
+
+    if (light.state.hue != null) {
+      hsl = HSLColor.fromAHSL(
+        1.0,
+        light.state.hue / 65535 * 360,
+        light.state.saturation / 255,
+        light.state.brightness / 255,
+      );
+    }
+
+    accentColor = hsl != null ? hsl.toColor() : accentColor;
+    brightness = light.state.brightness.toDouble();
+    saturation = light.state.saturation?.toDouble();
+    hue = light.state.hue?.toDouble();
 
     if (hue != null) {
       generatePalette();
     }
-
-    fetch();
   }
 
   @override
@@ -84,33 +97,7 @@ class _LightPageState extends State<LightPage> {
       body: CustomScrollView(
         slivers: [
           appBar(),
-          SliverPadding(
-            padding: const EdgeInsets.only(
-              left: 40.0,
-              right: 40.0,
-              bottom: 200.0,
-            ),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate.fixed([
-                header(),
-                powerSwitch(),
-                if (light != null && light.state.on)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 40.0),
-                    child: Wrap(
-                      spacing: 18.0,
-                      runSpacing: 18.0,
-                      children: [
-                        brightnessSlider(),
-                        if (saturation != null) saturationSlider(),
-                        if (hue != null) lightHue(),
-                        if (hue != null) colorsPalette(),
-                      ],
-                    ),
-                  ),
-              ]),
-            ),
-          ),
+          body(),
         ],
       ),
     );
@@ -124,6 +111,44 @@ class _LightPageState extends State<LightPage> {
         style: FontsUtils.titleStyle(
           fontSize: 30.0,
         ),
+      ),
+    );
+  }
+
+  Widget body() {
+    return SliverPadding(
+      padding: const EdgeInsets.only(
+        left: 40.0,
+        right: 40.0,
+        bottom: 200.0,
+      ),
+      sliver: SliverList(
+        delegate: SliverChildListDelegate.fixed([
+          header(),
+          powerSwitch(),
+          if (light != null && light.state.on)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 40.0,
+                    left: 40.0,
+                  ),
+                  child: Wrap(
+                    spacing: 18.0,
+                    runSpacing: 18.0,
+                    children: [
+                      brightnessSlider(),
+                      if (saturation != null) saturationSlider(),
+                      if (hue != null) lightHue(),
+                    ],
+                  ),
+                ),
+                if (hue != null) colorsPalette(),
+              ],
+            ),
+        ]),
       ),
     );
   }
@@ -220,7 +245,6 @@ class _LightPageState extends State<LightPage> {
       width: _cardWidth,
       child: Card(
         elevation: _cardElevation,
-        color: _cardColor,
         child: Padding(
           padding: const EdgeInsets.all(18.0),
           child: Column(
@@ -297,7 +321,6 @@ class _LightPageState extends State<LightPage> {
       width: _cardWidth,
       child: Card(
         elevation: _cardElevation,
-        color: _cardColor,
         child: Padding(
           padding: const EdgeInsets.all(18.0),
           child: Column(
@@ -360,7 +383,6 @@ class _LightPageState extends State<LightPage> {
       width: _cardWidth,
       child: Card(
         elevation: _cardElevation,
-        color: _cardColor,
         child: Padding(
           padding: const EdgeInsets.all(18.0),
           child: Column(
@@ -447,7 +469,7 @@ class _LightPageState extends State<LightPage> {
   Widget colorsPalette() {
     return Padding(
       padding: const EdgeInsets.symmetric(
-        horizontal: 70.0,
+        horizontal: 50.0,
         vertical: 50.0,
       ),
       child: Column(
@@ -524,29 +546,14 @@ class _LightPageState extends State<LightPage> {
     timerUpdate = Timer(150.milliseconds, () async {
       try {
         final int lightId = light?.id ?? widget.lightId;
-        light = await userState.bridge.light(lightId);
+        final Light newLight = await userState.bridge.light(lightId);
 
         if (!mounted) {
           return;
         }
 
-        HSLColor hsl;
-
-        if (light.state.hue != null) {
-          hsl = HSLColor.fromAHSL(
-            1.0,
-            light.state.hue / 65535 * 360,
-            light.state.saturation / 255,
-            light.state.brightness / 255,
-          );
-        }
-
-        setState(() {
-          accentColor = hsl != null ? hsl.toColor() : accentColor;
-          brightness = light.state.brightness.toDouble();
-          saturation = light.state.saturation?.toDouble();
-          hue = light.state.hue?.toDouble();
-        });
+        setState(() => light = newLight);
+        initProps();
       } catch (error) {
         appLogger.e(error);
       } finally {

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:hue_api/hue_dart.dart' hide Timer;
+import 'package:lumi/router/navigation_state_helper.dart';
 import 'package:lumi/screens/home/light_page.dart';
 import 'package:lumi/state/colors.dart';
 import 'package:lumi/state/user_state.dart';
@@ -67,6 +68,8 @@ class _TinyLightCardState extends State<TinyLightCard> {
   }
 
   void onNavigateToLightPage(Light light) async {
+    NavigationStateHelper.light = light;
+
     await Navigator.of(context).push(MaterialPageRoute(
       fullscreenDialog: true,
       builder: (context) {
@@ -84,7 +87,6 @@ class _TinyLightCardState extends State<TinyLightCard> {
                     child: GestureDetector(
                       onTap: () {}, // to block parent onTap()
                       child: LightPage(
-                        light: light,
                         color: accentColor,
                       ),
                     ),
