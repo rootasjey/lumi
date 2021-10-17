@@ -48,6 +48,7 @@ dependencies:
   unicons: 2.0.1
   url_launcher: 6.0.12
   url_strategy: 0.2.0
+  window_manager: 0.0.4
 
 dev_dependencies:
   build_runner:
