@@ -13,13 +13,14 @@ import 'package:lumi/state/user_state.dart';
 import 'package:lumi/utils/app_logger.dart';
 import 'package:lumi/utils/fonts.dart';
 import 'package:supercharged/supercharged.dart';
+import 'package:window_manager/window_manager.dart';
 
 class GroupsPage extends StatefulWidget {
   @override
   _GroupsPageState createState() => _GroupsPageState();
 }
 
-class _GroupsPageState extends State<GroupsPage> {
+class _GroupsPageState extends State<GroupsPage> with WindowListener {
   List<Group> _groups = [];
   Exception _error;
 
@@ -32,12 +33,17 @@ class _GroupsPageState extends State<GroupsPage> {
   @override
   void initState() {
     super.initState();
+    WindowManager.instance.addListener(this);
+    // NOTE: Events listennrs are not fire without this.
+    WindowManager.instance.isVisible();
+
     fetchGroups(showLoading: true);
     startPolling();
   }
 
   @override
   dispose() {
+    WindowManager.instance.removeListener(this);
     _pageUpdateTimer?.cancel();
     super.dispose();
   }
@@ -156,7 +162,7 @@ class _GroupsPageState extends State<GroupsPage> {
 
   void startPolling() async {
     _pageUpdateTimer = Timer.periodic(
-      2.seconds,
+      1.seconds,
       (timer) {
         fetchGroups(showLoading: false);
       },
@@ -200,5 +206,20 @@ class _GroupsPageState extends State<GroupsPage> {
         'groupId': group.id.toString(),
       }),
     );
+  }
+
+  @override
+  void onWindowFocus() {
+    if (_pageUpdateTimer == null || !_pageUpdateTimer.isActive) {
+      startPolling();
+    }
+
+    super.onWindowFocus();
+  }
+
+  @override
+  void onWindowBlur() {
+    _pageUpdateTimer?.cancel();
+    super.onWindowBlur();
   }
 }

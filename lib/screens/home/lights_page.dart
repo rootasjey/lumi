@@ -13,13 +13,14 @@ import 'package:lumi/state/user_state.dart';
 import 'package:lumi/utils/app_logger.dart';
 import 'package:lumi/utils/fonts.dart';
 import 'package:supercharged/supercharged.dart';
+import 'package:window_manager/window_manager.dart';
 
 class LightsPage extends StatefulWidget {
   @override
   _LightsPageState createState() => _LightsPageState();
 }
 
-class _LightsPageState extends State<LightsPage> {
+class _LightsPageState extends State<LightsPage> with WindowListener {
   List<Light> _lights = [];
   Exception _error;
 
@@ -34,12 +35,17 @@ class _LightsPageState extends State<LightsPage> {
   @override
   void initState() {
     super.initState();
+    WindowManager.instance.addListener(this);
+    // NOTE: Events listennrs are not fire without this.
+    WindowManager.instance.isVisible();
+
     fetch(showLoading: true);
     startPolling();
   }
 
   @override
   dispose() {
+    WindowManager.instance.removeListener(this);
     _pageUpdateTimer?.cancel();
     _updateBrightnessTimer?.cancel();
     super.dispose();
@@ -181,7 +187,7 @@ class _LightsPageState extends State<LightsPage> {
 
   void startPolling() async {
     _pageUpdateTimer = Timer.periodic(
-      2.seconds,
+      1.seconds,
       (timer) {
         fetch(showLoading: false);
       },
@@ -197,22 +203,25 @@ class _LightsPageState extends State<LightsPage> {
     try {
       _lights = await userState.bridge.lights();
 
-      _lights.forEach((light) {
-        _sliderValues[light.id] = light.state.brightness.toDouble();
-      });
-
-      if (mounted) {
-        setState(() => _isLoading = false);
+      if (!mounted) {
+        return;
       }
+
+      setState(() {
+        _lights.forEach((light) {
+          _sliderValues[light.id] = light.state.brightness.toDouble();
+        });
+      });
     } on Exception catch (err) {
       if (mounted) {
-        setState(() {
-          _error = err;
-          _isLoading = false;
-        });
+        setState(() => _error = err);
       }
 
       appLogger.e(err);
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
@@ -257,5 +266,20 @@ class _LightsPageState extends State<LightsPage> {
         },
       ),
     );
+  }
+
+  @override
+  void onWindowFocus() {
+    if (_pageUpdateTimer == null || !_pageUpdateTimer.isActive) {
+      startPolling();
+    }
+
+    super.onWindowFocus();
+  }
+
+  @override
+  void onWindowBlur() {
+    _pageUpdateTimer?.cancel();
+    super.onWindowBlur();
   }
 }

@@ -13,13 +13,14 @@ import 'package:lumi/state/user_state.dart';
 import 'package:lumi/utils/app_logger.dart';
 import 'package:lumi/utils/fonts.dart';
 import 'package:supercharged/supercharged.dart';
+import 'package:window_manager/window_manager.dart';
 
 class SensorsPage extends StatefulWidget {
   @override
   _SensorsPageState createState() => _SensorsPageState();
 }
 
-class _SensorsPageState extends State<SensorsPage> {
+class _SensorsPageState extends State<SensorsPage> with WindowListener {
   List<Sensor> _sensors = [];
   Exception _error;
 
@@ -32,12 +33,17 @@ class _SensorsPageState extends State<SensorsPage> {
   @override
   void initState() {
     super.initState();
+    WindowManager.instance.addListener(this);
+    // NOTE: Events listennrs are not fire without this.
+    WindowManager.instance.isVisible();
+
     fetchSensors(showLoading: true);
     startPolling();
   }
 
   @override
   void dispose() {
+    WindowManager.instance.removeListener(this);
     _pageUpdateTimer?.cancel();
     super.dispose();
   }
@@ -152,8 +158,9 @@ class _SensorsPageState extends State<SensorsPage> {
 
   void startPolling() async {
     _pageUpdateTimer = Timer.periodic(
-      2.seconds,
+      1.seconds,
       (timer) {
+        appLogger.d("polling sensors");
         fetchSensors(showLoading: false);
       },
     );
@@ -203,5 +210,20 @@ class _SensorsPageState extends State<SensorsPage> {
         },
       ),
     );
+  }
+
+  @override
+  void onWindowFocus() {
+    if (_pageUpdateTimer == null || !_pageUpdateTimer.isActive) {
+      startPolling();
+    }
+
+    super.onWindowFocus();
+  }
+
+  @override
+  void onWindowBlur() {
+    _pageUpdateTimer?.cancel();
+    super.onWindowBlur();
   }
 }
