@@ -31,22 +31,22 @@ class LightPage extends StatefulWidget {
 }
 
 class _LightPageState extends State<LightPage> with WindowListener {
-  bool isLoading = false;
+  bool _isLoading = false;
 
-  double brightness = 0;
-  double saturation = 0;
-  double hue = 0;
+  double _brightness = 0;
+  double _saturation = 0;
+  double _hue = 0;
 
   double _cardWidth = 400.0;
   double _cardElevation = 4.0;
 
-  Color accentColor;
+  Color _accentColor;
 
   final _colors = <Color>[];
 
-  Light light;
+  Light _light;
 
-  RandomColor colorGenerator;
+  RandomColor _colorGenerator;
 
   /// Polling fetch timer.
   Timer _fetchTimer;
@@ -70,11 +70,11 @@ class _LightPageState extends State<LightPage> with WindowListener {
     // NOTE: Events listennrs are not fire without this.
     WindowManager.instance.isVisible();
 
-    colorGenerator = RandomColor();
+    _colorGenerator = RandomColor();
 
     setState(() {
-      accentColor = widget.color ?? stateColors.primary;
-      light = NavigationStateHelper.light;
+      _accentColor = widget.color ?? stateColors.primary;
+      _light = NavigationStateHelper.light;
       refreshProps();
     });
 
@@ -82,27 +82,27 @@ class _LightPageState extends State<LightPage> with WindowListener {
   }
 
   void refreshProps() {
-    if (light == null) {
+    if (_light == null) {
       return;
     }
 
     HSLColor hsl;
 
-    if (light.state.hue != null) {
+    if (_light.state.hue != null) {
       hsl = HSLColor.fromAHSL(
         1.0,
-        light.state.hue / 65535 * 360,
-        light.state.saturation / 255,
-        light.state.brightness / 255,
+        _light.state.hue / 65535 * 360,
+        _light.state.saturation / 255,
+        _light.state.brightness / 255,
       );
     }
 
-    accentColor = hsl != null ? hsl.toColor() : accentColor;
-    brightness = light.state.brightness.toDouble();
-    saturation = light.state.saturation?.toDouble();
-    hue = light.state.hue?.toDouble();
+    _accentColor = hsl != null ? hsl.toColor() : _accentColor;
+    _brightness = _light.state.brightness.toDouble();
+    _saturation = _light.state.saturation?.toDouble();
+    _hue = _light.state.hue?.toDouble();
 
-    if (hue != null) {
+    if (_hue != null) {
       generatePalette();
     }
   }
@@ -154,7 +154,7 @@ class _LightPageState extends State<LightPage> with WindowListener {
         delegate: SliverChildListDelegate.fixed([
           header(),
           powerSwitch(),
-          if (light != null && light.state.on)
+          if (_light != null && _light.state.on)
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -168,12 +168,12 @@ class _LightPageState extends State<LightPage> with WindowListener {
                     runSpacing: 18.0,
                     children: [
                       brightnessSlider(),
-                      if (saturation != null) saturationSlider(),
-                      if (hue != null) lightHue(),
+                      if (_saturation != null) saturationSlider(),
+                      if (_hue != null) lightHue(),
                     ],
                   ),
                 ),
-                if (hue != null) colorsPalette(),
+                if (_hue != null) colorsPalette(),
               ],
             ),
         ]),
@@ -184,8 +184,8 @@ class _LightPageState extends State<LightPage> with WindowListener {
   Widget header() {
     Color colorBulb = AdaptiveTheme.of(context).theme.textTheme.bodyText1.color;
 
-    if (light != null && light.state.on) {
-      colorBulb = accentColor;
+    if (_light != null && _light.state.on) {
+      colorBulb = _accentColor;
     }
 
     return Padding(
@@ -199,7 +199,7 @@ class _LightPageState extends State<LightPage> with WindowListener {
             padding: const EdgeInsets.only(top: 6.0),
             child: IconButton(
               iconSize: 40.0,
-              onPressed: () => onToggle(!light.state.on),
+              onPressed: () => onToggle(!_light.state.on),
               icon: Icon(
                 UniconsLine.lightbulb_alt,
                 color: colorBulb,
@@ -213,7 +213,7 @@ class _LightPageState extends State<LightPage> with WindowListener {
             child: Opacity(
               opacity: 0.6,
               child: Text(
-                light?.name ?? 'loading...',
+                _light?.name ?? 'loading...',
                 style: FontsUtils.mainStyle(
                   fontSize: 60.0,
                   fontWeight: FontWeight.w500,
@@ -229,7 +229,7 @@ class _LightPageState extends State<LightPage> with WindowListener {
   Widget powerSwitch() {
     String stateStr = 'OFF';
 
-    if (light != null && light.state.on) {
+    if (_light != null && _light.state.on) {
       stateStr = 'ON';
     }
 
@@ -253,8 +253,8 @@ class _LightPageState extends State<LightPage> with WindowListener {
             ),
           ),
           Switch(
-            value: light?.state?.on ?? false,
-            activeColor: accentColor,
+            value: _light?.state?.on ?? false,
+            activeColor: _accentColor,
             onChanged: (isOn) => onToggle(isOn),
           ),
         ],
@@ -265,8 +265,8 @@ class _LightPageState extends State<LightPage> with WindowListener {
   Widget brightnessSlider() {
     Color activeColor = stateColors.foreground.withOpacity(0.4);
 
-    if (light != null && light.state.on) {
-      activeColor = accentColor;
+    if (_light != null && _light.state.on) {
+      activeColor = _accentColor;
     }
 
     return Container(
@@ -298,15 +298,15 @@ class _LightPageState extends State<LightPage> with WindowListener {
                   SizedBox(
                     width: 250.0,
                     child: Slider(
-                      value: brightness,
+                      value: _brightness,
                       min: 0,
                       max: 254,
                       activeColor: activeColor,
                       inactiveColor: stateColors.foreground.withOpacity(0.4),
-                      label: brightness.round().toString(),
+                      label: _brightness.round().toString(),
                       onChanged: (double value) async {
                         setState(() {
-                          brightness = value;
+                          _brightness = value;
                         });
 
                         if (_updateBrightnessTimer != null) {
@@ -318,7 +318,7 @@ class _LightPageState extends State<LightPage> with WindowListener {
                           LightState state =
                               LightState((l) => l..brightness = value.toInt());
 
-                          await userState.bridge.updateLightState(light
+                          await userState.bridge.updateLightState(_light
                               .rebuild((l) => l..state = state.toBuilder()));
 
                           fetch();
@@ -341,8 +341,8 @@ class _LightPageState extends State<LightPage> with WindowListener {
   Widget saturationSlider() {
     Color activeColor = stateColors.foreground.withOpacity(0.4);
 
-    if (light != null && light.state.on) {
-      activeColor = accentColor;
+    if (_light != null && _light.state.on) {
+      activeColor = _accentColor;
     }
 
     return Container(
@@ -372,15 +372,15 @@ class _LightPageState extends State<LightPage> with WindowListener {
               SizedBox(
                 width: 250.0,
                 child: Slider(
-                  value: saturation,
+                  value: _saturation,
                   min: 0,
                   max: 254,
                   activeColor: activeColor,
                   inactiveColor: stateColors.foreground.withOpacity(0.4),
-                  label: saturation.round().toString(),
+                  label: _saturation.round().toString(),
                   onChanged: (double value) async {
                     setState(() {
-                      saturation = value;
+                      _saturation = value;
                     });
 
                     if (_updateSaturationTimer != null) {
@@ -392,7 +392,7 @@ class _LightPageState extends State<LightPage> with WindowListener {
                           LightState((l) => l..saturation = value.toInt());
 
                       await userState.bridge.updateLightState(
-                          light.rebuild((l) => l..state = state.toBuilder()));
+                          _light.rebuild((l) => l..state = state.toBuilder()));
 
                       fetch();
                     });
@@ -457,22 +457,22 @@ class _LightPageState extends State<LightPage> with WindowListener {
   Widget colorSlider() {
     Color activeColor = stateColors.foreground.withOpacity(0.4);
 
-    if (light != null && light.state.on) {
-      activeColor = accentColor;
+    if (_light != null && _light.state.on) {
+      activeColor = _accentColor;
     }
 
     return SizedBox(
       width: 250.0,
       child: Slider(
-        value: hue,
+        value: _hue,
         min: 0,
         max: 65535,
         activeColor: activeColor,
         inactiveColor: stateColors.foreground.withOpacity(0.4),
-        label: hue.round().toString(),
+        label: _hue.round().toString(),
         onChanged: (double value) async {
           setState(() {
-            hue = value;
+            _hue = value;
           });
 
           if (_updateHueTimer != null) {
@@ -484,7 +484,7 @@ class _LightPageState extends State<LightPage> with WindowListener {
 
             userState.bridge
                 .updateLightState(
-                    light.rebuild((l) => l..state = state.toBuilder()))
+                    _light.rebuild((l) => l..state = state.toBuilder()))
                 .then((value) {
               fetch();
             });
@@ -543,7 +543,7 @@ class _LightPageState extends State<LightPage> with WindowListener {
                   }
 
                   _updateHueTimer = Timer(250.milliseconds, () async {
-                    final state = lightStateForColorOnly(light.changeColor(
+                    final state = lightStateForColorOnly(_light.changeColor(
                       red: color.red,
                       green: color.green,
                       blue: color.blue,
@@ -551,7 +551,7 @@ class _LightPageState extends State<LightPage> with WindowListener {
 
                     userState.bridge
                         .updateLightState(
-                            light.rebuild((l) => l..state = state.toBuilder()))
+                            _light.rebuild((l) => l..state = state.toBuilder()))
                         .then((_) => fetch());
                   });
                 },
@@ -565,17 +565,17 @@ class _LightPageState extends State<LightPage> with WindowListener {
 
   /// Fetch a single light's data.
   void fetch({bool showLoading = true}) async {
-    if (isLoading && _updateLightTimer != null) {
+    if (_isLoading && _updateLightTimer != null) {
       _updateLightTimer.cancel();
     }
 
     if (showLoading) {
-      setState(() => isLoading = true);
+      setState(() => _isLoading = true);
     }
 
     _updateLightTimer = Timer(150.milliseconds, () async {
       try {
-        final int lightId = light?.id ?? widget.lightId;
+        final int lightId = _light?.id ?? widget.lightId;
         final Light newLight = await userState.bridge.light(lightId);
 
         if (!mounted) {
@@ -583,13 +583,13 @@ class _LightPageState extends State<LightPage> with WindowListener {
         }
 
         setState(() {
-          light = newLight;
+          _light = newLight;
           refreshProps();
         });
       } catch (error) {
         appLogger.e(error);
       } finally {
-        setState(() => isLoading = false);
+        setState(() => _isLoading = false);
       }
     });
   }
@@ -597,7 +597,7 @@ class _LightPageState extends State<LightPage> with WindowListener {
   void generatePalette() {
     setState(() {
       _colors.clear();
-      _colors.addAll(colorGenerator.randomColors(count: 5));
+      _colors.addAll(_colorGenerator.randomColors(count: 5));
     });
   }
 
@@ -605,7 +605,7 @@ class _LightPageState extends State<LightPage> with WindowListener {
     LightState state = LightState((l) => l..on = isOn);
 
     await userState.bridge
-        .updateLightState(light.rebuild((l) => l..state = state.toBuilder()));
+        .updateLightState(_light.rebuild((l) => l..state = state.toBuilder()));
 
     fetch();
   }
