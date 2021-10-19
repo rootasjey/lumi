@@ -48,9 +48,9 @@ class _HomeAppBarState extends State<HomeAppBar> {
               expandedHeight: 140.0,
               backgroundColor: adaptiveTheme.theme.canvasColor,
               automaticallyImplyLeading: false,
-              title: Padding(
+              flexibleSpace: Padding(
                 padding: EdgeInsets.only(
-                  top: 12.0,
+                  top: 48.0,
                   left: leftPadding,
                   right: leftPadding,
                 ),
@@ -72,7 +72,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
                     ),
                     Expanded(
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 40.0),
+                        padding: const EdgeInsets.only(left: 24.0, top: 4.0),
                         child: Text(
                           'lumi',
                           style: FontsUtils.titleStyle(
