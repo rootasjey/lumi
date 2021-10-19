@@ -160,7 +160,6 @@ class _SensorsPageState extends State<SensorsPage> with WindowListener {
     _pageUpdateTimer = Timer.periodic(
       1.seconds,
       (timer) {
-        appLogger.d("polling sensors");
         fetchSensors(showLoading: false);
       },
     );
