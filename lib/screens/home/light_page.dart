@@ -15,6 +15,7 @@ import 'package:lumi/utils/fonts.dart';
 import 'package:random_color/random_color.dart';
 import 'package:supercharged/supercharged.dart';
 import 'package:unicons/unicons.dart';
+import 'package:window_manager/window_manager.dart';
 
 class LightPage extends StatefulWidget {
   final Color color;
@@ -29,7 +30,7 @@ class LightPage extends StatefulWidget {
   _LightPageState createState() => _LightPageState();
 }
 
-class _LightPageState extends State<LightPage> {
+class _LightPageState extends State<LightPage> with WindowListener {
   bool isLoading = false;
 
   double brightness = 0;
@@ -47,26 +48,40 @@ class _LightPageState extends State<LightPage> {
 
   RandomColor colorGenerator;
 
-  Timer timerUpdate;
-  Timer timerUpdateBrightness;
-  Timer timerUpdateSaturation;
-  Timer timerUpdateHue;
+  /// Polling fetch timer.
+  Timer _fetchTimer;
+
+  /// Schedule light's state update.
+  Timer _updateLightTimer;
+
+  /// Schedule light's brightness update.
+  Timer _updateBrightnessTimer;
+
+  /// Schedule light's saturation update.
+  Timer _updateSaturationTimer;
+
+  /// Schedule light's hue update.
+  Timer _updateHueTimer;
 
   @override
   void initState() {
     super.initState();
+    WindowManager.instance.addListener(this);
+    // NOTE: Events listennrs are not fire without this.
+    WindowManager.instance.isVisible();
+
     colorGenerator = RandomColor();
 
     setState(() {
       accentColor = widget.color ?? stateColors.primary;
       light = NavigationStateHelper.light;
-      initProps();
+      refreshProps();
     });
 
-    fetch();
+    pollingFetch();
   }
 
-  void initProps() {
+  void refreshProps() {
     if (light == null) {
       return;
     }
@@ -90,6 +105,18 @@ class _LightPageState extends State<LightPage> {
     if (hue != null) {
       generatePalette();
     }
+  }
+
+  @override
+  void dispose() {
+    WindowManager.instance.removeListener(this);
+    _fetchTimer?.cancel();
+    _updateLightTimer?.cancel();
+    _updateBrightnessTimer?.cancel();
+    _updateSaturationTimer?.cancel();
+    _updateHueTimer?.cancel();
+
+    super.dispose();
   }
 
   @override
@@ -282,11 +309,11 @@ class _LightPageState extends State<LightPage> {
                           brightness = value;
                         });
 
-                        if (timerUpdateBrightness != null) {
-                          timerUpdateBrightness.cancel();
+                        if (_updateBrightnessTimer != null) {
+                          _updateBrightnessTimer.cancel();
                         }
 
-                        timerUpdateBrightness =
+                        _updateBrightnessTimer =
                             Timer(250.milliseconds, () async {
                           LightState state =
                               LightState((l) => l..brightness = value.toInt());
@@ -356,11 +383,11 @@ class _LightPageState extends State<LightPage> {
                       saturation = value;
                     });
 
-                    if (timerUpdateSaturation != null) {
-                      timerUpdateSaturation.cancel();
+                    if (_updateSaturationTimer != null) {
+                      _updateSaturationTimer.cancel();
                     }
 
-                    timerUpdateSaturation = Timer(250.milliseconds, () async {
+                    _updateSaturationTimer = Timer(250.milliseconds, () async {
                       LightState state =
                           LightState((l) => l..saturation = value.toInt());
 
@@ -448,11 +475,11 @@ class _LightPageState extends State<LightPage> {
             hue = value;
           });
 
-          if (timerUpdateHue != null) {
-            timerUpdateHue.cancel();
+          if (_updateHueTimer != null) {
+            _updateHueTimer.cancel();
           }
 
-          timerUpdateHue = Timer(250.milliseconds, () async {
+          _updateHueTimer = Timer(250.milliseconds, () async {
             var state = LightState((l) => l..hue = value.toInt());
 
             userState.bridge
@@ -511,11 +538,11 @@ class _LightPageState extends State<LightPage> {
               return ColorCard(
                 color: color,
                 onTap: () {
-                  if (timerUpdateHue != null) {
-                    timerUpdateHue.cancel();
+                  if (_updateHueTimer != null) {
+                    _updateHueTimer.cancel();
                   }
 
-                  timerUpdateHue = Timer(250.milliseconds, () async {
+                  _updateHueTimer = Timer(250.milliseconds, () async {
                     final state = lightStateForColorOnly(light.changeColor(
                       red: color.red,
                       green: color.green,
@@ -537,14 +564,16 @@ class _LightPageState extends State<LightPage> {
   }
 
   /// Fetch a single light's data.
-  void fetch() async {
-    if (isLoading && timerUpdate != null) {
-      timerUpdate.cancel();
+  void fetch({bool showLoading = true}) async {
+    if (isLoading && _updateLightTimer != null) {
+      _updateLightTimer.cancel();
     }
 
-    isLoading = true;
+    if (showLoading) {
+      setState(() => isLoading = true);
+    }
 
-    timerUpdate = Timer(150.milliseconds, () async {
+    _updateLightTimer = Timer(150.milliseconds, () async {
       try {
         final int lightId = light?.id ?? widget.lightId;
         final Light newLight = await userState.bridge.light(lightId);
@@ -553,8 +582,10 @@ class _LightPageState extends State<LightPage> {
           return;
         }
 
-        setState(() => light = newLight);
-        initProps();
+        setState(() {
+          light = newLight;
+          refreshProps();
+        });
       } catch (error) {
         appLogger.e(error);
       } finally {
@@ -577,5 +608,29 @@ class _LightPageState extends State<LightPage> {
         .updateLightState(light.rebuild((l) => l..state = state.toBuilder()));
 
     fetch();
+  }
+
+  @override
+  void onWindowFocus() {
+    if (_fetchTimer == null || !_fetchTimer.isActive) {
+      pollingFetch();
+    }
+
+    super.onWindowFocus();
+  }
+
+  @override
+  void onWindowBlur() {
+    _fetchTimer?.cancel();
+    super.onWindowBlur();
+  }
+
+  void pollingFetch() async {
+    _fetchTimer = Timer.periodic(
+      1.seconds,
+      (timer) {
+        fetch(showLoading: false);
+      },
+    );
   }
 }

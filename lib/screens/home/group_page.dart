@@ -13,6 +13,7 @@ import 'package:lumi/utils/colors.dart';
 import 'package:lumi/utils/fonts.dart';
 import 'package:supercharged/supercharged.dart';
 import 'package:unicons/unicons.dart';
+import 'package:window_manager/window_manager.dart';
 
 class GroupPage extends StatefulWidget {
   final int groupId;
@@ -25,45 +26,66 @@ class GroupPage extends StatefulWidget {
   _GroupPageState createState() => _GroupPageState();
 }
 
-class _GroupPageState extends State<GroupPage> {
-  bool isLoading = false;
-  bool groupOn = false;
-  bool timeInitialized = false;
+class _GroupPageState extends State<GroupPage> with WindowListener {
+  bool _isLoading = false;
+  bool _isGroupOn = false;
 
-  DateTime localTime;
+  double _brightness = 0.0;
+  double _saturation = 0.0;
+  double _hue = 0.0;
 
-  double brightness = 0.0;
-  double saturation = 0.0;
-  double hue = 0.0;
+  Group _group;
 
-  Group group;
+  /// Polling fetch timer.
+  Timer _fetchTimer;
 
-  Timer timerUpdate;
-  Timer timerUpdateBrightness;
-  Timer timerUpdateSaturation;
-  Timer timerUpdateHue;
+  /// Schedule group's state update.
+  Timer _updateGroupTimer;
+
+  /// Schedule group's brightness update.
+  Timer _updateBrightnessTimer;
+
+  /// Schedule group's saturation update.
+  Timer _updateSaturationTimer;
+
+  /// Schedule group's hue update.
+  Timer _updateHueTimer;
 
   @override
   void initState() {
     super.initState();
+    WindowManager.instance.addListener(this);
+    // NOTE: Events listennrs are not fire without this.
+    WindowManager.instance.isVisible();
 
     setState(() {
-      group = NavigationStateHelper.group;
-      initProps();
+      _group = NavigationStateHelper.group;
+      refreshProps();
     });
 
-    fetch();
+    pollingFetch();
   }
 
-  void initProps() {
-    if (group == null) {
+  void refreshProps() {
+    if (_group == null) {
       return;
     }
 
-    groupOn = group.action.on;
-    brightness = group.action.brightness.toDouble();
-    hue = group.action.hue?.toDouble();
-    saturation = group.action.saturation?.toDouble();
+    _isGroupOn = _group.action.on;
+    _brightness = _group.action.brightness.toDouble();
+    _hue = _group.action.hue?.toDouble();
+    _saturation = _group.action.saturation?.toDouble();
+  }
+
+  @override
+  void dispose() {
+    WindowManager.instance.removeListener(this);
+    _fetchTimer?.cancel();
+    _updateGroupTimer?.cancel();
+    _updateBrightnessTimer?.cancel();
+    _updateSaturationTimer?.cancel();
+    _updateHueTimer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -81,13 +103,13 @@ class _GroupPageState extends State<GroupPage> {
                 header(),
                 powerSwitch(),
                 groupTypeAndLights(),
-                if (groupOn)
+                if (_isGroupOn)
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       brightnessSlider(),
-                      if (saturation != null) saturationSlider(),
-                      if (hue != null) hueContainer(),
+                      if (_saturation != null) saturationSlider(),
+                      if (_hue != null) hueContainer(),
                       groupLights(),
                     ],
                   ),
@@ -128,29 +150,29 @@ class _GroupPageState extends State<GroupPage> {
               SizedBox(
                 width: 250.0,
                 child: Slider(
-                  value: brightness,
+                  value: _brightness,
                   min: 0,
                   max: 254,
-                  activeColor: groupOn
+                  activeColor: _isGroupOn
                       ? stateColors.primary
                       : stateColors.foreground.withOpacity(0.4),
                   inactiveColor: stateColors.foreground.withOpacity(0.4),
-                  label: brightness.round().toString(),
+                  label: _brightness.round().toString(),
                   onChanged: (double value) async {
                     setState(() {
-                      brightness = value;
+                      _brightness = value;
                     });
 
-                    if (timerUpdateBrightness != null) {
-                      timerUpdateBrightness.cancel();
+                    if (_updateBrightnessTimer != null) {
+                      _updateBrightnessTimer.cancel();
                     }
 
-                    timerUpdateBrightness = Timer(250.milliseconds, () async {
+                    _updateBrightnessTimer = Timer(250.milliseconds, () async {
                       final action = GroupAction(
-                          (g) => g..brightness = brightness.toInt());
+                          (g) => g..brightness = _brightness.toInt());
 
                       userState.bridge
-                          .updateGroupState(group
+                          .updateGroupState(_group
                               .rebuild((g) => g..action = action.toBuilder()))
                           .then((_) => fetch());
                     });
@@ -177,25 +199,25 @@ class _GroupPageState extends State<GroupPage> {
           thumbColor: Color.fromRGBO(255, 255, 255, 0.9),
         ),
         child: Slider(
-          value: hue,
+          value: _hue,
           min: 0,
           max: 65535,
-          label: hue.round().toString(),
+          label: _hue.round().toString(),
           onChanged: (double value) async {
             setState(() {
-              hue = value;
+              _hue = value;
             });
 
-            if (timerUpdateHue != null) {
-              timerUpdateHue.cancel();
+            if (_updateHueTimer != null) {
+              _updateHueTimer.cancel();
             }
 
-            timerUpdateHue = Timer(250.milliseconds, () async {
-              final action = GroupAction((g) => g..hue = hue.toInt());
+            _updateHueTimer = Timer(250.milliseconds, () async {
+              final action = GroupAction((g) => g..hue = _hue.toInt());
 
               userState.bridge
                   .updateGroupState(
-                      group.rebuild((g) => g..action = action.toBuilder()))
+                      _group.rebuild((g) => g..action = action.toBuilder()))
                   .then((_) => fetch());
             });
           },
@@ -207,7 +229,7 @@ class _GroupPageState extends State<GroupPage> {
   Widget header() {
     Color iconColor = AdaptiveTheme.of(context).theme.textTheme.bodyText1.color;
 
-    if (group != null && group.action.on) {
+    if (_group != null && _group.action.on) {
       iconColor = stateColors.primary;
     }
 
@@ -222,12 +244,12 @@ class _GroupPageState extends State<GroupPage> {
           IconButton(
             iconSize: 40.0,
             onPressed: () async {
-              setState(() => groupOn = !group.action.on);
+              setState(() => _isGroupOn = !_group.action.on);
 
-              final action = GroupAction((g) => g..on = !group.action.on);
+              final action = GroupAction((g) => g..on = !_group.action.on);
 
               await userState.bridge.updateGroupState(
-                  group.rebuild((g) => g..action = action.toBuilder()));
+                  _group.rebuild((g) => g..action = action.toBuilder()));
 
               fetch();
             },
@@ -243,7 +265,7 @@ class _GroupPageState extends State<GroupPage> {
             child: Opacity(
               opacity: 0.6,
               child: Text(
-                group?.name ?? 'loading...',
+                _group?.name ?? 'loading...',
                 style: FontsUtils.mainStyle(
                   fontSize: 60.0,
                   fontWeight: FontWeight.w500,
@@ -269,7 +291,7 @@ class _GroupPageState extends State<GroupPage> {
               right: 12.0,
             ),
             child: Text(
-              groupOn ? 'ON' : 'OFF',
+              _isGroupOn ? 'ON' : 'OFF',
               style: TextStyle(
                 fontSize: 20.0,
                 fontWeight: FontWeight.w500,
@@ -277,15 +299,15 @@ class _GroupPageState extends State<GroupPage> {
             ),
           ),
           Switch(
-            value: groupOn,
+            value: _isGroupOn,
             activeColor: stateColors.primary,
             onChanged: (isOn) async {
-              setState(() => groupOn = isOn);
+              setState(() => _isGroupOn = isOn);
 
               final action = GroupAction((g) => g..on = isOn);
 
               await userState.bridge.updateGroupState(
-                  group.rebuild((g) => g..action = action.toBuilder()));
+                  _group.rebuild((g) => g..action = action.toBuilder()));
             },
           ),
         ],
@@ -304,7 +326,7 @@ class _GroupPageState extends State<GroupPage> {
           child: Opacity(
             opacity: 0.6,
             child: Text(
-              group?.type ?? '',
+              _group?.type ?? '',
               style: FontsUtils.mainStyle(
                 fontSize: 24.0,
                 fontWeight: FontWeight.w400,
@@ -319,8 +341,8 @@ class _GroupPageState extends State<GroupPage> {
   Widget groupLights() {
     List<Widget> childrenLights = [];
 
-    if (group != null) {
-      childrenLights = group.lightIds.map((id) {
+    if (_group != null) {
+      childrenLights = _group.lightIds.map((id) {
         return TinyLightCard(id: id);
       }).toList();
     }
@@ -490,28 +512,28 @@ class _GroupPageState extends State<GroupPage> {
           SizedBox(
             width: 250.0,
             child: Slider(
-              value: saturation,
+              value: _saturation,
               min: 0,
               max: 254,
               activeColor: stateColors.primary,
               inactiveColor: stateColors.foreground.withOpacity(0.4),
-              label: saturation.round().toString(),
+              label: _saturation.round().toString(),
               onChanged: (double value) async {
                 setState(() {
-                  saturation = value;
+                  _saturation = value;
                 });
 
-                if (timerUpdateSaturation != null) {
-                  timerUpdateSaturation.cancel();
+                if (_updateSaturationTimer != null) {
+                  _updateSaturationTimer.cancel();
                 }
 
-                timerUpdateSaturation = Timer(250.milliseconds, () async {
+                _updateSaturationTimer = Timer(250.milliseconds, () async {
                   final action =
-                      GroupAction((g) => g..saturation = saturation.toInt());
+                      GroupAction((g) => g..saturation = _saturation.toInt());
 
                   userState.bridge
                       .updateGroupState(
-                          group.rebuild((g) => g..action = action.toBuilder()))
+                          _group.rebuild((g) => g..action = action.toBuilder()))
                       .then((_) => fetch());
                 });
               },
@@ -523,39 +545,42 @@ class _GroupPageState extends State<GroupPage> {
   }
 
   /// Fetch a single sensor's data.
-  void fetch() async {
-    if (isLoading && timerUpdate != null) {
-      timerUpdate.cancel();
+  void fetch({bool showLoading = true}) async {
+    if (_isLoading && _updateGroupTimer != null) {
+      _updateGroupTimer.cancel();
     }
 
-    isLoading = true;
+    if (showLoading) {
+      setState(() => _isLoading = true);
+    }
 
-    timerUpdate = Timer(150.milliseconds, () async {
+    _updateGroupTimer = Timer(150.milliseconds, () async {
       try {
-        final int groupId = group?.id ?? widget.groupId;
+        final int groupId = _group?.id ?? widget.groupId;
         final Group newGroup = await userState.bridge.group(groupId);
 
         if (!mounted) {
           return;
         }
 
-        setState(() => group = newGroup);
-
-        initProps();
+        setState(() => _group = newGroup);
+        refreshProps();
       } catch (error) {
         appLogger.e(error);
       } finally {
-        setState(() => isLoading = false);
+        if (mounted) {
+          setState(() => _isLoading = false);
+        }
       }
     });
   }
 
   String lightsCountText() {
-    if (group == null) {
+    if (_group == null) {
       return '0 light';
     }
 
-    final int count = group.lightIds.length;
+    final int count = _group.lightIds.length;
     final String suffix = count > 1 ? 'lights' : 'light';
 
     return '$count $suffix';
@@ -583,6 +608,30 @@ class _GroupPageState extends State<GroupPage> {
           ),
         ),
       ),
+    );
+  }
+
+  @override
+  void onWindowFocus() {
+    if (_fetchTimer == null || !_fetchTimer.isActive) {
+      pollingFetch();
+    }
+
+    super.onWindowFocus();
+  }
+
+  @override
+  void onWindowBlur() {
+    _fetchTimer?.cancel();
+    super.onWindowBlur();
+  }
+
+  void pollingFetch() async {
+    _fetchTimer = Timer.periodic(
+      1.seconds,
+      (timer) {
+        fetch(showLoading: false);
+      },
     );
   }
 }

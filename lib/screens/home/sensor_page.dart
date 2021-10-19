@@ -13,6 +13,7 @@ import 'package:lumi/utils/app_logger.dart';
 import 'package:lumi/utils/fonts.dart';
 import 'package:supercharged/supercharged.dart';
 import 'package:unicons/unicons.dart';
+import 'package:window_manager/window_manager.dart';
 
 class SensorPage extends StatefulWidget {
   final int sensorId;
@@ -25,7 +26,7 @@ class SensorPage extends StatefulWidget {
   _SensorPageState createState() => _SensorPageState();
 }
 
-class _SensorPageState extends State<SensorPage> {
+class _SensorPageState extends State<SensorPage> with WindowListener {
   DateTime _localTime;
   Sensor _sensor;
 
@@ -36,31 +37,36 @@ class _SensorPageState extends State<SensorPage> {
   double _cardWidth = 500.0;
   double _cardElevation = 4.0;
 
-  Timer _timerUpdate;
+  Timer _updateSensorTimer;
+  Timer _fetchTimer;
 
   @override
   void initState() {
     super.initState();
+    WindowManager.instance.addListener(this);
 
     setState(() {
       _sensor = NavigationStateHelper.sensor;
     });
 
-    initProps();
-    initLocalTime();
+    pollingFetch();
+    refreshProps();
   }
 
   @override
   void dispose() {
-    _timerUpdate?.cancel();
+    WindowManager.instance.removeListener(this);
+    _updateSensorTimer?.cancel();
+    _fetchTimer?.cancel();
     super.dispose();
   }
 
-  void initProps() {
+  void refreshProps() {
     if (_sensor == null) {
       return;
     }
 
+    initLocalTime();
     _sensorOn = _sensor.config.on;
   }
 
@@ -332,14 +338,14 @@ class _SensorPageState extends State<SensorPage> {
   }
 
   /// Fetch a single sensor's data.
-  void fetch() async {
-    if (_isLoading && _timerUpdate != null) {
-      _timerUpdate.cancel();
+  void fetch({bool showLoading = true}) async {
+    if (_isLoading && _updateSensorTimer != null) {
+      _updateSensorTimer.cancel();
     }
 
     _isLoading = true;
 
-    _timerUpdate = Timer(150.milliseconds, () async {
+    _updateSensorTimer = Timer(150.milliseconds, () async {
       try {
         final newSensor = await userState.bridge.sensor(_sensor.id.toString());
 
@@ -350,7 +356,7 @@ class _SensorPageState extends State<SensorPage> {
         setState(() {
           _isLoading = false;
           _sensor = newSensor;
-          initLocalTime();
+          refreshProps();
         });
       } catch (error) {
         setState(() => _isLoading = false);
@@ -388,5 +394,29 @@ class _SensorPageState extends State<SensorPage> {
         .updateSensorConfig(_sensor.rebuild((s) => s..config.on = isOn))
         .then((_) => fetch())
         .catchError((err) => setState(() => _sensorOn = !isOn));
+  }
+
+  @override
+  void onWindowFocus() {
+    if (_fetchTimer == null || !_fetchTimer.isActive) {
+      pollingFetch();
+    }
+
+    super.onWindowFocus();
+  }
+
+  @override
+  void onWindowBlur() {
+    _fetchTimer?.cancel();
+    super.onWindowBlur();
+  }
+
+  void pollingFetch() async {
+    _fetchTimer = Timer.periodic(
+      1.seconds,
+      (timer) {
+        fetch(showLoading: false);
+      },
+    );
   }
 }
