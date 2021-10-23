@@ -102,7 +102,7 @@ class _LightPageState extends State<LightPage> with WindowListener {
     _saturation = _light.state.saturation?.toDouble();
     _hue = _light.state.hue?.toDouble();
 
-    if (_hue != null) {
+    if (_hue != null && _colors.isEmpty) {
       generatePalette();
     }
   }
